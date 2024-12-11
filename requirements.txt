@@ -1,0 +1,5 @@
+pandas
+scikit-learn
+ollama
+tqdm
+codecarbon==2.6
