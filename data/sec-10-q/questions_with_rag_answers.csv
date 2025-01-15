@@ -1,0 +1,222 @@
+Question,Source Docs,Question Type,Source Chunk Type,Answer,RAG_Answer
+How has Apple's total net sales changed over time?,*AAPL*,Multi-Doc RAG,Table,"Based on the provided documents, Apple's total net sales have changed over time as follows:
+
+- For the quarterly period ended June 25, 2022, the total net sales were $82,959 million. (SOURCE: 2022 Q3 AAPL.pdf)
+- For the quarterly period ended December 31, 2022, the total net sales were $117,154 million. (SOURCE: 2023 Q1 AAPL.pdf)
+- For the quarterly period ended April 1, 2023, the total net sales were $94,836 million. (SOURCE: 2023 Q2 AAPL.pdf)
+- For the quarterly period ended July 1, 2023, the total net sales were $81,797 million. (SOURCE: 2023 Q3 AAPL.pdf)
+
+From these figures, it can be observed that there was an increase in total net sales from the quarter ended June 25, 2022, to the quarter ended December 31, 2022. However, there was a subsequent decrease in total net sales in the quarters ended April 1, 2023, and July 1, 2023.
+
+SOURCE(S): 2022 Q3 AAPL.pdf, 2023 Q1 AAPL.pdf, 2023 Q2 AAPL.pdf, 2023 Q3 AAPL.pdf","Based on the provided excerpts from Apple's SEC 10-Q filings, Apple's total net sales have decreased over time as follows:
+
+- In the third quarter of 2023, total net sales were $81,797 million, a decrease of 1% from $82,959 million in the third quarter of 2022.
+- For the first nine months of 2023, total net sales were $293,787 million, a decrease of 3% from $304,182 million for the same period in 2022.
+
+The breakdown of net sales by category for the third quarter and first nine months of 2023 compared to the same periods in 2022 shows the following changes:
+
+- iPhone sales decreased by 2% in Q3 2023 and by 4% over the first nine months.
+- Mac sales decreased by 7% in Q3 2023 and by 24% over the first nine months.
+- iPad sales decreased by 20% in Q3 2023 but were relatively flat with a 1% decrease over the first nine months.
+- Wearables, Home and Accessories increased by 2% in Q3 2023 but decreased by 3% over the first nine months.
+- Services increased by 8% in Q3 2023 and by 7% over the first nine months.
+
+These figures indicate that while there has been growth in the Services category and a slight increase in Wearables, Home and Accessories in Q3 2023, the overall trend for Apple's total net sales is a decline over the periods reported in 2023 compared to 2022.
+
+The specific reasons for the changes in net sales for each category are also provided, such as lower net sales from certain iPhone models, lower net sales of laptops for Mac, and lower net sales across most iPad models.
+
+The source of this information is the excerpts from Apple's SEC 10-Q filings for the first three quarters of 2023."
+What are the major factors contributing to the change in Apple's gross margin in the most recent 10-Q compared to the previous quarters?,*AAPL*,Multi-Doc RAG,Text,"In the most recent 10-Q for the quarter ended July 1, 2023, the factors contributing to the change in Apple's gross margin compared to previous quarters include:
+
+1. Weakness in foreign currencies relative to the U.S. dollar, which had an unfavorable impact on gross margin.
+2. Lower Products volume, which decreased gross margin.
+3. Cost savings and a different Products mix, which partially offset the decrease in gross margin.
+
+For the third quarter of 2023, the Products gross margin percentage increased compared to the same quarter in 2022 due to cost savings and a different Products mix, despite the negative impact of foreign currency weakness and decreased leverage. However, the year-over-year Products gross margin percentage for the first nine months of 2023 decreased due to the weakness in foreign currencies and decreased leverage, despite cost savings and a different Products mix.
+
+The Services gross margin increased due to higher Services net sales but was partially offset by the weakness in foreign currencies and higher Services costs. The Services gross margin percentage decreased due to higher Services costs, partially offset by improved leverage.
+
+SOURCE(S): 2023 Q3 AAPL.pdf","To analyze the major factors contributing to the change in Apple's gross margin in the most recent 10-Q compared to previous quarters, we need to consider the information provided in the excerpts from Apple's quarterly filings.
+
+From the 2023 Q3 10-Q filing, we learn that the Services gross margin percentage decreased during the third quarter of 2023 compared to the third quarter of 2022 primarily due to higher Services costs, partially offset by improved leverage. Additionally, the year-over-year Services gross margin percentage decreased during the first nine months of 2023 due to higher Services costs and the weakness in foreign currencies relative to the U.S. dollar, again partially offset by improved leverage.
+
+Comparing this to the 2023 Q2 10-Q filing, the Services gross margin percentage also decreased during the second quarter and first six months of 2023 compared to the same periods in 2022, with the reasons cited being the weakness in foreign currencies relative to the U.S. dollar and higher Services costs, partially offset by improved leverage.
+
+Looking back at the 2022 Q3 10-Q filing, we see that the Services gross margin percentage increased during the third quarter and first nine months of 2022 compared to the same periods in 2021. The increase was primarily due to improved leverage and a different Services mix, partially offset by the weakness in foreign currencies relative to the U.S. dollar and higher Services costs.
+
+In summary, the major factors contributing to the change in Apple's gross margin in the most recent 10-Q compared to previous quarters include:
+
+1. Higher Services costs: This has been a consistent factor mentioned across multiple quarters as contributing to a decrease in gross margin percentage.
+2. Weakness in foreign currencies relative to the U.S. dollar: This has negatively impacted the gross margin percentage by increasing the relative cost of sales in international markets.
+3. Improved leverage: This factor has helped to partially offset the negative impacts of higher Services costs and currency fluctuations.
+
+These factors are consistent with the risk factors discussed in Part I, Item 1A of the 2022 Form 10-K, where Apple acknowledges that its gross margins are subject to volatility and downward pressure due to various factors.
+
+Sources:
+- Apple Inc. | Q3 2023 Form 10-Q
+- Apple Inc. | Q2 2023 Form 10-Q
+- Apple Inc. | Q3 2022 Form 10-Q
+- Apple Inc. | Q1 2023 Form 10-Q"
+"Has there been any significant change in Apple's operating expenses over the reported quarters? If so, what are the key drivers for this change?",*AAPL*,Multi-Doc RAG,Table,"Yes, there has been a change in Apple's operating expenses over the reported quarters. The key drivers for this change are increases in research and development (""R&D"") expense and selling, general and administrative expense. The growth in R&D expense is primarily driven by increases in headcount-related expenses.
+
+For the third quarter of 2022, the total operating expenses were $12,809 million, with R&D expenses of $6,797 million and selling, general and administrative expenses of $6,012 million.
+
+For the first quarter of 2023, the total operating expenses increased to $14,316 million, with R&D expenses of $7,709 million and selling, general and administrative expenses of $6,607 million.
+
+For the second quarter of 2023, the total operating expenses were $13,658 million, with R&D expenses of $7,457 million and selling, general and administrative expenses of $6,201 million.
+
+For the third quarter of 2023, the total operating expenses were $13,415 million, with R&D expenses of $7,442 million and selling, general and administrative expenses of $5,973 million.
+
+The consistent increase in R&D expenses indicates the company's continued investment in innovation and product development. The selling, general and administrative expenses have also increased, although they saw a slight decrease in the third quarter of 2023 compared to the second quarter of 2023.
+
+SOURCE(S): 2022 Q3 AAPL.pdf, 2023 Q1 AAPL.pdf, 2023 Q2 AAPL.pdf, 2023 Q3 AAPL.pdf","Based on the provided excerpts from Apple Inc.'s Form 10-Q filings, there has been a significant change in Apple's operating expenses over the reported quarters. To analyze the key drivers for this change, we need to look at the specific figures for research and development (R&D) expense and other corporate expenses, net, as these are the primary components of operating expenses.
+
+From the 2022 Q3 Form 10-Q, we have the following operating expenses for the three-month period ended:
+- Research and development expense: $5,717 million
+- Other corporate expenses, net: $1,608 million
+
+From the 2023 Q1 Form 10-Q, we do not have the specific figures provided in the excerpt.
+
+From the 2023 Q2 Form 10-Q, we have the following operating expenses for the three-month period ended April 1, 2023:
+- Research and development expense: $6,797 million
+- Other corporate expenses, net: $1,713 million
+
+From the 2023 Q3 Form 10-Q, we have the following operating expenses for the three-month period ended:
+- Research and development expense: $6,797 million
+- Other corporate expenses, net: $1,650 million
+
+Comparing these figures, we can see that there has been an increase in R&D expenses from $5,717 million in Q3 2022 to $6,797 million in Q2 and Q3 2023. Similarly, other corporate expenses have also increased from $1,608 million in Q3 2022 to $1,650 million in Q3 2023, although there was a slight decrease from Q2 2023's $1,713 million.
+
+The key drivers for the increase in operating expenses, particularly R&D, could be attributed to Apple's continued investment in innovation and development of new products and services. Other corporate expenses may vary due to a range of factors, including administrative costs, legal expenses, and other overheads.
+
+To provide a more comprehensive analysis, the specific figures for the three months ended December 31, 2022, and December 25, 2021, would be needed, which are not included in the provided excerpts. However, based on the available data, there is a clear trend of increasing operating expenses, particularly in R&D, over the reported quarters."
+How has Apple's revenue from iPhone sales fluctuated across quarters?,*AAPL*,Multi-Doc RAG,Table,"The revenue from iPhone sales for Apple has fluctuated across the quarters as follows:
+
+- In the quarter ended June 25, 2022, the revenue from iPhone sales was $40,665 million. (""2022 Q3 AAPL.pdf"")
+- In the quarter ended December 31, 2022, the revenue from iPhone sales was $65,775 million. (""2023 Q1 AAPL.pdf"")
+- In the quarter ended April 1, 2023, the revenue from iPhone sales was $51,334 million. (""2023 Q2 AAPL.pdf"")
+- In the quarter ended July 1, 2023, the revenue from iPhone sales was $39,669 million. (""2023 Q3 AAPL.pdf"")
+
+SOURCE(S): ""2022 Q3 AAPL.pdf"", ""2023 Q1 AAPL.pdf"", ""2023 Q2 AAPL.pdf"", ""2023 Q3 AAPL.pdf""","Based on the provided excerpts from Apple Inc.'s Form 10-Q filings, we can observe the following fluctuations in iPhone sales across different quarters:
+
+1. In the second quarter of 2023, iPhone net sales were relatively flat compared to the second quarter of 2022. However, there was a year-over-year decrease in iPhone net sales during the first six months of 2023, primarily due to lower net sales from the new iPhone models launched in the fourth quarter of 2022. (From 2023 Q2 AAPL.txt)
+
+2. In the third quarter of 2023, iPhone net sales decreased compared to the same period in 2022. This was primarily due to lower net sales from certain iPhone models, partially offset by higher net sales of iPhone 14 Pro models. (From 2023 Q3 AAPL.txt)
+
+3. For the first nine months of 2023, there was an increase in iPhone net sales in the Rest of Asia Pacific region, which was partially offset by lower net sales of Mac. (From 2023 Q3 AAPL.txt)
+
+4. In the third quarter of 2022, iPhone net sales were $40,665 million, which was a 3% increase from the $39,570 million in the third quarter of 2021. For the nine months ended June 25, 2022, iPhone net sales were $162,863 million, a 6% increase from $153,105 million for the same period in 2021. (From 2022 Q3 AAPL.txt)
+
+To summarize, iPhone sales were relatively flat in Q2 2023 compared to Q2 2022, decreased in Q3 2023 compared to Q3 2022, and experienced a decrease in the first six months of 2023 compared to the same period in 2022. However, in the third quarter of 2022, there was a year-over-year increase in iPhone sales compared to the third quarter of 2021."
+Can any trends be identified in Apple's Services segment revenue over the reported periods?,*AAPL*,Multi-Doc RAG,Table,"Based on the provided documents, there is a trend of increasing revenue in Apple's Services segment over the reported periods. The net sales for Services have shown growth from each period to the next. Specifically:
+
+- In the quarter ended June 25, 2022, Services net sales were $19,604 million.
+- In the quarter ended December 31, 2022, Services net sales increased to $20,766 million.
+- In the quarter ended April 1, 2023, Services net sales further increased to $20,907 million.
+- Finally, in the quarter ended July 1, 2023, Services net sales again increased to $21,213 million.
+
+This consistent increase over the reported periods indicates a positive trend in the revenue of Apple's Services segment.
+
+SOURCE(S): 2022 Q3 AAPL.pdf, 2023 Q1 AAPL.pdf, 2023 Q2 AAPL.pdf, 2023 Q3 AAPL.pdf","Based on the excerpts provided from Apple Inc.'s Form 10-Q filings for Q1, Q2, and Q3 of 2023, we can identify certain trends in Apple's Services segment revenue over the reported periods:
+
+1. **Q1 2023 (ended December 31, 2022)**: The Services net sales included sales from advertising, AppleCare, cloud, digital content, payment, and other services. It also included amortization of the deferred value of services bundled in the sales price of certain products. The document mentions lower net sales of Services compared to the same quarter in the previous year (Q1 2022).
+
+2. **Q2 2023 (ended April 1, 2023)**: The document indicates that there were lower net sales of Services compared to the previous year. However, it also mentions higher net sales of Services in the Rest of Asia Pacific region, which partially offset the lower net sales of iPhone and Mac due to the weakness in foreign currencies relative to the U.S. dollar.
+
+3. **Q3 2023 (ended July 1, 2023)**: The document states that there was an increase in Services net sales during the third quarter of 2023, primarily due to higher net sales from advertising, cloud services, and the App Store. Additionally, year-over-year Services net sales increased during the first nine months of 2023, primarily due to higher net sales from cloud services, advertising, and music.
+
+From these observations, we can infer that while there was a mention of lower Services net sales in the earlier part of the year, there was a positive trend in the Services segment revenue by the third quarter, with increases attributed to advertising, cloud services, and the App Store. This suggests a recovery or growth in the Services segment as the year progressed.
+
+To provide a more comprehensive analysis, one would typically review the actual financial figures for the Services segment across these periods. However, the specific revenue numbers for the Services segment are not provided in the excerpts. For a complete understanding of the trends, it would be necessary to refer to the full financial tables and discussions in the respective 10-Q filings, which would provide the quantitative data to support the qualitative trends described above."
+What is the impact of foreign exchange rates on Apple's financial performance? List this out separately for each reported period.,*AAPL*,Multi-Doc RAG,Table,"- For the quarterly period ended June 25, 2022, weakness in foreign currencies relative to the U.S. dollar had an unfavorable impact on the Companyâ€™s total net sales.
+  
+  SOURCE(S): 2023 Q1 AAPL.pdf, Item 2. Managementâ€™s Discussion and Analysis of Financial Condition and Results of Operations
+
+- For the quarterly period ended December 31, 2022, weakness in foreign currencies relative to the U.S. dollar had an unfavorable impact on the Companyâ€™s total net sales, which decreased 5% or $6.8 billion during the first quarter of 2023 compared to the same quarter in 2022.
+
+  SOURCE(S): 2023 Q2 AAPL.pdf, Item 2. Managementâ€™s Discussion and Analysis of Financial Condition and Results of Operations
+
+- For the quarterly period ended April 1, 2023, weakness in foreign currencies relative to the U.S. dollar had an unfavorable impact on the Companyâ€™s total net sales, which decreased 3% or $2.4 billion during the second quarter of 2023 compared to the same quarter in 2022.
+
+  SOURCE(S): 2023 Q3 AAPL.pdf, Item 2. Managementâ€™s Discussion and Analysis of Financial Condition and Results of Operations
+
+- For the quarterly period ended July 1, 2023, weakness in foreign currencies relative to the U.S. dollar had an unfavorable impact on the Companyâ€™s total net sales, which decreased 1% or $1.2 billion during the third quarter of 2023 compared to the same quarter in 2022.
+
+  SOURCE(S): 2023 Q3 AAPL.pdf, Item 2. Managementâ€™s Discussion and Analysis of Financial Condition and Results of Operations","The impact of foreign exchange rates on Apple's financial performance for the reported periods is as follows:
+
+**2023 Q2 (from 2023 Q2 AAPL.txt):**
+- The weakness in foreign currencies relative to the U.S. dollar had an unfavorable impact on Rest of Asia Pacific net sales during the second quarter and first six months of 2023.
+
+**2022 Q3 (from 2022 Q3 AAPL.txt):**
+- The weakness in foreign currencies relative to the U.S. dollar had an unfavorable impact on Greater China net sales during the third quarter of 2022.
+- The strength of the renminbi relative to the U.S. dollar had a favorable impact on Greater China net sales during the first nine months of 2022.
+- The weakness of the yen relative to the U.S. dollar had an unfavorable impact on Japan net sales during the third quarter and first nine months of 2022.
+
+**2023 Q3 (from 2023 Q3 AAPL.txt):**
+- The specific impact of foreign exchange rates on Apple's financial performance is not detailed in the provided excerpt from the 2023 Q3 Form 10-Q. Additional information from the full document would be required to assess the impact for this period.
+
+Please note that the provided excerpts do not contain detailed quantitative information on the exact impact of foreign exchange rates on Apple's financial performance. For a comprehensive analysis, one would need to review the full Management's Discussion and Analysis of Financial Condition and Results of Operations (MD&A) section and the notes to the financial statements in the respective 10-Q filings, which typically provide more context and details on the effects of foreign exchange rate fluctuations."
+Are there any notable changes in Apple's liquidity position or cash flows as reported in these 10-Qs?,*AAPL*,Multi-Doc RAG,Table,"Based on the provided documents, there are no explicit details indicating notable changes in Apple Inc.'s liquidity position or cash flows between the quarterly reports. The documents provided do not contain specific financial data or comparative analysis that would allow for an assessment of changes in the company's liquidity or cash flows.
+
+SOURCE(S): 2022 Q3 AAPL.pdf, 2023 Q1 AAPL.pdf, 2023 Q2 AAPL.pdf, 2023 Q3 AAPL.pdf","Based on the provided excerpts from Apple Inc.'s Form 10-Q filings, there are a few points to consider regarding the company's liquidity position and cash flows:
+
+1. **Liquidity Position**: Apple believes that its balances of cash, cash equivalents, and unrestricted marketable securities, along with the cash generated from ongoing operations and access to debt markets, will be sufficient to satisfy its cash requirements and capital return program over the next 12 months and beyond. This statement from the Q2 2023 Form 10-Q suggests that Apple is confident in its liquidity position.
+
+2. **Contractual Cash Requirements**: The company indicates that its contractual cash requirements have not materially changed since the 2022 Form 10-K, except for changes in commercial paper and manufacturing purchase obligations. This suggests stability in the company's expected cash outflows for contractual obligations.
+
+3. **Cash and Cash Equivalents**: The cash and cash equivalents at the beginning of the period for Q1 2023 were $24,977 million, as per the Q1 2023 Form 10-Q. By Q3 2023, the ending balances were $28,861 million, as per the Q3 2023 Form 10-Q. This indicates an increase in cash and cash equivalents over the fiscal year.
+
+4. **Cash Paid for Income Taxes and Interest**: There was a notable decrease in cash paid for income taxes, net, from $12,251 million in Q3 2022 to $7,020 million in Q3 2023, as per the respective Form 10-Q filings. This could be due to the impact of U.S. foreign tax credit regulations and a higher U.S. federal R&D credit. Additionally, cash paid for interest increased from $1,910 million in Q3 2022 to $2,590 million in Q3 2023, indicating higher interest expenses.
+
+In summary, Apple's liquidity position appears to be strong, with sufficient cash, cash equivalents, and marketable securities to meet its short-term requirements. The company's cash flows have experienced some changes, particularly in the form of decreased cash paid for income taxes and increased interest payments. However, these changes do not seem to have materially affected Apple's overall liquidity position as of the latest 10-Q filings."
+Examine how Intel's effective tax rate in the most recent 10-Q compares with the tax-related discussions in the notes section.,*2023 Q3 INTC*,Single-Doc Multi-Chunk RAG,Table,"Intel's effective tax rate for the third quarter ended September 30, 2023, was 696.2%, and for the nine months ended September 30, 2023, it was 642.0%. This information is found in Note 7: Income Taxes, which states that the provision for (benefit from) taxes was $(362) million on income (loss) before taxes of $(52) million for the third quarter, and $(1,041) million on income (loss) before taxes of $(2,026) million for the nine months ended September 30, 2023.
+
+The notes section further explains that the provision for, or benefit from, income taxes for an interim period is typically determined using an estimated annual effective tax rate, adjusted for discrete items. However, for the first nine months of 2023, Intel used the actual effective tax rate for the year-to-date period because they were unable to make a reliable estimate of the annual effective tax rate due to the variability of the rate as a result of fluctuations in forecasted income and the effects of being taxed in multiple tax jurisdictions.
+
+SOURCE(S): 2023 Q3 INTC.pdf","To examine Intel's effective tax rate in the most recent 10-Q filing and compare it with the tax-related discussions in the notes section, we need to look at the relevant sections of the 2023 Q2 INTC.txt document.
+
+From the 2023 Q2 INTC.txt document, we can see the following financial figures:
+
+- Income (loss) before taxes: $(816) million
+- Provision for (benefit from) taxes: $(2,289) million
+- Net income (loss): $1,473 million
+
+The provision for (benefit from) taxes is negative, which indicates that Intel recognized a tax benefit rather than an expense. To calculate the effective tax rate, we would typically divide the provision for taxes by the income before taxes. However, in this case, both figures are negative, which complicates the calculation of a traditional effective tax rate. The negative provision for taxes suggests that Intel's tax benefits exceeded its pre-tax income, resulting in a net tax benefit rather than a tax expense.
+
+Unfortunately, the provided excerpts from the 2023 Q2 INTC.txt document do not include a discussion from the notes section that directly addresses the effective tax rate or the details behind the tax benefit. To fully understand the factors contributing to the negative effective tax rate, we would need to review the complete notes section related to income taxes in the 10-Q filing, which typically provides explanations for significant tax-related items, changes in tax laws, or adjustments to tax contingencies.
+
+In summary, based on the provided excerpts, Intel's effective tax rate for the period reflected in the 2023 Q2 filing cannot be directly compared to a traditional positive effective tax rate due to the negative provision for taxes. For a comprehensive understanding, the full notes section on income taxes in the 10-Q filing should be reviewed to identify the specific reasons for the tax benefit and how it compares to the discussions in the notes section."
+"In Amazon's latest 10-Q, how does the revenue distribution across its diverse business segments like e-commerce, AWS, and others compare to the costs incurred in these segments?",*2023 Q3 AMZN*,Single-Doc Multi-Chunk RAG,Table,"For the quarter ended September 30, 2023, Amazon's revenue distribution and costs incurred across its business segments were as follows:
+
+North America:
+- Net sales: $87,887 million
+- Operating expenses: $83,580 million
+- Operating income: $4,307 million
+
+International:
+- Net sales: $32,137 million
+- Operating expenses: $32,232 million
+- Operating loss: $(95) million
+
+AWS:
+- Net sales: $23,059 million
+- Operating expenses: $16,083 million
+- Operating income: $6,976 million
+
+The North America segment generated the highest net sales and operating income, while the International segment experienced an operating loss. AWS, while having lower net sales compared to the North America segment, had a significant operating income due to lower operating expenses.
+
+SOURCE(S): 2023 Q3 AMZN.pdf","To provide a detailed comparison of revenue distribution and costs incurred across Amazon's business segments, including e-commerce (North America and International) and AWS, we would need to refer to the specific financial figures from Amazon's latest 10-Q filing. However, the excerpts provided do not include the actual financial tables with revenue and cost numbers for the segments.
+
+Based on the context provided, we can infer the following:
+
+1. **North America**: This segment includes revenue from retail sales of consumer products and subscriptions through North America-focused online and physical stores. Costs are allocated based on usage, with non-infrastructure technology costs primarily incurred in the U.S. and allocated to this segment.
+
+2. **International**: This segment comprises revenue from retail sales of consumer products, advertising, and subscription services through internationally-focused online stores. It includes export sales from these stores but excludes export sales from North America-focused online stores.
+
+3. **AWS**: The AWS segment generates revenue from global sales of compute, storage, database, and other services. Costs to operate AWS are primarily classified as ""Technology and infrastructure,"" leveraging a shared infrastructure that supports both internal technology requirements and external sales to AWS customers.
+
+4. **Fulfillment Costs**: Fulfillment costs include those incurred in operating and staffing fulfillment centers, physical stores, customer service centers, and payment processing costs. While AWS payment processing costs are included in ""Fulfillment,"" the majority of AWS costs are classified as ""Technology and infrastructure.""
+
+To accurately compare revenue distribution and costs, we would need the segment financials, which typically include net sales, operating expenses, and operating income for each segment. This information is usually found in the segment information section of the 10-Q filing.
+
+Since the necessary financial data is not provided in the excerpts, I recommend reviewing the full 10-Q filing for the most recent quarter to find the specific segment financials. This information is typically presented in a table format and will provide the revenue and cost figures needed to make a direct comparison. The SEC's EDGAR database (https://www.sec.gov/edgar.shtml) is a reliable source for accessing the full 10-Q filings of publicly traded companies like Amazon."

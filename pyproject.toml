@@ -6,8 +6,25 @@ authors = ["Your Name <you@example.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 pre-commit = "^3.7.0"
+chromadb = "^0.5.23"
+openai = "^1.58.1"
+pandas = "^2.2.3"
+pytesseract = "^0.3.13"
+pdf2image = "^1.17.0"
+tiktoken = "^0.8.0"
+neo4j = "^5.27.0"
+langchain = "^0.3.13"
+langchain-neo4j = "^0.2.0"
+langchain-openai = "^0.2.13"
+langgraph = "^0.2.60"
+networkx = "^3.4.2"
+matplotlib = "^3.10.0"
+langchain-experimental = "^0.3.3"
+pypdf = "^5.1.0"
+ipywidgets = "^8.1.5"
+scipy = "^1.15.0"
 
 
 [build-system]
