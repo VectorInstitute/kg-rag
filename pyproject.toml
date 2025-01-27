@@ -25,6 +25,7 @@ langchain-experimental = "^0.3.3"
 pypdf = "^5.1.0"
 ipywidgets = "^8.1.5"
 scipy = "^1.15.0"
+python-dotenv = "^1.0.1"
 
 
 [build-system]
