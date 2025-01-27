@@ -9,7 +9,6 @@ Before you dive into the materials, ensure you have the following prerequisites:
 - Poetry for dependency management
 - An OpenAI API key
 - A Neo4j database instance (for knowledge graph notebooks)
-- Docugami account (for document processing notebook)
 - Tesseract and Poppler (for PDF processing)
 
 ## Notebooks
@@ -28,13 +27,12 @@ This section includes code files that demonstrate:
 For further reading and additional studies, consider the following resources:
 - LangChain documentation: [https://python.langchain.com/docs/](https://python.langchain.com/docs/)
 - Neo4j documentation: [https://neo4j.com/docs/](https://neo4j.com/docs/)
-- Docugami documentation: [https://docugami.com/docs/](https://docugami.com/docs/)
 - Tesseract documentation: [https://tesseract-ocr.github.io/tessdoc/](https://tesseract-ocr.github.io/tessdoc/)
 - Poppler documentation: [https://poppler.freedesktop.org/](https://poppler.freedesktop.org/)
 
 ## Getting Started
 To get started with the materials in this topic:
 1. Ensure you have installed all the required dependencies using `poetry install`.
-2. Set up your environment variables, including your OpenAI API key, Neo4j connection details, and Docugami API key.
+2. Set up your environment variables, including your OpenAI API key and Neo4j connection details.
 3. Explore the notebooks and scripts to understand the different approaches to question answering with SEC 10-Q filings.
 4. Run the notebooks and scripts to reproduce the results and experiment with different parameters.

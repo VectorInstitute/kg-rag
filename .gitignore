@@ -1,3 +1,5 @@
 .venv/*
 *.pkl
 reference_implementations/sec-10-q/chroma_db/*
+.DS_Store
+reference_implementations/sec-10-q/evaluation_results/*
