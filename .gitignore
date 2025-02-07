@@ -4,3 +4,6 @@ reference_implementations/sec-10-q/chroma_db/*
 .DS_Store
 reference_implementations/sec-10-q/evaluation_results/*
 reference_implementations/sec-10-q/evaluation_results_graphrag/*
+reference_implementations/sec-10-q/evaluation_results_kg/*
+reference_implementations/sec-10-q/evaluation_results_kg_hyperparam/*
+

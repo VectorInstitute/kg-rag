@@ -31,6 +31,8 @@ langchain-chroma = "^0.2.1"
 scipy = "1.12.0"
 langchain-graphrag = "^0.0.9"
 ragas = "^0.2.12"
+spacy = "^3.8.4"
+levenshtein = "^0.26.1"
 
 
 [build-system]
