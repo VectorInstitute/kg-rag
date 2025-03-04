@@ -1,9 +1,48 @@
-.venv/*
-# *.pkl
-reference_implementations/sec-10-q/chroma_db/*
-.DS_Store
-reference_implementations/sec-10-q/evaluation_results/*
-reference_implementations/sec-10-q/evaluation_results_graphrag/*
-reference_implementations/sec-10-q/evaluation_results_kg/*
-reference_implementations/sec-10-q/evaluation_results_kg_hyperparam/*
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+.env/
+.venv/
+
+# Environment variables
+.env
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Data and model files
+data/*
+!data/.gitkeep
+*.model
+*.h5
+*.pt
+*.npy
+*.npz
+
+# Logs and output
+logs/
+*.log
+evaluation_results*/
+hyperparameter_search*/
+
+# Neo4j
+neo4j/data/
+
+# Mac OS
+.DS_Store

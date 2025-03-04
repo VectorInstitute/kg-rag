@@ -1,0 +1,221 @@
+{
+    "entity": [
+      {
+        "name": "baseline",
+        "model_name": "gpt-4o",
+        "beam_width": 10,
+        "max_depth": 8,
+        "top_k": 100,
+        "num_chains": 2,
+        "min_score": 0.7,
+        "verbose": false
+      },
+      {
+        "name": "wide_beam",
+        "model_name": "gpt-4o",
+        "beam_width": 25,
+        "max_depth": 8,
+        "top_k": 100,
+        "num_chains": 2,
+        "min_score": 0.7,
+        "verbose": false
+      },
+      {
+        "name": "narrow_beam",
+        "model_name": "gpt-4o",
+        "beam_width": 5,
+        "max_depth": 8,
+        "top_k": 100,
+        "num_chains": 2,
+        "min_score": 0.7,
+        "verbose": false
+      },
+      {
+        "name": "deep_search",
+        "model_name": "gpt-4o",
+        "beam_width": 10,
+        "max_depth": 12,
+        "top_k": 100,
+        "num_chains": 2,
+        "min_score": 0.7,
+        "verbose": false
+      },
+      {
+        "name": "shallow_search",
+        "model_name": "gpt-4o",
+        "beam_width": 10,
+        "max_depth": 5,
+        "top_k": 100,
+        "num_chains": 2,
+        "min_score": 0.7,
+        "verbose": false
+      },
+      {
+        "name": "high_topk",
+        "model_name": "gpt-4o",
+        "beam_width": 10,
+        "max_depth": 8,
+        "top_k": 200,
+        "num_chains": 2,
+        "min_score": 0.7,
+        "verbose": false
+      },
+      {
+        "name": "low_topk",
+        "model_name": "gpt-4o",
+        "beam_width": 10,
+        "max_depth": 8,
+        "top_k": 50,
+        "num_chains": 2,
+        "min_score": 0.7,
+        "verbose": false
+      },
+      {
+        "name": "multi_chain",
+        "model_name": "gpt-4o",
+        "beam_width": 10,
+        "max_depth": 8,
+        "top_k": 100,
+        "num_chains": 5,
+        "min_score": 0.7,
+        "verbose": false
+      },
+      {
+        "name": "low_threshold",
+        "model_name": "gpt-4o",
+        "beam_width": 10,
+        "max_depth": 8,
+        "top_k": 100,
+        "num_chains": 2,
+        "min_score": 0.5,
+        "verbose": false
+      },
+      {
+        "name": "high_threshold",
+        "model_name": "gpt-4o",
+        "beam_width": 10,
+        "max_depth": 8,
+        "top_k": 100,
+        "num_chains": 2,
+        "min_score": 0.8,
+        "verbose": false
+      },
+      {
+        "name": "aggressive",
+        "model_name": "gpt-4o",
+        "beam_width": 25,
+        "max_depth": 12,
+        "top_k": 200,
+        "num_chains": 5,
+        "min_score": 0.5,
+        "verbose": false
+      },
+      {
+        "name": "conservative",
+        "model_name": "gpt-4o",
+        "beam_width": 5,
+        "max_depth": 5,
+        "top_k": 50,
+        "num_chains": 1,
+        "min_score": 0.8,
+        "verbose": false
+      }
+    ],
+    "baseline": [
+      {
+        "name": "default",
+        "model_name": "gpt-4o",
+        "embedding_model": "text-embedding-3-small",
+        "top_k": 5,
+        "verbose": false
+      },
+      {
+        "name": "high_context",
+        "model_name": "gpt-4o",
+        "embedding_model": "text-embedding-3-small",
+        "top_k": 10,
+        "verbose": false
+      },
+      {
+        "name": "low_context",
+        "model_name": "gpt-4o",
+        "embedding_model": "text-embedding-3-small",
+        "top_k": 3,
+        "verbose": false
+      },
+      {
+        "name": "alt_embedding",
+        "model_name": "gpt-4o",
+        "embedding_model": "text-embedding-ada-002",
+        "top_k": 5,
+        "verbose": false
+      }
+    ],
+    "cypher": [
+      {
+        "name": "default",
+        "model_name": "gpt-4o",
+        "max_depth": 2,
+        "max_hops": 3,
+        "verbose": false
+      },
+      {
+        "name": "deep",
+        "model_name": "gpt-4o",
+        "max_depth": 4,
+        "max_hops": 5,
+        "verbose": false
+      },
+      {
+        "name": "shallow",
+        "model_name": "gpt-4o",
+        "max_depth": 1,
+        "max_hops": 2,
+        "verbose": false
+      }
+    ],
+    "graphrag": [
+      {
+        "name": "local_l2",
+        "model_name": "gpt-4o",
+        "search_strategy": "local",
+        "community_level": 2,
+        "verbose": false
+      },
+      {
+        "name": "local_l1",
+        "model_name": "gpt-4o",
+        "search_strategy": "local",
+        "community_level": 1,
+        "verbose": false
+      },
+      {
+        "name": "local_l3",
+        "model_name": "gpt-4o",
+        "search_strategy": "local",
+        "community_level": 3,
+        "verbose": false
+      },
+      {
+        "name": "global_l2",
+        "model_name": "gpt-4o",
+        "search_strategy": "global",
+        "community_level": 2,
+        "verbose": false
+      },
+      {
+        "name": "global_l1",
+        "model_name": "gpt-4o",
+        "search_strategy": "global",
+        "community_level": 1,
+        "verbose": false
+      },
+      {
+        "name": "global_l3",
+        "model_name": "gpt-4o",
+        "search_strategy": "global",
+        "community_level": 3,
+        "verbose": false
+      }
+    ]
+  }

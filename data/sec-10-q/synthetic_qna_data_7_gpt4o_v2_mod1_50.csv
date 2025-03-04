@@ -19,7 +19,7 @@ For the third quarter of 2023, the Products gross margin percentage increased co
 
 The Services gross margin increased due to higher Services net sales but was partially offset by the weakness in foreign currencies and higher Services costs. The Services gross margin percentage decreased due to higher Services costs, partially offset by improved leverage.
 
-SOURCE(S): 2023 Q3 AAPL.pdf","What was the Products gross margin percentage for Apple for the quarter ended July 1, 2023, as reported in their Q3 2023 10-Q? Provide the answer rounded to one decimal place.",37.5,1
+SOURCE(S): 2023 Q3 AAPL.pdf","What was the Products gross margin percentage for Apple for the quarter ended July 1, 2023, as reported in their Q3 2023 10-Q? Provide the answer rounded to one decimal place.",35.4,1
 "Has there been any significant change in Apple's operating expenses over the reported quarters? If so, what are the key drivers for this change?",*AAPL*,Multi-Doc RAG,Table,"Yes, there has been a change in Apple's operating expenses over the reported quarters. The key drivers for this change are increases in research and development (""R&D"") expense and selling, general and administrative expense. The growth in R&D expense is primarily driven by increases in headcount-related expenses.
 
 For the third quarter of 2022, the total operating expenses were $12,809 million, with R&D expenses of $6,797 million and selling, general and administrative expenses of $6,012 million.
@@ -421,7 +421,7 @@ Has Intel reported any significant business acquisitions or divestitures in thes
 
 Additionally, Intel discussed the divestiture of its NAND memory business. The first phase of the agreement with SK hynix Inc. to divest the NAND memory business was closed on December 29, 2021, for $9.0 billion in cash. The transaction is to be completed in two closings, with the first closing having occurred in the first quarter of 2022 and the second closing expected to be no earlier than March 2025.
 
-SOURCE(S): 2023 Q1 INTC.pdf, 2023 Q2 INTC.pdf, 2023 Q3 INTC.pdf","What was the cash amount received by Intel for the first phase of the divestiture of its NAND memory business to SK hynix Inc., as reported in the 2023 Q3 INTC.pdf? Provide the answer in billions of dollars rounded to one decimal place.",9.0,1
+SOURCE(S): 2023 Q1 INTC.pdf, 2023 Q2 INTC.pdf, 2023 Q3 INTC.pdf","What was the cash amount received by Intel for the first phase of the divestiture of its NAND memory business to SK hynix Inc., as reported in the 2023 Q3 INTC.pdf? Provide the answer in billions of dollars rounded to one decimal place.",9,1
 "How have inventory levels at Intel changed over these quarters, and what might this suggest about their supply chain strategies?",*INTC*,Multi-Doc RAG,Table,"Over the quarters provided in the context, Intel's inventory levels have shown fluctuations:
 
 - In Q3 2022, the inventory level was $13.224 billion (as stated in the ""2023 Q1 INTC.pdf"" document).
