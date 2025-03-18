@@ -7,6 +7,7 @@ import re
 from typing import Dict, Any, Optional, List
 
 import openai
+import os
 
 from .embedder import OpenAIEmbedding
 from .document_processor import DocumentProcessor
@@ -19,7 +20,6 @@ class BaselineRAG:
     
     def __init__(
         self,
-        openai_api_key: str, 
         collection_name: str = "document_collection",
         chroma_persist_dir: str = "chroma_db",
         model_name: str = "gpt-4o",
@@ -43,6 +43,11 @@ class BaselineRAG:
             numerical_answer: Whether to format answers as numerical values only
             verbose: Whether to print verbose output
         """
+
+        openai_api_key = os.getenv("OPENAI_API_KEY")
+        if not openai_api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set")
+
         self.embedder = OpenAIEmbedding(
             api_key=openai_api_key,
             model=embedding_model,
@@ -82,7 +87,7 @@ class BaselineRAG:
         )
         
         # Set response format to JSON if using CoT or numerical answer
-        response_format = {"type": "json_object"} if (self.use_cot or self.numerical_answer) else None
+        response_format = {"type": "json_object"} if self.use_cot else None
         
         # Generate response
         response = self.client.chat.completions.create(

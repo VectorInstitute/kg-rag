@@ -8,7 +8,8 @@ from typing import List, Dict, Any, Optional, Tuple
 import networkx as nx
 from tqdm.auto import tqdm
 from langchain_openai import ChatOpenAI
-from langchain_experimental.graph_transformers import LLMGraphTransformer
+# from langchain_experimental.graph_transformers import LLMGraphTransformer
+from kg_rag.utils.graph_transformers import MetadataEnhancedLLMGraphTransformer
 from langchain_core.documents import Document
 from langchain_community.graphs.networkx_graph import NetworkxEntityGraph
 
@@ -97,7 +98,7 @@ def create_graph_from_documents(
         )
     
     # Create LLM transformer
-    llm_transformer = LLMGraphTransformer(llm=llm)
+    llm_transformer = MetadataEnhancedLLMGraphTransformer(llm)
     
     # Check if graph documents can be loaded
     if graph_documents_path and os.path.exists(graph_documents_path) and not force_rebuild:
@@ -129,6 +130,37 @@ def create_graph_from_documents(
             )
     
     return graph._graph, graph_documents
+
+
+def create_graph_from_graph_documents(
+    graph_documents: List[Any]
+) -> nx.DiGraph:
+    """
+    Create a NetworkX knowledge graph from graph documents.
+    
+    Args:
+        graph_documents: List of graph documents to create the graph from
+        
+    Returns:
+        NetworkX graph
+    """
+    graph = nx.DiGraph()
+    
+    # Add nodes to the graph
+    for doc in graph_documents:
+        for node in doc.nodes:
+            graph.add_node(node.id)
+
+    # Add edges to the graph
+    for doc in graph_documents:
+        for edge in doc.relationships:
+            graph.add_edge(
+                edge.source.id,
+                edge.target.id,
+                relation=edge.type,
+            )
+    
+    return graph
 
 
 def get_graph_statistics(graph: nx.DiGraph) -> Dict[str, Any]:

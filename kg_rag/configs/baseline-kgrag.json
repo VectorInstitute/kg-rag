@@ -1,0 +1,7 @@
+{
+  "collection_name": "sec_10q",
+  "chroma_persist_dir": "chroma_db",
+  "model_name": "gpt-4o",
+  "embedding_model": "text-embedding-3-small",
+  "top_k": 5
+}

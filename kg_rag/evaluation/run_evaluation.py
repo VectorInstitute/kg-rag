@@ -26,6 +26,9 @@ from kg_rag.methods.baseline_rag.kg_rag import BaselineRAG
 from kg_rag.methods.cypher_based.kg_rag import CypherBasedKGRAG
 from kg_rag.methods.graphrag_based.kg_rag import GraphRAGBasedKGRAG, create_graphrag_system
 
+from kg_rag.utils.graph_utils import create_graph_from_graph_documents
+from kg_rag.utils.document_loader import load_documents, load_graph_documents
+
 
 def parse_args():
     """Parse command line arguments."""
@@ -39,21 +42,32 @@ def parse_args():
         help="Path to evaluation dataset CSV"
     )
     parser.add_argument(
-        "--graph-path",
-        type=str,
-        help="Path to the graph pickle file (required for graph-based methods)"
-    )
-    parser.add_argument(
         "--method",
         type=str,
-        choices=["entity", "cypher", "graphrag", "baseline", "all"],
+        choices=["entity", "cypher", "graphrag", "baseline"],
         default="all",
         help="KG-RAG method to evaluate"
+    )
+    parser.add_argument(
+        "--config-path",
+        type=str,
+        default=None,
+        help="Path to configuration JSON file"
     )
     parser.add_argument(
         "--use-cot",
         action="store_true",
         help="Use Chain-of-Thought prompting"
+    )
+    parser.add_argument(
+        "--numerical-answer",
+        action="store_true",
+        help="Format answer as numerical value only"
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Print verbose output"
     )
     parser.add_argument(
         "--output-dir",
@@ -79,59 +93,6 @@ def parse_args():
         default=None,
         help="Maximum number of samples to evaluate"
     )
-    parser.add_argument(
-        "--config-path",
-        type=str,
-        default=None,
-        help="Path to configuration JSON file"
-    )
-    parser.add_argument(
-        "--collection-name",
-        type=str,
-        default="sec_10q",
-        help="Name of the ChromaDB collection (for baseline methods)"
-    )
-    parser.add_argument(
-        "--persist-dir",
-        type=str,
-        default="chroma_db",
-        help="Directory with ChromaDB files (for baseline methods)"
-    )
-    parser.add_argument(
-        "--graphrag-artifacts",
-        type=str,
-        default=None,
-        help="Path to GraphRAG artifacts (for GraphRAG-based method)"
-    )
-    parser.add_argument(
-        "--vector-store-dir",
-        type=str,
-        default="vector_stores",
-        help="Directory with vector stores (for GraphRAG-based method)"
-    )
-    parser.add_argument(
-        "--neo4j-uri",
-        type=str,
-        default="bolt://localhost:7687",
-        help="URI for Neo4j connection (for Cypher-based method)"
-    )
-    parser.add_argument(
-        "--neo4j-user",
-        type=str,
-        default="neo4j",
-        help="Username for Neo4j connection (for Cypher-based method)"
-    )
-    parser.add_argument(
-        "--neo4j-password",
-        type=str,
-        default=None,
-        help="Password for Neo4j connection (for Cypher-based method)"
-    )
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Print verbose output"
-    )
     
     return parser.parse_args()
 
@@ -145,50 +106,65 @@ def load_config(config_path):
         return json.load(f)
 
 
-def create_entity_rag(graph, config, use_cot=False, verbose=False):
+def create_entity_rag(config, use_cot=False, numerical_answer=False, verbose=False):
     """Create an entity-based KG-RAG system."""
     llm = ChatOpenAI(
         temperature=0,
         model_name=config.get("model_name", "gpt-4o")
     )
-    llm = llm.bind(response_format={"type": "json_object"})
+
+    # Load the documents
+    print(f"Loading documents from {config.get('documents_pkl_path')}")
+    documents = load_documents(
+        directory_path=config.get("documents_path"),
+        pickle_path=config.get("documents_pkl_path"),
+    )
+    
+    # Load the graph
+    print(f"Converting graph documents from {config.get('graph_documents_pkl_path')} to graph...")
+    graph_documents = load_graph_documents(config.get("graph_documents_pkl_path"))
+    
+    graph = create_graph_from_graph_documents(graph_documents)
     
     rag_system = EntityBasedKGRAG(
         graph=graph,
+        graph_documents=graph_documents,
+        document_chunks=documents,
         llm=llm,
-        beam_width=config.get("beam_width", 10),
-        max_depth=config.get("max_depth", 8),
-        top_k=config.get("top_k", 50),
-        num_chains=config.get("num_chains", 2),
-        min_score=config.get("min_score", 0.7),
+        top_k_nodes=config.get("top_k_nodes", 10),
+        top_k_chunks=config.get("top_k_chunks", 5),
+        similarity_threshold=config.get("similarity_threshold", 0.7),
+        node_freq_weight=config.get("node_freq_weight", 0.4),
+        node_sim_weight=config.get("node_sim_weight", 0.6),
         use_cot=use_cot,
+        numerical_answer=numerical_answer,
         verbose=verbose
     )
     
     return rag_system
 
 
-def create_baseline_rag(config, use_cot=False, verbose=False):
+def create_baseline_rag(config, use_cot=False, numerical_answer=False, verbose=False):
     """Create a standard baseline RAG system."""
     openai_api_key = os.getenv("OPENAI_API_KEY")
     if not openai_api_key:
         raise ValueError("OPENAI_API_KEY environment variable is not set")
     
     rag_system = BaselineRAG(
-        openai_api_key=openai_api_key,
         collection_name=config.get("collection_name", "sec_10q"),
         chroma_persist_dir=config.get("persist_dir", "chroma_db"),
         model_name=config.get("model_name", "gpt-4o"),
         embedding_model=config.get("embedding_model", "text-embedding-3-small"),
         top_k=config.get("top_k", 5),
         use_cot=use_cot,
+        numerical_answer=numerical_answer,
         verbose=verbose
     )
     
     return rag_system
 
 
-def create_cypher_rag(graph, config, use_cot=False, verbose=False):
+def create_cypher_rag(config, use_cot=False, verbose=False):
     """Create a Cypher-based KG-RAG system."""
     from langchain_neo4j import Neo4jGraph
     
@@ -264,37 +240,6 @@ def main():
     # Load configuration
     config = load_config(args.config_path) or {}
     
-    # Add command line arguments to config
-    if args.collection_name:
-        config.setdefault("baseline", {})["collection_name"] = args.collection_name
-    
-    if args.persist_dir:
-        config.setdefault("baseline", {})["persist_dir"] = args.persist_dir
-    
-    if args.neo4j_uri:
-        config.setdefault("cypher", {})["neo4j_uri"] = args.neo4j_uri
-    
-    if args.neo4j_user:
-        config.setdefault("cypher", {})["neo4j_user"] = args.neo4j_user
-    
-    if args.neo4j_password:
-        config.setdefault("cypher", {})["neo4j_password"] = args.neo4j_password
-    
-    if args.graphrag_artifacts:
-        config.setdefault("graphrag", {})["artifacts_path"] = args.graphrag_artifacts
-    
-    if args.vector_store_dir:
-        config.setdefault("graphrag", {})["vector_store_dir"] = args.vector_store_dir
-    
-    # Load graph for graph-based methods if needed
-    graph = None
-    if args.method in ["entity", "all"]:
-        if not args.graph_path:
-            print("Error: --graph-path is required for entity-based method")
-            sys.exit(1)
-        print(f"Loading graph from {args.graph_path}...")
-        graph = load_graph(args.graph_path)
-    
     # Load dataset
     print(f"Loading dataset from {args.data_path}...")
     df = pd.read_csv(args.data_path)
@@ -319,33 +264,34 @@ def main():
     # Evaluate each method
     for method in methods:
         print(f"\nEvaluating {method}-based KG-RAG{cot_suffix}...")
-        
         try:
             # Create RAG system
             if method == "entity":
                 rag_system = create_entity_rag(
-                    graph, 
-                    config.get("entity", {}), 
+                    config, 
                     args.use_cot,
+                    args.numerical_answer,
                     args.verbose
                 )
             elif method == "baseline":
                 rag_system = create_baseline_rag(
-                    config.get("baseline", {}), 
+                    config, 
                     args.use_cot,
+                    args.numerical_answer,
                     args.verbose
                 )
             elif method == "cypher":
                 rag_system = create_cypher_rag(
-                    graph, 
-                    config.get("cypher", {}), 
+                    config,
                     args.use_cot,
+                    args.numerical_answer,
                     args.verbose
                 )
             elif method == "graphrag":
                 rag_system = create_graphrag_rag(
-                    config.get("graphrag", {}), 
+                    config,
                     args.use_cot,
+                    args.numerical_answer,
                     args.verbose
                 )
             
@@ -353,6 +299,7 @@ def main():
             method_name = f"{method}{cot_suffix}"
             evaluator = Evaluator(
                 rag_system=rag_system,
+                config=config,
                 output_dir=output_dir,
                 experiment_name=f"{method_name}_rag",
                 verbose=args.verbose
@@ -367,21 +314,13 @@ def main():
             )
             
             results[method_name] = method_results
-            
-        except NotImplementedError as e:
-            print(f"Skipping {method}-based KG-RAG: {str(e)}")
+
         except Exception as e:
             print(f"Error evaluating {method}-based KG-RAG: {str(e)}")
     
-    # Save combined results
-    combined_results_path = output_dir / f"combined_results{cot_suffix}.json"
-    with open(combined_results_path, 'w') as f:
-        json.dump(results, f, indent=2)
-    
     # Print summary
     print("\nEvaluation Results Summary:")
-    for method, result in results.items():
-        print(f"{method} KG-RAG: {result['accuracy']:.2%} accuracy")
+    print(f"{method} KG-RAG: {results[method_name]['accuracy']:.2%} accuracy")
     
     print(f"\nDetailed results saved to {output_dir}")
 

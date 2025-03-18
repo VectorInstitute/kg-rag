@@ -8,7 +8,7 @@ How has Apple's total net sales changed over time?,*AAPL*,Multi-Doc RAG,Table,"B
 
 From these figures, it can be observed that there was an increase in total net sales from the quarter ended June 25, 2022, to the quarter ended December 31, 2022. However, there was a subsequent decrease in total net sales in the quarters ended April 1, 2023, and July 1, 2023.
 
-SOURCE(S): 2022 Q3 AAPL.pdf, 2023 Q1 AAPL.pdf, 2023 Q2 AAPL.pdf, 2023 Q3 AAPL.pdf","What was the total net sales for Apple for the quarterly period ended April 1, 2023, as reported in their 2023 Q2 AAPL.pdf? Provide the answer in millions of dollars as a whole number without commas.",94836,1
+SOURCE(S): 2022 Q3 AAPL.pdf, 2023 Q1 AAPL.pdf, 2023 Q2 AAPL.pdf, 2023 Q3 AAPL.pdf","What was the total net sales for Apple for the quarterly period ended April 1, 2023, as reported in their 2023 Q2 10-Q? Provide the answer in millions of dollars as a whole number without commas.",94836,1
 What are the major factors contributing to the change in Apple's gross margin in the most recent 10-Q compared to the previous quarters?,*AAPL*,Multi-Doc RAG,Text,"In the most recent 10-Q for the quarter ended July 1, 2023, the factors contributing to the change in Apple's gross margin compared to previous quarters include:
 
 1. Weakness in foreign currencies relative to the U.S. dollar, which had an unfavorable impact on gross margin.
@@ -40,7 +40,7 @@ How has Apple's revenue from iPhone sales fluctuated across quarters?,*AAPL*,Mul
 - In the quarter ended April 1, 2023, the revenue from iPhone sales was $51,334 million. (""2023 Q2 AAPL.pdf"")
 - In the quarter ended July 1, 2023, the revenue from iPhone sales was $39,669 million. (""2023 Q3 AAPL.pdf"")
 
-SOURCE(S): ""2022 Q3 AAPL.pdf"", ""2023 Q1 AAPL.pdf"", ""2023 Q2 AAPL.pdf"", ""2023 Q3 AAPL.pdf""","What was the revenue from iPhone sales for Apple in the quarter ended April 1, 2023, as reported in their 2023 Q2 AAPL.pdf? Provide the answer in millions of dollars as a whole number without commas.",51334,1
+SOURCE(S): ""2022 Q3 AAPL.pdf"", ""2023 Q1 AAPL.pdf"", ""2023 Q2 AAPL.pdf"", ""2023 Q3 AAPL.pdf""","What was the revenue from iPhone sales for Apple in the quarter ended April 1, 2023, as reported in their 2023 Q2 AAPL 10-Q? Provide the answer in millions of dollars as a whole number without commas.",51334,1
 Can any trends be identified in Apple's Services segment revenue over the reported periods?,*AAPL*,Multi-Doc RAG,Table,"Based on the provided documents, there is a trend of increasing revenue in Apple's Services segment over the reported periods. The net sales for Services have shown growth from each period to the next. Specifically:
 
 - In the quarter ended June 25, 2022, Services net sales were $19,604 million.
@@ -125,7 +125,7 @@ The effective tax rate remained consistent at 19% for the quarters ended Decembe
 SOURCE(S): 2022 Q3 MSFT.pdf, 2023 Q1 MSFT.pdf, 2023 Q2 MSFT.pdf, 2023 Q3 MSFT.pdf","What was Microsoft's effective tax rate for the quarter ended September 30, 2023, as reported in their Q3 2023 10-Q? Provide the answer as a whole number without a percentage symbol.",18,1
 Has Microsoft announced any major new company acquisitions or sell-offs in these quarterly reports?,*MSFT*,Multi-Doc RAG,Text,"Yes, Microsoft announced the completion of the acquisition of Activision Blizzard, Inc. on October 13, 2023, for a cash payment of $61.8 billion, net of cash acquired. This information is found in the ""Subsequent Event"" section of the 2023 Q3 MSFT.pdf document.
 
-SOURCE(S): 2023 Q3 MSFT.pdf","What was the cash payment made by Microsoft for the acquisition of Activision Blizzard, Inc., net of cash acquired, as reported in the ""Subsequent Event"" section of the 2023 Q3 MSFT.pdf document? Provide the answer in billions of dollars rounded to one decimal place.",61.8,1
+SOURCE(S): 2023 Q3 MSFT.pdf","What was the cash payment made by Microsoft for the acquisition of Activision Blizzard, Inc., net of cash acquired, as reported in the ""Subsequent Event"" section of the 2023 Q3 MSFT 10-Q? Provide the answer in billions of dollars rounded to one decimal place.",61.8,1
 "In what ways have Microsoft's inventory levels shifted during these quarters, and what does this suggest about their management of the supply chain?",*MSFT*,Multi-Doc RAG,Table,"During the quarters presented, Microsoft's inventory levels have shown fluctuations:
 
 - In Q3 2022, the inventory was $3,742 million (2022 Q3 MSFT.pdf).
@@ -145,7 +145,7 @@ How has NVIDIA's total net sales trended over time?,*NVDA*,Multi-Doc RAG,Table,"
 
 This trend indicates a significant increase in NVIDIA's total net sales over the observed periods.
 
-SOURCE(S): 2022 Q3 NVDA.pdf, 2023 Q1 NVDA.pdf, 2023 Q2 NVDA.pdf, 2023 Q3 NVDA.pdf","What was the total net sales for NVIDIA for the quarterly period ended October 29, 2023, as reported in their 2023 Q3 NVDA.pdf? Provide the answer in millions of dollars as a whole number without commas.",18120,1
+SOURCE(S): 2022 Q3 NVDA.pdf, 2023 Q1 NVDA.pdf, 2023 Q2 NVDA.pdf, 2023 Q3 NVDA.pdf","What was the total net sales for NVIDIA for the quarterly period ended October 29, 2023, as reported in their 2023 Q3 10-Q? Provide the answer in millions of dollars as a whole number without commas.",18120,1
 "Has there been a considerable shift in NVIDIA's operating costs over the reported quarters? If so, what are the main causes for this shift?",*NVDA*,Multi-Doc RAG,Table,"Yes, there has been a considerable shift in NVIDIA's operating costs over the reported quarters. The main causes for this shift include:
 
 1. Acquisition Termination Cost: In the first quarter of fiscal year 2023, NVIDIA recorded an acquisition termination cost of $1.35 billion due to the termination of the Share Purchase Agreement whereby NVIDIA would have acquired Arm Limited from SoftBank. This one-time cost significantly impacted operating expenses for that period.
@@ -304,7 +304,7 @@ Are there any significant alterations in Intel's debt structure or interest cost
 
 These changes indicate a significant management of debt and interest costs within the observed quarters.
 
-SOURCE(S): ""2023 Q1 INTC.pdf"", ""2023 Q3 INTC.pdf""","What was the total amount of commercial paper settled in cash by Intel in the third quarter of 2023, as reported in their Q3 2023 10-Q? Provide the answer in billions of dollars rounded to one decimal place.",3.944,1
+SOURCE(S): ""2023 Q1 INTC.pdf"", ""2023 Q3 INTC.pdf""","What was the total amount of commercial paper settled in cash by Intel in the third quarter of 2023, as reported in their Q3 2023 10-Q? Provide the answer in billions of dollars rounded to one decimal place.",3.9,1
 "What significant changes, if any, in accounting practices were reported by NVIDIA in its most recent 10-Q?",*2023 Q3 NVDA*,Single-Doc Single-Chunk RAG,Text,"In the most recent 10-Q, NVIDIA reported a change in accounting estimate related to the useful lives of its property, plant, and equipment. Specifically, NVIDIA increased the estimated useful life of a majority of its server, storage, and network equipment from three to a range of four to five years, and its assembly and test equipment from five to seven years. This change in accounting estimate became effective at the beginning of fiscal year 2024.
 
 SOURCE(S): 2023 Q3 NVDA.pdf, Notes to Condensed Consolidated Financial Statements, Note 1 - Summary of Significant Accounting Policies.","What is the new estimated useful life, in years, for NVIDIA's assembly and test equipment as reported in their Q3 2023 10-Q? Provide the answer as a whole number without commas.",7,1
@@ -388,7 +388,7 @@ What patterns can be discerned from Microsoft's Cloud Services revenue throughou
 
 This indicates a trend of growth in Microsoft's Cloud Services revenue over the reported periods.
 
-SOURCE(S): 2022 Q3 MSFT.pdf, 2023 Q1 MSFT.pdf, 2023 Q2 MSFT.pdf, 2023 Q3 MSFT.pdf","What was Microsoft's Cloud Services revenue for the first quarter of fiscal year 2023, as reported in the 2022 Q3 MSFT.pdf? Provide the answer in billions of dollars rounded to one decimal place.",25.7,1
+SOURCE(S): 2022 Q3 MSFT.pdf, 2023 Q1 MSFT.pdf, 2023 Q2 MSFT.pdf, 2023 Q3 MSFT.pdf","What was Microsoft's Cloud Services revenue for the first quarter of fiscal year 2023, as reported in the 2022 Q3 10-Q? Provide the answer in billions of dollars rounded to one decimal place.",25.7,1
 What significant movements have been observed in Microsoft's liquidity status or cash flow as per the quarterly reports?,*MSFT*,Multi-Doc RAG,Table,"In the quarterly reports provided, Microsoft's liquidity status and cash flow have shown the following significant movements:
 
 1. Cash and cash equivalents increased from $13,931 million as of June 30, 2022, to $80,452 million as of September 30, 2023.
@@ -460,7 +460,7 @@ Intel's risk factors have also been updated to reflect the current macroeconomic
 
 Overall, while the core risk factors have remained consistent, their descriptions have been updated to reflect the changing global economic, political, and health landscapes.
 
-SOURCE(S): 2022 Q3 INTC.pdf, 2023 Q1 INTC.pdf, 2023 Q2 INTC.pdf, 2023 Q3 INTC.pdf",How many specific geopolitical tensions were added to Intel's risk factors over the reporting periods as mentioned in the 2023 Q1 INTC.pdf document? Provide the answer as a whole number without commas.,3,1
+SOURCE(S): 2022 Q3 INTC.pdf, 2023 Q1 INTC.pdf, 2023 Q2 INTC.pdf, 2023 Q3 INTC.pdf",How many specific geopolitical tensions were added to Intel's risk factors over the reporting periods as mentioned in the 2023 Q1 10-Q? Provide the answer as a whole number without commas.,3,1
 How has Amazon's total net sales changed over time?,*AMZN*,Multi-Doc RAG,Table,"Amazon's total net sales have changed over time as follows:
 
 - For the quarterly period ended September 30, 2022, the total net sales were $127,101 million.

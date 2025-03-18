@@ -1,9 +1,11 @@
 """
-Embedding generation and handling utilities for KG-RAG approaches.
+Embedding generation and handling utilities for KG-RAG approaches with caching capabilities.
 """
 
 import time
-from typing import Dict, List, Iterator, Tuple, Any
+import os
+import pickle
+from typing import Dict, List, Iterator, Tuple, Any, Optional
 import numpy as np
 import networkx as nx
 from tqdm.auto import tqdm
@@ -11,14 +13,16 @@ from langchain_openai import OpenAIEmbeddings
 
 
 class EmbeddingHandler:
-    """Handles embedding generation and similarity calculations for entities and relationships."""
+    """Handles embedding generation and similarity calculations for entities and relationships with caching support."""
     
     def __init__(
         self, 
         model: str = "text-embedding-3-small", 
         batch_size: int = 100, 
         max_retries: int = 3,
-        verbose: bool = False
+        verbose: bool = False,
+        cache_dir: str = "data/sec-10-q/graphs/",
+        use_cache: bool = True
     ):
         """
         Initialize the embedding handler.
@@ -28,6 +32,8 @@ class EmbeddingHandler:
             batch_size: Number of items to embed in a single batch
             max_retries: Maximum number of retries for embedding attempts
             verbose: Whether to print verbose output
+            cache_dir: Directory to store embedding cache files
+            use_cache: Whether to use cached embeddings if available
         """
         self.embedder = OpenAIEmbeddings(model=model)
         self.entity_embeddings: Dict[str, np.ndarray] = {}
@@ -35,6 +41,16 @@ class EmbeddingHandler:
         self.batch_size = batch_size
         self.max_retries = max_retries
         self.verbose = verbose
+        self.cache_dir = cache_dir
+        self.use_cache = use_cache
+        
+        # Define cache file paths
+        self.entity_cache_path = os.path.join(self.cache_dir, "entity_embedding_cache.pkl")
+        self.relation_cache_path = os.path.join(self.cache_dir, "relation_embedding_cache.pkl")
+        
+        # Load cached embeddings if use_cache is True
+        if self.use_cache:
+            self._load_cached_embeddings()
         
     def _batch_items(self, items: List[str]) -> Iterator[List[str]]:
         """Split items into batches."""
@@ -62,12 +78,59 @@ class EmbeddingHandler:
         if self.verbose:
             print(f"[EmbeddingHandler] {message}")
             
-    def embed_graph(self, graph: nx.DiGraph) -> None:
+    def _ensure_cache_dir_exists(self) -> None:
+        """Ensure cache directory exists."""
+        if not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir)
+            self._log(f"Created cache directory at {self.cache_dir}")
+    
+    def _save_cached_embeddings(self) -> None:
+        """Save embeddings to cache files."""
+        self._ensure_cache_dir_exists()
+        
+        # Save entity embeddings
+        if self.entity_embeddings:
+            with open(self.entity_cache_path, 'wb') as f:
+                pickle.dump(self.entity_embeddings, f)
+                self._log(f"Saved {len(self.entity_embeddings)} entity embeddings to {self.entity_cache_path}")
+        
+        # Save relation embeddings
+        if self.relation_embeddings:
+            with open(self.relation_cache_path, 'wb') as f:
+                pickle.dump(self.relation_embeddings, f)
+                self._log(f"Saved {len(self.relation_embeddings)} relation embeddings to {self.relation_cache_path}")
+    
+    def _load_cached_embeddings(self) -> None:
+        """Load embeddings from cache files if they exist."""
+        # Load entity embeddings
+        if os.path.exists(self.entity_cache_path):
+            try:
+                with open(self.entity_cache_path, 'rb') as f:
+                    self.entity_embeddings = pickle.load(f)
+                    self._log(f"Loaded {len(self.entity_embeddings)} entity embeddings from cache")
+            except Exception as e:
+                self._log(f"Error loading entity embeddings from cache: {str(e)}")
+        else:
+            self._log(f"Entity embedding cache not found at {self.entity_cache_path}")
+        
+        # Load relation embeddings
+        if os.path.exists(self.relation_cache_path):
+            try:
+                with open(self.relation_cache_path, 'rb') as f:
+                    self.relation_embeddings = pickle.load(f)
+                    self._log(f"Loaded {len(self.relation_embeddings)} relation embeddings from cache")
+            except Exception as e:
+                self._log(f"Error loading relation embeddings from cache: {str(e)}")
+        else:
+            self._log(f"Relation embedding cache not found at {self.relation_cache_path}")
+            
+    def embed_graph(self, graph: nx.DiGraph, save_cache: bool = True) -> None:
         """
         Embed all entities and relationships in the graph.
         
         Args:
             graph: NetworkX graph with nodes as entities and edges with 'relation' attribute
+            save_cache: Whether to save embeddings to cache after processing
         """
         start_time = time.time()
         self._log("Starting graph embedding process...")
@@ -125,6 +188,10 @@ class EmbeddingHandler:
         duration = end_time - start_time
         self._log(f"Graph embedding completed in {duration:.2f} seconds")
         self._log(f"Final counts - Nodes: {len(self.entity_embeddings)}, Relationships: {len(self.relation_embeddings)}")
+        
+        # Save to cache if requested
+        if save_cache:
+            self._save_cached_embeddings()
     
     def embed_queries(self, entities: List[str], relations: List[str]) -> Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray]]:
         """
@@ -238,3 +305,28 @@ class EmbeddingHandler:
                 self._log(f"  {relation}: {score:.3f}")
         
         return top_matches
+        
+    def clear_cache(self, delete_files: bool = False) -> None:
+        """
+        Clear embedding caches from memory and optionally delete cache files.
+        
+        Args:
+            delete_files: Whether to delete the cache files from disk
+        """
+        # Clear memory caches
+        self.entity_embeddings = {}
+        self.relation_embeddings = {}
+        self._log("Cleared embedding caches from memory")
+        
+        # Delete cache files if requested
+        if delete_files:
+            try:
+                if os.path.exists(self.entity_cache_path):
+                    os.remove(self.entity_cache_path)
+                    self._log(f"Deleted entity cache file: {self.entity_cache_path}")
+                    
+                if os.path.exists(self.relation_cache_path):
+                    os.remove(self.relation_cache_path)
+                    self._log(f"Deleted relation cache file: {self.relation_cache_path}")
+            except Exception as e:
+                self._log(f"Error deleting cache files: {str(e)}")

@@ -34,6 +34,10 @@ data/*
 *.pt
 *.npy
 *.npz
+chroma_db/
+
+# Environment variables
+.env
 
 # Logs and output
 logs/

@@ -4,12 +4,13 @@ Document loading and processing utilities for KG-RAG approaches.
 
 import os
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from langchain_community.document_loaders.pdf import PyPDFLoader
 from langchain_text_splitters import TokenTextSplitter
-from langchain.vectorstores.utils import filter_complex_metadata
+from langchain_community.vectorstores.utils import filter_complex_metadata
 from langchain_core.documents import Document
+import pickle
 
 class DocumentLoader:
     """Loads and processes documents for knowledge graph construction."""
@@ -105,21 +106,44 @@ def load_documents(
     file_filter: Optional[str] = None,
     chunk_size: int = 512,
     chunk_overlap: int = 24,
+    pickle_path: Optional[str] = None,
 ) -> List[Document]:
     """
-    Convenience function to load documents from a directory.
+    Convenience function to load documents from a directory or a pickle file.
     
     Args:
         directory_path: Path to the directory containing documents
         file_filter: Optional string to filter filenames
         chunk_size: Size of chunks for text splitting
         chunk_overlap: Overlap between chunks
+        pickle_path: Optional path to a pickle file containing pre-chunked documents
         
     Returns:
         List of processed document chunks
     """
-    loader = DocumentLoader(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap
-    )
-    return loader.load_directory(directory_path, file_filter)
+    # If pickle path is provided and exists, load from pickle
+    if pickle_path and os.path.exists(pickle_path):
+        with open(pickle_path, 'rb') as f:
+            return pickle.load(f)
+    else:
+        # Otherwise load from directory
+        loader = DocumentLoader(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap
+        )
+        return loader.load_directory(directory_path, file_filter)
+    
+def load_graph_documents(file_path: str) -> List[Any]:
+    """
+    Load graph documents from a pickle file.
+    
+    Args:
+        file_path: Path to the graph documents pickle file
+        
+    Returns:
+        Loaded graph documents
+    """
+    with open(file_path, 'rb') as f:
+        graph_documents = pickle.load(f)
+    print(f"Graph documents loaded from {file_path}")
+    return graph_documents

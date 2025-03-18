@@ -64,6 +64,7 @@ class Evaluator:
     def __init__(
         self,
         rag_system: RagSystem,
+        config: Optional[Dict[str, Any]],
         output_dir: Optional[Union[str, Path]] = None,
         experiment_name: Optional[str] = None,
         verbose: bool = False
@@ -78,6 +79,7 @@ class Evaluator:
             verbose: Whether to print verbose output
         """
         self.rag_system = rag_system
+        self.config = config
         self.output_dir = Path(output_dir) if output_dir else Path("evaluation_results")
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.experiment_name = experiment_name or "evaluation"
@@ -130,6 +132,18 @@ class Evaluator:
             f.write(f"{self.experiment_name} Evaluation Results\n")
             f.write(f"Evaluation Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             f.write(f"Total Questions: {total}\n")
+
+
+            # Write config information
+            f.write("\nConfiguration:\n")
+            if self.config:
+                # Format config nicely
+                config_str = json.dumps(self.config, indent=2)
+                f.write(config_str + "\n")
+            else:
+                f.write("No configuration provided\n")
+
+
             f.write("=" * 80 + "\n\n")
             
             # Process each question

@@ -7,7 +7,7 @@ from typing import List, Tuple, Dict, Any
 
 from langchain_community.document_loaders.pdf import PyPDFLoader
 from langchain_text_splitters import TokenTextSplitter
-from langchain.vectorstores.utils import filter_complex_metadata
+from langchain_community.vectorstores.utils import filter_complex_metadata
 from tqdm.auto import tqdm
 
 

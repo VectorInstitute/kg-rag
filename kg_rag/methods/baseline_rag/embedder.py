@@ -7,6 +7,7 @@ from typing import List
 from tqdm.auto import tqdm
 import tiktoken
 import openai
+import os
 
 
 class OpenAIEmbedding:

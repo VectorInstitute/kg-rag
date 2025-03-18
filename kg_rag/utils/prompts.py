@@ -7,12 +7,12 @@ from datetime import datetime
 from typing import Optional, Dict, Any, Literal
 
 # Base prompts for different RAG systems
-BASELINE_SYSTEM_PROMPT = """You are a helpful assistant that answers queries about SEC 10-Q filings. 
+BASELINE_SYSTEM_PROMPT = """You are a helpful assistant that answers queries about SEC 10-Q filings using the blocks of context provided. 
 Just follow the instructions from the question exactly and use the context to provide accurate information.
 The current date is {date}."""
 
-ENTITY_SYSTEM_PROMPT = """You are a helpful assistant that answers queries about SEC 10-Q filings using knowledge graph data.
-Base your answer ONLY on the provided knowledge traces.
+ENTITY_SYSTEM_PROMPT = """You are a helpful assistant that answers queries about SEC 10-Q filings using knowledge graph data mapped to context chunks.
+Base your answer ONLY on the provided context and the mapped entities and relationships.
 The current date is {date}."""
 
 CYPHER_SYSTEM_PROMPT = """You are a helpful assistant that answers queries about SEC 10-Q filings using graph database information.
@@ -32,7 +32,7 @@ Follow these steps carefully:
 4. VERIFY: Double-check your work and ensure your answer matches the question
 5. FORMAT: Format your answer appropriately based on the question
 
-Response Format:
+Response should be formatted as valid JSON with the following structure:
 {
     "reasoning": "Your detailed step-by-step analysis showing:
         1. What specific information you're looking for
@@ -42,22 +42,15 @@ Response Format:
     "answer": "your final answer"
 }
 """
-
 # Numerical answer extension
 NUMERICAL_EXTENSION = """
+
 Important Rules:
 - Base your answer ONLY on the provided context
 - Do not make assumptions or use external knowledge besides the context provided
 - Numbers must be whole integers without comma separators, unless specified
 - Percentages must be whole numbers without % sign
 - The answer field must contain ONLY the numerical value, no text or units
-- Your entire response must be valid JSON
-
-Response Format:
-{
-    "reasoning": "Your detailed step-by-step analysis showing how you found the answer",
-    "answer": "final numerical value only, properly formatted with no units"
-}
 """
 
 def get_prompt(
@@ -158,13 +151,13 @@ def get_graphrag_prompt_suffix(numerical_answer: bool = False) -> str:
         return f"\nThe current date is {current_date}."
     
     return f"""
-Important Rules:
-- Base your answer ONLY on the provided context
-- Do not make assumptions or use external knowledge besides the context provided
-- Numbers must be whole integers without comma separators, unless specified
-- Percentages must be whole numbers without % sign
-- The answer field must contain ONLY the numerical value, no text or units
-- Your entire response must be valid JSON
+            Important Rules:
+            - Base your answer ONLY on the provided context
+            - Do not make assumptions or use external knowledge besides the context provided
+            - Numbers must be whole integers without comma separators, unless specified
+            - Percentages must be whole numbers without % sign
+            - The answer field must contain ONLY the numerical value, no text or units
+            - Your entire response must be valid JSON
 
-The current date is {current_date}.
-"""
+            The current date is {current_date}.
+            """
