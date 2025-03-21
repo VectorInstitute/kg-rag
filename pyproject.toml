@@ -1,40 +1,119 @@
-[tool.poetry]
-name = "bootcamp-template"
+[project]
+name = "kg_rag"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "Knowledge Graph-based Retrieval Augmented Generation"
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = ">=3.10,<3.13"
-pre-commit = "^3.7.0"
-chromadb = "^0.5.23"
-openai = "^1.58.1"
-pandas = "^2.2.3"
-pytesseract = "^0.3.13"
-pdf2image = "^1.17.0"
-tiktoken = "^0.8.0"
-neo4j = "^5.27.0"
-langchain = "^0.3.13"
-langchain-neo4j = "^0.2.0"
-langchain-openai = "^0.2.13"
-langgraph = "^0.2.60"
-networkx = "^3.4.2"
-matplotlib = "^3.10.0"
-langchain-experimental = "^0.3.3"
-pypdf = "^5.1.0"
-ipywidgets = "^8.1.5"
-python-dotenv = "^1.0.1"
-langchain-google-genai = "^2.0.9"
-google-generativeai = "^0.8.4"
-langchain-chroma = "^0.2.1"
-scipy = "1.12.0"
-langchain-graphrag = "^0.0.9"
-ragas = "^0.2.12"
-spacy = "^3.8.4"
-levenshtein = "^0.26.1"
-
+authors = [{name = "Vector Institute", email = "ai_engineering@vectorinstitute.ai"}]
+license = "MIT"
+repository = "https://github.com/VectorInstitute/kg-rag"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "chromadb>=0.5.23",
+    "openai>=1.58.1",
+    "pandas>=2.2.3",
+    "pytesseract>=0.3.13",
+    "pdf2image>=1.17.0",
+    "tiktoken>=0.8.0",
+    "neo4j>=5.27.0",
+    "langchain>=0.3.13",
+    "langchain-neo4j>=0.2.0",
+    "langchain-openai>=0.2.13",
+    "langgraph>=0.2.60",
+    "networkx>=3.4.2",
+    "matplotlib>=3.10.0",
+    "langchain-experimental>=0.3.3",
+    "pypdf>=5.1.0",
+    "ipywidgets>=8.1.5",
+    "python-dotenv>=1.0.1",
+    "langchain-google-genai>=2.0.9",
+    "google-generativeai>=0.8.4",
+    "langchain-chroma>=0.2.1",
+    "scipy>=1.12.0",
+    "langchain-graphrag>=0.0.9",
+    "ragas>=0.2.12",
+    "spacy>=3.8.4",
+    "levenshtein>=0.26.1",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["kg_rag/"]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.1.1",
+    "pre-commit>=4.0.0",
+    "pytest-cov>=3.0.0",
+    "codecov>=2.1.13",
+    "mypy>=1.7.0",
+    "ruff>=0.6.0",
+    "pip-audit>=2.7.1",
+]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.ruff]
+include = ["*.py", "pyproject.toml", "*.ipynb"]
+line-length = 88
+lint.select = [
+    "E", "F", "I", "W", "N",  # Basic
+    "B", "C4", "UP",          # Additional quality checks
+    "D", "PL", "RET", "SIM",  # Code style
+]
+lint.fixable = [
+    "E", "F", "I", "W", "N",
+    "B", "C4", "UP",
+    "D", "PL", "RET", "SIM",
+]
+lint.ignore = [
+    "B905", # `zip()` without an explicit `strict=` parameter
+    "E501", # line too long
+    "D203", # 1 blank line required before class docstring
+    "D213", # Multi-line docstring summary should start at the second line
+    "PLR2004", # Replace magic number with named constant
+    "PLR0913", # Too many arguments
+    "COM812", # Missing trailing comma
+]
+target-version = "py310"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402", "F401", "F403", "F811"]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+markers = [
+    "integration_test: marks tests as integration tests",
+]
+
+[tool.coverage.run]
+source = ["kg_rag"]
+omit = ["tests/*", "*__init__.py"]

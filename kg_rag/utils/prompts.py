@@ -1,13 +1,11 @@
-"""
-Prompt templates for different RAG approaches with standard, Chain-of-Thought (CoT),
-and numerical answer variations.
-"""
+"""Prompt templates for different RAG approaches with standard, Chain-of-Thought (CoT), and numerical answer variations."""
 
 from datetime import datetime
-from typing import Optional, Dict, Any, Literal
+from typing import Any, Literal
+
 
 # Base prompts for different RAG systems
-BASELINE_SYSTEM_PROMPT = """You are a helpful assistant that answers queries about SEC 10-Q filings using the blocks of context provided. 
+BASELINE_SYSTEM_PROMPT = """You are a helpful assistant that answers queries about SEC 10-Q filings using the blocks of context provided.
 Just follow the instructions from the question exactly and use the context to provide accurate information.
 The current date is {date}."""
 
@@ -53,24 +51,26 @@ Important Rules:
 - The answer field must contain ONLY the numerical value, no text or units
 """
 
+
 def get_prompt(
     system_type: Literal["baseline", "entity", "cypher", "graphrag"],
     use_cot: bool = False,
-    numerical_answer: bool = False
+    numerical_answer: bool = False,
 ) -> str:
     """
     Get the appropriate prompt for a given system type with optional extensions.
-    
+
     Args:
         system_type: Type of RAG system ('baseline', 'entity', 'cypher', or 'graphrag')
         use_cot: Whether to use Chain-of-Thought prompting
         numerical_answer: Whether to format the answer as a numerical value only
-        
-    Returns:
+
+    Returns
+    -------
         The appropriate prompt template as a string
     """
     date = datetime.now().strftime("%B %d, %Y")
-    
+
     # Select base prompt based on system type
     base_prompt_map = {
         "baseline": BASELINE_SYSTEM_PROMPT,
@@ -78,78 +78,77 @@ def get_prompt(
         "cypher": CYPHER_SYSTEM_PROMPT,
         "graphrag": GRAPHRAG_SYSTEM_PROMPT,
     }
-    
-    base_prompt = base_prompt_map.get(system_type, BASELINE_SYSTEM_PROMPT).format(date=date)
-    
+
+    base_prompt = base_prompt_map.get(system_type, BASELINE_SYSTEM_PROMPT).format(
+        date=date
+    )
+
     # Add extensions as needed
     extensions = []
-    
+
     if use_cot:
         extensions.append(COT_EXTENSION)
-    
+
     if numerical_answer:
         extensions.append(NUMERICAL_EXTENSION)
-    
+
     # Combine base prompt with extensions
     full_prompt = base_prompt
     for extension in extensions:
         full_prompt += extension
-        
+
     return full_prompt
 
 
 def create_query_prompt(
-    question: str, 
-    context: str, 
-    system_type: Literal["baseline", "entity", "cypher", "graphrag"], 
+    question: str,
+    context: str,
+    system_type: Literal["baseline", "entity", "cypher", "graphrag"],
     use_cot: bool = False,
-    numerical_answer: bool = False
-) -> Dict[str, Any]:
+    numerical_answer: bool = False,
+) -> list[dict[str, Any]]:
     """
     Create a complete query prompt for a given question and context.
-    
+
     Args:
         question: The user question
         context: The retrieved context
         system_type: Type of RAG system
         use_cot: Whether to use Chain-of-Thought prompting
         numerical_answer: Whether to format the answer as a numerical value only
-        
-    Returns:
+
+    Returns
+    -------
         A dictionary with prompt messages ready for the LLM
     """
     system_prompt = get_prompt(system_type, use_cot, numerical_answer)
-    
-    messages = [
-        {
-            "role": "system",
-            "content": system_prompt
-        },
+
+    return [
+        {"role": "system", "content": system_prompt},
         {
             "role": "user",
-            "content": f"Using the following context, answer this question: {question}\n\nContext: {context}"
-        }
+            "content": f"Using the following context, answer this question: {question}\n\nContext: {context}",
+        },
     ]
-    
-    return messages
 
 
 # For GraphRAG compatibility, provide a function to create a prompt suffix
 def get_graphrag_prompt_suffix(numerical_answer: bool = False) -> str:
     """
     Get a prompt suffix for GraphRAG that can be appended to LOCAL_SEARCH_SYSTEM_PROMPT.
-    
+
     Args:
         numerical_answer: Whether to format the answer as a numerical value only
-        
-    Returns:
+
+    Returns
+    -------
         Prompt suffix as a string
     """
     current_date = datetime.now().strftime("%B %d, %Y")
-    
+
     if not numerical_answer:
         return f"\nThe current date is {current_date}."
-    
+
     return f"""
             Important Rules:
             - Base your answer ONLY on the provided context

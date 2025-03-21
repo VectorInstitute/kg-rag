@@ -10,7 +10,7 @@
 ## Question-Answering Based
 **Natural Questions (NQ)**
    - Size: 307,373 examples with 1-way annotations, 7,830 examples with 5-way annotations for dev data and 7,842 with 5-way annotations for test data
-   - Ground-truth: Human-verified 
+   - Ground-truth: Human-verified
    - Tags: wikipedia, factual QA
    - Reference: [Kwiatkowski et al., 2019](https://doi.org/10.1162/tacl_a_00276)
 
@@ -34,7 +34,7 @@
    - Reference: [Xiong et al., 2024](https://arxiv.org/abs/2402.13178)
 
 **DomainRAG**
-   - Size: 36,166 examples, focused on 6 specific domain capabilities:  
+   - Size: 36,166 examples, focused on 6 specific domain capabilities:
      - Extractive, Conversational, Structural, Time-sensitive, Multi-document, Faithfulness
    - Ground-truth: Machine-generated
    - Tags: college admissions, temporal data
