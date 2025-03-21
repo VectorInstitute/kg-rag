@@ -1,31 +1,67 @@
-# .pre-commit-config.yaml
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v5.0.0 # Use the ref you want to point at
     hooks:
-      - id: check-yaml
-      - id: end-of-file-fixer
       - id: trailing-whitespace
-
-  - repo: https://github.com/psf/black
-    rev: 22.10.0
-    hooks:
-      - id: black
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: requirements-txt-fixer
+      - id: check-yaml
+      - id: check-toml
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.3
+    rev: 'v0.11.0'
     hooks:
       - id: ruff
-        types_or: [python, pyi, jupyter]
-        args: [--fix]
+        args: [--fix, --exit-non-zero-on-fix]
+        types_or: [python, jupyter]
       - id: ruff-format
-        types_or: [python, pyi, jupyter]
+        types_or: [python, jupyter]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
+    rev: v1.15.0
     hooks:
-    - id: mypy
-      entry: python3 -m mypy --config-file pyproject.toml
-      language: system
-      types: [python]
-      exclude: "tests"
+      - id: mypy
+        entry: python3 -m mypy --config-file pyproject.toml
+        language: system
+        types: [python]
+        exclude: 'tests'
+
+  - repo: local
+    hooks:
+      - id: prettier-js-format
+        name: prettier-js-format
+        entry: npm run format:fix
+        files: 'app/'
+        language: node
+        types: [javascript]
+        additional_dependencies:
+          - npm
+          - prettier
+
+  - repo: local
+    hooks:
+      - id: nextjs-lint
+        name: Next.js Lint
+        entry: npm run lint
+        language: system
+        types: [javascript, jsx, tsx]
+        pass_filenames: false
+
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] Add auto fixes from pre-commit.com hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: [mypy]
+  submodules: false

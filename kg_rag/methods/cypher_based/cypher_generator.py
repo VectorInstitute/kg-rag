@@ -1,8 +1,5 @@
-"""
-Cypher query generator for Cypher-based KG-RAG approach.
-"""
+"""Cypher query generator for Cypher-based KG-RAG approach."""
 
-from typing import Optional
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 
@@ -40,23 +37,23 @@ The question is:
 """
 
 CYPHER_GENERATION_PROMPT = PromptTemplate(
-    input_variables=['schema', 'question'],
+    input_variables=["schema", "question"],
     template=CYPHER_GENERATION_TEMPLATE,
 )
 
 
 class CypherGenerator:
     """Generates Cypher queries from natural language questions."""
-    
+
     def __init__(
         self,
-        llm: Optional[ChatOpenAI] = None,
-        cypher_prompt: Optional[PromptTemplate] = None,
-        verbose: bool = False
+        llm: ChatOpenAI | None = None,
+        cypher_prompt: PromptTemplate | None = None,
+        verbose: bool = False,
     ):
         """
         Initialize the Cypher generator.
-        
+
         Args:
             llm: LLM to use for query generation (default: ChatOpenAI with gpt-4o)
             cypher_prompt: Prompt template for Cypher generation
@@ -64,27 +61,25 @@ class CypherGenerator:
         """
         # Set up LLM if not provided
         if llm is None:
-            self.llm = ChatOpenAI(
-                temperature=0,
-                model_name="gpt-4o"
-            )
+            self.llm = ChatOpenAI(temperature=0, model_name="gpt-4o")
         else:
             self.llm = llm
-        
+
         # Set up prompt template
         self.prompt = cypher_prompt or CYPHER_GENERATION_PROMPT
-        
+
         # Other settings
         self.verbose = verbose
-    
+
     def get_schema(self, graph):
         """
         Get the schema from the graph.
-        
+
         Args:
             graph: Neo4jGraph instance
-            
-        Returns:
+
+        Returns
+        -------
             Schema string for use in prompt
         """
         # Get node labels and properties
@@ -93,88 +88,84 @@ class CypherGenerator:
         YIELD value
         RETURN value
         """
-        
+
         schema_result = graph.query(node_query)
-        
+
         if not schema_result:
             return "No schema information available."
-        
+
         # Extract node information
         node_info = []
         relation_info = []
         relation_patterns = []
-        
+
         if "nodes" in schema_result[0]["value"]:
             nodes = schema_result[0]["value"]["nodes"]
             for label, info in nodes.items():
                 properties = info.get("properties", {})
-                property_str = ", ".join([f"{prop}: {dtype}" for prop, dtype in properties.items()])
+                property_str = ", ".join(
+                    [f"{prop}: {dtype}" for prop, dtype in properties.items()]
+                )
                 node_info.append(f"{label} {{{property_str}}}")
-        
+
         # Extract relationship information
         if "relationships" in schema_result[0]["value"]:
             relationships = schema_result[0]["value"]["relationships"]
             for rel_type, info in relationships.items():
                 properties = info.get("properties", {})
-                property_str = ", ".join([f"{prop}: {dtype}" for prop, dtype in properties.items()])
+                property_str = ", ".join(
+                    [f"{prop}: {dtype}" for prop, dtype in properties.items()]
+                )
                 if property_str:
                     relation_info.append(f"{rel_type} {{{property_str}}}")
                 else:
                     relation_info.append(rel_type)
-                
+
                 # Add relationship patterns
                 start_labels = info.get("start", [])
                 end_labels = info.get("end", [])
-                
+
                 for start in start_labels:
                     for end in end_labels:
                         relation_patterns.append(f"(:{start})-[:{rel_type}]->(:{end})")
-        
+
         # Construct schema string
         schema = []
         if node_info:
             schema.append("Node properties:")
             schema.append("\n".join(node_info))
-        
+
         if relation_info:
             schema.append("\nRelationship properties:")
             schema.append("\n".join(relation_info))
-        
+
         if relation_patterns:
             schema.append("\nThe relationships:")
             schema.append("\n".join(relation_patterns))
-        
+
         return "\n".join(schema)
-    
-    def generate_cypher(self, question: str, schema: str) -> str:
+
+    def generate_cypher(self, question: str, schema: str) -> str | list[str | dict]:
         """
         Generate a Cypher query from a natural language question.
-        
+
         Args:
             question: Natural language question
             schema: Schema of the graph
-            
-        Returns:
+
+        Returns
+        -------
             Generated Cypher query
         """
         if self.verbose:
             print(f"Generating Cypher query for: {question}")
-        
+
         # Generate Cypher query
-        response = self.llm.invoke(
-            self.prompt.format(
-                schema=schema,
-                question=question
-            )
-        )
-        
-        # Extract query from response
-        if hasattr(response, "content"):
-            query = response.content
-        else:
-            query = str(response)
-        
+        response = self.llm.invoke(self.prompt.format(schema=schema, question=question))
+
+        query = response.content if hasattr(response, "content") else str(response)
+
         if self.verbose:
             print(f"Generated Cypher query: {query}")
-        
+
         return query

@@ -52,7 +52,7 @@ This consistent increase over the reported periods indicates a positive trend in
 
 SOURCE(S): 2022 Q3 AAPL.pdf, 2023 Q1 AAPL.pdf, 2023 Q2 AAPL.pdf, 2023 Q3 AAPL.pdf","What was the increase in Apple's Services segment net sales from the quarter ended June 25, 2022, to the quarter ended July 1, 2023, as reported in their 2022 Q3 and 2023 Q3 10-Q filings? Provide the answer in millions of dollars as a whole number without commas.",1609,2
 What is the impact of foreign exchange rates on Apple's financial performance? List this out separately for each reported period.,*AAPL*,Multi-Doc RAG,Table,"- For the quarterly period ended June 25, 2022, weakness in foreign currencies relative to the U.S. dollar had an unfavorable impact on the Companyâ€™s total net sales.
-  
+
   SOURCE(S): 2023 Q1 AAPL.pdf, Item 2. Managementâ€™s Discussion and Analysis of Financial Condition and Results of Operations
 
 - For the quarterly period ended December 31, 2022, weakness in foreign currencies relative to the U.S. dollar had an unfavorable impact on the Companyâ€™s total net sales, which decreased 5% or $6.8 billion during the first quarter of 2023 compared to the same quarter in 2022.
@@ -74,7 +74,7 @@ SOURCE(S): 2023 Q3 AAPL.pdf","What was the increase in Apple's R&D expenditure f
 Has Apple engaged in any significant share repurchase activities in the reported quarters and what are the financial implications of these activities?,*AAPL*,Multi-Doc RAG,Table,"Yes, Apple has engaged in significant share repurchase activities in the reported quarters. The financial implications of these activities include a reduction in the number of shares outstanding, which can lead to an increase in earnings per share (EPS) and potentially enhance shareholder value. The repurchase activities are as follows:
 
 - In the quarter ended June 25, 2022, Apple repurchased 408 million shares of its common stock for $65.0 billion under a share repurchase program authorized by the Board of Directors.
-  
+
 - In the quarter ended December 31, 2022, Apple repurchased 133 million shares of its common stock under an authorized share repurchase program for $19.0 billion, excluding excise tax due under the Inflation Reduction Act of 2022.
 
 - In the quarter ended April 1, 2023, Apple repurchased 262 million shares of its common stock under an authorized share repurchase program for $38.1 billion, excluding excise tax due under the Inflation Reduction Act of 2022.
@@ -87,7 +87,7 @@ SOURCE(S): 2022 Q3 AAPL.pdf, 2023 Q1 AAPL.pdf, 2023 Q2 AAPL.pdf, 2023 Q3 AAPL.pd
 What is the effective tax rate reported by Apple in these quarters and how does it compare across the periods?,*AAPL*,Multi-Doc RAG,Table,"The effective tax rates reported by Apple in the provided quarters are as follows:
 
 - For the quarter ended June 25, 2022, the effective tax rate was 15.7%.
-  
+
 - For the quarter ended December 31, 2022, the effective tax rate was 15.8%.
 
 - For the quarter ended April 1, 2023, the effective tax rate was 14.9%.
@@ -113,7 +113,7 @@ SOURCE(S): 2022 Q3 MSFT.pdf, 2023 Q1 MSFT.pdf, 2023 Q2 MSFT.pdf, 2023 Q3 MSFT.pd
 What effective tax rate has Microsoft reported in these quarters and how does it differ from period to period?,*MSFT*,Multi-Doc RAG,Table,"Microsoft reported the following effective tax rates for the quarters:
 
 - For the quarter ended September 30, 2022, the effective tax rate was 19%.
-  
+
 - For the quarter ended December 31, 2022, the effective tax rate was 19% for the three months and 19% for the six months.
 
 - For the quarter ended March 31, 2023, the effective tax rate was 19% for the three months and 19% for the nine months.
@@ -209,7 +209,7 @@ SOURCE(S): ""2022 Q3 NVDA.pdf"", ""2023 Q1 NVDA.pdf"", ""2023 Q2 NVDA.pdf"", ""2
 How has Intel's total net sales fluctuated over historical periods?,*INTC*,Multi-Doc RAG,Table,"Intel's total net sales have fluctuated as follows over the historical periods:
 
 - For the quarterly period ended October 1, 2022, the total net revenue was $15.3 billion.
-  
+
 - For the quarterly period ended April 1, 2023, the total net revenue was $11.7 billion.
 
 - For the quarterly period ended July 1, 2023, the total net revenue was $12.9 billion.
@@ -227,7 +227,7 @@ SOURCE(S): 2023 Q3 INTC.pdf, 2023 Q2 INTC.pdf, 2023 Q1 INTC.pdf, 2022 Q3 INTC.pd
 "Has there been a substantial shift in Intel's operating expenses over the reported quarters? If so, what have been the driving factors?",*INTC*,Multi-Doc RAG,Table,"Yes, there has been a substantial shift in Intel's operating expenses over the reported quarters. The driving factors include:
 
 1. In Q3 2022, operating expenses were $6,710 million, with restructuring and other charges amounting to $664 million, which included an inventory impairment of $559 million related to the wind-down of the IntelÂ® Optaneâ„¢ memory business.
-   
+
 2. In Q1 2023, operating expenses decreased to $5,476 million, with restructuring and other charges of $64 million.
 
 3. In Q2 2023, operating expenses increased to $5,654 million, with restructuring and other charges of $200 million.
@@ -516,7 +516,7 @@ SOURCE(S): 2022 Q3 AMZN.pdf, 2023 Q1 AMZN.pdf, 2023 Q2 AMZN.pdf, 2023 Q3 AMZN.pd
 Are there any notable changes in Amazon's liquidity position or cash flows as reported in these 10-Qs?,*AMZN*,Multi-Doc RAG,Table,"Yes, there are notable changes in Amazon's liquidity position and cash flows as reported in the provided 10-Qs. Specifically:
 
 1. Cash and cash equivalents increased from $30,177 million as of September 30, 2022, to $49,605 million as of September 30, 2023.
-   
+
 2. Net cash provided by operating activities increased from $39,665 million for the twelve months ended September 30, 2022, to $71,654 million for the twelve months ended September 30, 2023.
 
 3. Net cash used in investing activities decreased from $(39,360) million for the twelve months ended September 30, 2022, to $(37,232) million for the twelve months ended September 30, 2023.
@@ -556,7 +556,7 @@ Has Amazon engaged in any significant share repurchase activities in the reporte
 The financial implications of these activities include a reduction in cash and cash equivalents due to the funds used for the repurchase. The repurchase also reduces the number of outstanding shares, which can potentially increase the earnings per share (EPS) and return value to shareholders. The treasury stock account on the balance sheet increases with the cost of the repurchased shares, reflecting a reduction in stockholders' equity.
 
 SOURCE(S): 2022 Q3 AMZN.pdf, 2023 Q1 AMZN.pdf, 2023 Q2 AMZN.pdf, 2023 Q3 AMZN.pdf","How many shares did Amazon repurchase in the first quarter of 2022 under its repurchase program authorized by the Board of Directors in March 2022, as reported in their 2022 Q3 10-Q? Provide the answer as a whole number without commas.",46200000,1
-Are there any significant changes in Amazon's debt structure or interest expenses across these quarters?,*AMZN*,Multi-Doc RAG,Table,"Yes, there are significant changes in Amazon's debt structure and interest expenses across these quarters. 
+Are there any significant changes in Amazon's debt structure or interest expenses across these quarters?,*AMZN*,Multi-Doc RAG,Table,"Yes, there are significant changes in Amazon's debt structure and interest expenses across these quarters.
 
 In the ""2022 Q3 AMZN.pdf"" document, it is mentioned that as of September 30, 2022, Amazon had $66.5 billion of unsecured senior notes outstanding and $972 million of borrowings under their credit facility. The weighted-average remaining life of the Notes was 12.9 years as of September 30, 2022.
 
