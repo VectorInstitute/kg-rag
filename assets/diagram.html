@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Entity KG-RAG Flow (D3 - Bounded)</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        /* Styles remain largely the same as the previous "Accurate Subgraph" version */
+        /* ... (Keep all styles from the previous version) ... */
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            width: 95%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        .animation-container {
+            width: 100%;
+            height: 650px;
+            position: relative;
+            background-color: #ffffff;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .query-display {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            right: 20px;
+            background: rgba(227, 242, 253, 0.9);
+            border-left: 4px solid #2196F3;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        #graph-svg {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            right: 20px;
+            bottom: 180px;
+            overflow: hidden; /* Changed from visible to hidden to clip if needed */
+            /* increase size of  graph */
+            width: calc(100% - 40px);
+            height: calc(100% - 260px);
+        }
+        .node {
+            transition: opacity 0.5s ease, r 0.3s ease, fill 0.3s ease, stroke 0.3s ease, stroke-width 0.3s ease;
+            cursor: pointer;
+        }
+        .node-label {
+            font-size: 9px;
+            font-weight: 500;
+            fill: #444;
+            text-anchor: middle;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .link {
+            stroke: #d8d8d8;
+            stroke-width: 1.5px;
+            stroke-opacity: 0.4;
+            transition: stroke 0.5s ease, stroke-opacity 0.5s ease, stroke-width 0.3s ease;
+        }
+        .node-company { fill: #d1c4e9; }
+        .node-metric { fill: #c8e6c9; }
+        .node-quarter { fill: #ffccbc; }
+        .node-document { fill: #cfd8dc; }
+        .node-other { fill: #eeeeee; }
+        .node-context { fill: #FFF9C4; }
+        .node.highlight-initial {
+            stroke: #FFA000;
+            stroke-width: 3px;
+            stroke-opacity: 1;
+            r: 10px !important;
+        }
+        .node.highlight-subgraph {
+             stroke: #1976D2;
+             stroke-width: 2px;
+             stroke-opacity: 0.8;
+        }
+        .node.highlight-path {
+            animation: path-flash 0.6s ease-out;
+             stroke: #c62828;
+             stroke-width: 3px;
+             stroke-opacity: 1;
+             r: 11px !important;
+        }
+        @keyframes path-flash {
+             0%, 100% { fill-opacity: 1; }
+             50% { fill-opacity: 0.5; }
+        }
+        .link.highlight-subgraph {
+            stroke: #64b5f6;
+            stroke-opacity: 0.7;
+            stroke-width: 2px;
+        }
+        .link.highlight-path {
+            stroke: #e57373;
+            stroke-opacity: 0.9;
+            stroke-width: 2.5px;
+        }
+        .chunks-container {
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            right: 15px;
+            height: 160px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .chunk {
+            width: 19%;
+            height: 140px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 6px;
+            overflow-y: auto;
+            font-size: 9px;
+            line-height: 1.3;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+         .chunk strong { font-size: 10px; display: block; margin-bottom: 3px;}
+        .chunk.highlight-top5 {
+            border-color: #FFA000;
+            box-shadow: 0 0 8px rgba(255, 160, 0, 0.4);
+            opacity: 1;
+        }
+        .chunk.highlight-final {
+            border: 2px solid #4CAF50;
+            box-shadow: 0 0 12px rgba(76, 175, 80, 0.6);
+            transform: scale(1.03);
+            opacity: 1;
+        }
+        .similarity-line {
+            stroke: #fbc02d;
+            stroke-width: 1.5px;
+            stroke-opacity: 0;
+            stroke-dasharray: 3 2;
+            transition: stroke-opacity 0.5s ease;
+        }
+        .entity-chunk-line {
+            stroke: #ab47bc;
+            stroke-width: 1.2px; /* Slightly thicker for visibility */
+            stroke-opacity: 0; /* Start hidden */
+            transition: stroke-opacity 0.5s ease;
+        }
+        .similarity-score-text {
+            font-size: 9px;
+            fill: #E65100;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .path-display {
+            position: absolute;
+            top: 85px;
+            left: 30px;
+            width: 220px;
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 9px;
+            line-height: 1.3;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 20;
+            max-height: 180px;
+            overflow-y: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .final-answer {
+            position: absolute;
+            bottom: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 25;
+        }
+        .status { text-align: center; margin-top: 15px; font-size: 14px; color: #666; height: 20px; font-weight: 500; }
+        .controls { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+        button { padding: 7px 14px; background-color: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        button:hover { background-color: #1976D2; }
+        .legend { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; font-size: 10px; }
+        .legend-color { width: 12px; height: 12px; margin-right: 4px; border: 1px solid #ddd; border-radius: 50%; }
+        .legend-line { width: 15px; height: 3px; margin-right: 4px; }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Entity KG-RAG Flow</h1>
+
+         <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background-color: #d1c4e9;"></div><span>Company</span></div>
+            <div class="legend-item"><div class="legend-color" style="background-color: #c8e6c9;"></div><span>Metric</span></div>
+            <div class="legend-item"><div class="legend-color" style="background-color: #ffccbc;"></div><span>Time</span></div>
+            <div class="legend-item"><div class="legend-color" style="background-color: #cfd8dc;"></div><span>Doc</span></div>
+            <div class="legend-item"><div class="legend-color" style="background-color: #FFF9C4;"></div><span>Context</span></div>
+            <div class="legend-item"><div class="legend-color" style="background-color: #eeeeee;"></div><span>Other</span></div>
+            <div class="legend-item"><div class="legend-line" style="background-color: #fbc02d;"></div><span>Similarity</span></div>
+            <div class="legend-item"><div class="legend-line" style="background-color: #64b5f6;"></div><span>Subgraph</span></div>
+            <div class="legend-item"><div class="legend-line" style="background-color: #ab47bc;"></div><span>Chunk Link</span></div>
+         </div>
+
+        <div class="animation-container" id="animation">
+            <div class="query-display" id="query-box">
+                 <strong>Query:</strong> What was the Products gross margin percentage for Apple for the quarter ended July 1, 2023, as reported in their Q3 2023 10-Q? Provide the answer rounded to one decimal place.
+            </div>
+
+            <svg id="graph-svg"></svg>
+             <div class="path-display" id="path-display">
+                 <strong>Subgraph Paths (Examples):</strong><br>
+                 <span id="path-content"></span>
+             </div>
+
+            <div class="chunks-container" id="chunks">
+                 <div class="chunk" id="chunk1" data-chunk-id="1"><strong>Chunk 1 (Q3 23):</strong> Products <b>35.4 %</b>... Services 70.5 %...</div>
+                 <div class="chunk" id="chunk2" data-chunk-id="2"><strong>Chunk 2 (Q3 22):</strong> Products 34.5 %... Services 71.5 %...</div>
+                 <div class="chunk" id="chunk3" data-chunk-id="3"><strong>Chunk 3 (Q2 23):</strong> Products 36.7 %... Services 71.0 %...</div>
+                <div class="chunk" id="chunk4" data-chunk-id="4"><strong>Chunk 4 (Q1 23):</strong> Products 37.0 %... Services 70.8 %...</div>
+                <div class="chunk" id="chunk5" data-chunk-id="5"><strong>Chunk 5 (Q3 22 Context):</strong> ...future gross margins... Risk Factors...</div>
+            </div>
+
+            <div class="final-answer" id="final-answer">Answer: 35.4%</div>
+        </div>
+
+        <div class="status" id="status">Initializing...</div>
+
+        <div class="controls">
+            <button id="restartBtn">Restart</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Elements (same) ---
+             const animationContainer = document.getElementById('animation');
+             const queryBox = document.getElementById('query-box');
+             const svg = d3.select("#graph-svg");
+             const chunksContainer = document.getElementById('chunks');
+             const status = document.getElementById('status');
+             const restartBtn = document.getElementById('restartBtn');
+             const finalAnswerEl = document.getElementById('final-answer');
+             const pathDisplay = document.getElementById('path-display');
+             const pathContent = document.getElementById('path-content');
+             const svgElement = document.getElementById('graph-svg');
+
+            let width, height;
+            let simulation;
+            let linkElements, nodeElements, labelElements;
+            let dynamicLinesGroup, similarityScoresGroup;
+            let currentAnimationTimeout = null;
+
+            // --- Data (Accurate data from previous step - no changes needed here) ---
+            // createId, rawNodes, rawEdges, graphData generation, nameToIdMap,
+            // allSubgraphNodeIds, allSubgraphLinkIds, similarNodesInfo, initialNodeIds,
+            // entityChunks, pathData, topChunkIds, finalChunkId all remain the same...
+
+            // Function to create consistent IDs
+            const createId = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '');
+
+            // Raw nodes from verbose output
+            const rawNodes = [
+                "Risk Factors - 2023 Q2 AAPL", "Gross Margins - 2023 Q2 AAPL",
+                "Apple Inc. - 2023 Q1 AAPL", "Gross Margin - 2023 Q1 AAPL", "Services Gross Margin - 2023 Q1 AAPL",
+                "Apple Inc. - 2023 Q3 AAPL", "Products - 2023 Q3 AAPL", "Services - 2023 Q3 AAPL",
+                "Gross Margin - 2023 Q3 AAPL", "Q3 2023 Form 10-Q - 2023 Q3 AAPL",
+                "Company - 2023 Q2 AAPL", // Assuming this is Apple Inc. Q2
+                "Products - 2023 Q1 AAPL",
+                "Gross Margins - 2023 Q3 AAPL", // Note: Separate from GM Q3? Treat as distinct for now.
+                "Volatility - 2023 Q2 AAPL", "Downward Pressure - 2023 Q2 AAPL",
+                "Apple Inc. - 2022 Q3 AAPL", "Gross Margin - 2022 Q3 AAPL",
+                "Gross Margin Percentage - 2022 Q3 AAPL", "2022 - 2022 Q3 AAPL", "2021 - 2022 Q3 AAPL",
+                "Gross Margin Percentage - 2023 Q3 AAPL",
+                "Products - 2023 Q2 AAPL", "Gross Margin - 2023 Q2 AAPL", "Gross Margin Percentage - 2023 Q2 AAPL",
+                "Services - 2023 Q2 AAPL", "Services Gross Margin Percentage - 2023 Q2 AAPL", // Assuming typo in verbose, used 'Gross Margin Percentage'
+                "Services - 2023 Q3 AAPL", "Services Gross Margin Percentage - 2023 Q3 AAPL", // Assuming typo
+                "Services - 2023 Q1 AAPL",
+                "Products - 2022 Q3 AAPL",
+                "Apple Inc. - 2023 Q2 AAPL",
+                "Services - 2022 Q3 AAPL",
+            ];
+
+             // Raw edges from verbose output
+             const rawEdges = [
+                 ["Risk Factors - 2023 Q2 AAPL", "Gross Margins - 2023 Q2 AAPL"],
+                 ["Apple Inc. - 2023 Q1 AAPL", "Gross Margin - 2023 Q1 AAPL"],
+                 ["Apple Inc. - 2023 Q1 AAPL", "Services Gross Margin - 2023 Q1 AAPL"],
+                 ["Apple Inc. - 2023 Q3 AAPL", "Products - 2023 Q3 AAPL"],
+                 ["Apple Inc. - 2023 Q3 AAPL", "Services - 2023 Q3 AAPL"],
+                 ["Apple Inc. - 2023 Q3 AAPL", "Gross Margin - 2023 Q3 AAPL"],
+                 ["Apple Inc. - 2023 Q3 AAPL", "Q3 2023 Form 10-Q - 2023 Q3 AAPL"],
+                 ["Company - 2023 Q2 AAPL", "Gross Margins - 2023 Q2 AAPL"], // Mapped to Apple Inc. Q2
+                 ["Products - 2023 Q1 AAPL", "Gross Margin - 2023 Q1 AAPL"],
+                 ["Q3 2023 Form 10-Q - 2023 Q3 AAPL", "Apple Inc. - 2023 Q3 AAPL"],
+                 ["Q3 2023 Form 10-Q - 2023 Q3 AAPL", "Gross Margins - 2023 Q3 AAPL"],
+                 ["Gross Margins - 2023 Q2 AAPL", "Volatility - 2023 Q2 AAPL"],
+                 ["Gross Margins - 2023 Q2 AAPL", "Downward Pressure - 2023 Q2 AAPL"],
+                 ["Apple Inc. - 2022 Q3 AAPL", "Gross Margin - 2022 Q3 AAPL"],
+                 ["Gross Margin Percentage - 2022 Q3 AAPL", "2022 - 2022 Q3 AAPL"], // Treating years as nodes
+                 ["Gross Margin Percentage - 2022 Q3 AAPL", "2021 - 2022 Q3 AAPL"], // Treating years as nodes
+                 ["Products - 2023 Q3 AAPL", "Gross Margin - 2023 Q3 AAPL"],
+                 ["Products - 2023 Q3 AAPL", "Gross Margin Percentage - 2023 Q3 AAPL"],
+                 ["Products - 2023 Q2 AAPL", "Gross Margin - 2023 Q2 AAPL"],
+                 ["Products - 2023 Q2 AAPL", "Gross Margin Percentage - 2023 Q2 AAPL"],
+                 ["Services - 2023 Q2 AAPL", "Gross Margin - 2023 Q2 AAPL"],
+                 ["Services - 2023 Q2 AAPL", "Services Gross Margin Percentage - 2023 Q2 AAPL"], // Using assumed corrected name
+                 ["Services - 2023 Q3 AAPL", "Gross Margin - 2023 Q3 AAPL"],
+                 ["Services - 2023 Q3 AAPL", "Services Gross Margin Percentage - 2023 Q3 AAPL"], // Using assumed corrected name
+                 ["Services - 2023 Q1 AAPL", "Services Gross Margin - 2023 Q1 AAPL"],
+                 ["Products - 2022 Q3 AAPL", "Gross Margin - 2022 Q3 AAPL"],
+                 ["Products - 2022 Q3 AAPL", "Gross Margin Percentage - 2022 Q3 AAPL"],
+                 ["Apple Inc. - 2023 Q2 AAPL", "Gross Margin - 2023 Q2 AAPL"],
+                 ["Services - 2022 Q3 AAPL", "Gross Margin - 2022 Q3 AAPL"],
+                 ["Services - 2022 Q3 AAPL", "Gross Margin Percentage - 2022 Q3 AAPL"],
+             ];
+
+            // Deduplicate and assign types + IDs
+            const uniqueNodeNames = [...new Set(rawNodes)];
+            const graphData = { nodes: [], links: [] };
+            const nameToIdMap = new Map();
+            const allSubgraphNodeIds = new Set(); // Store all actual subgraph node IDs
+
+            uniqueNodeNames.forEach(name => {
+                const id = createId(name);
+                nameToIdMap.set(name, id);
+                allSubgraphNodeIds.add(id); // Add ID to the ground truth subgraph set
+
+                let type = 'other'; // Default type
+                let shortText = name; // Default text
+
+                // Basic type inference (adjust as needed)
+                if (name.includes('Apple Inc.') || name.includes('Company -')) { type = 'company'; shortText = name.replace('Apple Inc. - ', 'AAPL ').replace('Company - ', 'AAPL '); }
+                else if (name.includes('Gross Margin') || name.includes('GM %')) { type = 'metric'; shortText = name.replace('Gross Margin Percentage', 'GM %').replace('Gross Margin', 'GM').replace(' - ',' '); }
+                else if (name.includes('Form 10-Q')) { type = 'document'; shortText = name.split(' - ')[0]; }
+                else if (name.includes('Products') || name.includes('Services')) { type = 'metric'; shortText = name.replace(' - ', ' '); } // Treat product/service lines as metrics here
+                else if (name.match(/^\d{4} Q\d/)) { type = 'quarter'; shortText = name.split(' - ')[0]; } // e.g., 2023 Q2
+                else if (name.match(/^\d{4}/) && name.includes('AAPL')) { type = 'context'; shortText = name.split(' - ')[0]; } // e.g., 2022 from "2022 - 2022 Q3 AAPL"
+                else if (name.includes('Risk') || name.includes('Volatility') || name.includes('Pressure')) { type = 'context'; shortText = name.split(' - ')[0]; }
+
+                 shortText = shortText.replace(' AAPL', '').replace(' - ', ' '); // Clean up text
+
+                graphData.nodes.push({ id: id, name: name, text: shortText, type: type });
+            });
+
+             // Map edges to use IDs
+             rawEdges.forEach(edge => {
+                 const sourceId = nameToIdMap.get(edge[0]);
+                 const targetId = nameToIdMap.get(edge[1]);
+                 if (sourceId && targetId) {
+                     graphData.links.push({ source: sourceId, target: targetId });
+                 } else {
+                     console.warn("Could not map edge:", edge);
+                 }
+             });
+             const allSubgraphLinkIds = new Set(graphData.links.map(l => [l.source, l.target].sort().join('-')));
+
+             // Top Similar Nodes from verbose output
+            // Gross Margin Percentage - 2023 Q3 AAPL: 0.747
+            // Gross Margin Percentage - 2022 Q3 AAPL: 0.735
+            // Gross Margin Percentage - 2023 Q2 AAPL: 0.729
+            // Gross Margin - 2023 Q3 AAPL: 0.718
+            // Gross Margin - 2022 Q3 AAPL: 0.708
+            // Gross Margin - 2023 Q2 AAPL: 0.706
+            // Gross Margins - 2023 Q3 AAPL: 0.702
+            // Gross Margin - 2023 Q1 AAPL: 0.698
+            // Gross Margins - 2023 Q2 AAPL: 0.690
+            // Services Gross Margin - 2023 Q1 AAPL: 0.670
+
+            //  ].filter(n => n.id); // Filter out any potentially missed nodes
+            const similarNodesInfo = [
+                { name: "Gross Margin Percentage - 2023 Q3 AAPL", id: nameToIdMap.get("Gross Margin Percentage - 2023 Q3 AAPL"), score: 0.747 },
+                { name: "Gross Margin Percentage - 2022 Q3 AAPL", id: nameToIdMap.get("Gross Margin Percentage - 2022 Q3 AAPL"), score: 0.735 },
+                { name: "Gross Margin Percentage - 2023 Q2 AAPL", id: nameToIdMap.get("Gross Margin Percentage - 2023 Q2 AAPL"), score: 0.729 },
+                { name: "Gross Margin - 2023 Q3 AAPL", id: nameToIdMap.get("Gross Margin - 2023 Q3 AAPL"), score: 0.718 },
+                { name: "Gross Margin - 2022 Q3 AAPL", id: nameToIdMap.get("Gross Margin - 2022 Q3 AAPL"), score: 0.708 },
+                { name: "Gross Margin - 2023 Q2 AAPL", id: nameToIdMap.get("Gross Margin - 2023 Q2 AAPL"), score: 0.706 },
+                { name: "Gross Margins - 2023 Q3 AAPL", id: nameToIdMap.get("Gross Margins - 2023 Q3 AAPL"), score: 0.702 },
+                { name: "Gross Margin - 2023 Q1 AAPL", id: nameToIdMap.get("Gross Margin - 2023 Q1 AAPL"), score: 0.698 },
+                { name: "Gross Margins - 2023 Q2 AAPL", id: nameToIdMap.get("Gross Margins - 2023 Q2 AAPL"), score: 0.690 },
+                { name: "Services Gross Margin - 2023 Q1 AAPL", id: nameToIdMap.get("Services Gross Margin - 2023 Q1 AAPL"), score: 0.670 },
+            ].filter(n => n.id); // Filter out any potentially missed nodes
+             const initialNodeIds = new Set(similarNodesInfo.map(n => n.id));
+
+             // Entity -> Chunk Mapping (Ensure IDs are correct)
+             const entityChunks = {};
+             const mappings = {
+                "Gross Margin Percentage - 2023 Q3 AAPL": [1], "Gross Margin - 2023 Q3 AAPL": [1],
+                "Products - 2023 Q3 AAPL": [1], "Services - 2023 Q3 AAPL": [1],
+                "Apple Inc. - 2023 Q3 AAPL": [1], "Q3 2023 Form 10-Q - 2023 Q3 AAPL": [1],
+                "Gross Margin Percentage - 2022 Q3 AAPL": [1, 2, 5], "Gross Margin - 2022 Q3 AAPL": [1, 2, 5],
+                "Products - 2022 Q3 AAPL": [1, 2], "Services - 2022 Q3 AAPL": [1, 2],
+                "Apple Inc. - 2022 Q3 AAPL": [2, 5],
+                "Gross Margin Percentage - 2023 Q2 AAPL": [3], "Gross Margin - 2023 Q2 AAPL": [3],
+                "Products - 2023 Q2 AAPL": [3], "Services - 2023 Q2 AAPL": [3],
+                "Apple Inc. - 2023 Q2 AAPL": [3], "Risk Factors - 2023 Q2 AAPL": [3],
+                "Gross Margins - 2023 Q2 AAPL": [3],
+                "Gross Margin - 2023 Q1 AAPL": [4], "Services Gross Margin - 2023 Q1 AAPL": [4],
+                "Products - 2023 Q1 AAPL": [4], "Services - 2023 Q1 AAPL": [4],
+                "Apple Inc. - 2023 Q1 AAPL": [4],
+                "Gross Margins - 2023 Q3 AAPL": [1],
+                "2022 - 2022 Q3 AAPL": [1, 2, 5], "2021 - 2022 Q3 AAPL": [2, 5],
+             };
+             for (const name in mappings) {
+                const id = nameToIdMap.get(name);
+                if (id) { entityChunks[id] = mappings[name]; }
+             }
+
+             // Path Descriptions (Using simplified text)
+             const pathData = [
+                { ids: ["apple-inc-2023-q3", "products-2023-q3"], text: "AAPL Q3 23 → Products Q3 23" },
+                { ids: ["apple-inc-2023-q3", "products-2023-q3", "gross-margin-2023-q3"], text: "AAPL Q3 23 → Products Q3 23 → GM Q3 23" },
+                { ids: ["apple-inc-2023-q3", "products-2023-q3", "gross-margin-percentage-2023-q3"], text: "AAPL Q3 23 → Products Q3 23 → GM % Q3 23" },
+                { ids: ["apple-inc-2023-q3", "services-2023-q3"], text: "AAPL Q3 23 → Services Q3 23" },
+                { ids: ["apple-inc-2023-q3", "services-2023-q3", "gross-margin-2023-q3"], text: "AAPL Q3 23 → Services Q3 23 → GM Q3 23" },
+                { ids: ["apple-inc-2023-q3", "services-2023-q3", "services-gross-margin-percentage-2023-q3"], text: "AAPL Q3 23 → Services Q3 23 → Services GM % Q3 23" },
+                { ids: ["apple-inc-2023-q3", "gross-margin-2023-q3"], text: "AAPL Q3 23 → GM Q3 23" },
+                { ids: ["apple-inc-2023-q3", "q3-2023-form-10-q-2023-q3"], text: "AAPL Q3 23 → Q3 23 10-Q" },
+                { ids: ["apple-inc-2023-q3", "q3-2023-form-10-q-2023-q3", "apple-inc-2023-q3"], text: "AAPL Q3 23 → Q3 23 10-Q → AAPL Q3 23" },
+                { ids: ["apple-inc-2023-q3", "q3-2023-form-10-q-2023-q3", "gross-margins-2023-q3"], text: "AAPL Q3 23 → Q3 23 10-Q → Gross Margins Q3 23" },
+             ].map(p => ({ // Ensure all IDs exist in the graph data
+                 ids: p.ids.filter(id => graphData.nodes.some(n => n.id === id)),
+                 text: p.text
+             })).filter(p => p.ids.length > 1);
+
+            const topChunkIds = ['chunk1', 'chunk2', 'chunk3', 'chunk4', 'chunk5'];
+            const finalChunkId = 'chunk1';
+
+
+            // --- Helper Functions (sleep, getChunkCenter - unchanged) ---
+             const sleep = (ms) => new Promise(resolve => {
+                 currentAnimationTimeout = setTimeout(resolve, ms);
+             });
+
+             function getChunkCenter(elementId) {
+                 const element = document.getElementById(elementId);
+                 if (!element) {
+                     // console.warn(`Chunk element not found: ${elementId}`);
+                     return null;
+                 }
+                 const chunkRect = element.getBoundingClientRect();
+                 const svgRect = svgElement.getBoundingClientRect(); // Use SVG element for relative coords
+                 // Check if SVG rect has valid dimensions (might be 0 initially)
+                 if (svgRect.width === 0 || svgRect.height === 0) return null;
+
+                 return {
+                     x: chunkRect.left - svgRect.left + chunkRect.width / 2,
+                     y: chunkRect.top - svgRect.top + 5 // Target near top edge
+                 };
+             }
+
+
+            // --- D3 Initialization (Forces Adjusted) ---
+            function initGraph() {
+                 const bounds = svgElement.getBoundingClientRect();
+                 width = bounds.width;
+                 height = bounds.height;
+
+                 svg.selectAll('*').remove(); // Clear previous
+
+                 // Add groups in specific order for layering
+                 dynamicLinesGroup = svg.append('g').attr('id', 'dynamic-lines'); // Draw lines first (under nodes)
+                 similarityScoresGroup = svg.append('g').attr('id', 'similarity-scores'); // Scores can be above lines
+                 svg.append('g').attr('id', 'links');
+                 svg.append('g').attr('id', 'nodes');
+                 svg.append('g').attr('id', 'labels'); // Labels on top
+
+                 // Add fx, fy hints (same as before)
+                 const centerNodeId = nameToIdMap.get("Apple Inc. - 2023 Q3 AAPL");
+                 const docNodeId = nameToIdMap.get("Q3 2023 Form 10-Q - 2023 Q3 AAPL");
+                 const targetMetricNodeId = nameToIdMap.get("Gross Margin Percentage - 2023 Q3 AAPL");
+
+                 graphData.nodes.forEach(node => {
+                      if (node.id === centerNodeId) { node.fx = width / 2; node.fy = height / 2 - 50; }
+                      else if (node.id === docNodeId) { node.fx = width / 2 + 100; node.fy = height / 2 - 50; }
+                      else if (node.id === targetMetricNodeId) { node.fx = width / 2; node.fy = height / 2 + 50; }
+                      else { node.fx = null; node.fy = null; }
+                  });
+
+                 simulation = d3.forceSimulation(graphData.nodes)
+                     // Adjust forces for better containment and spread
+                     .force("link", d3.forceLink(graphData.links).id(d => d.id).distance(20).strength(8.0)) // Shorter, slightly stronger links
+                     .force("charge", d3.forceManyBody().strength(-400)) // Less repulsion to prevent pushing out too hard
+                     .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1)) // Weaker center force, let bounds do more work
+                     .force("collide", d3.forceCollide().radius(15).strength(0.8)) // Stronger collision
+                     // Removed initial fx/fy setting here, apply before simulation starts
+                     .on("tick", ticked); // ticked function now handles boundaries
+
+                 linkElements = svg.select('#links')
+                     .selectAll(".link")
+                     .data(graphData.links)
+                     .join("line")
+                     .attr("class", "link")
+                     .attr("data-source", d => d.source.id)
+                     .attr("data-target", d => d.target.id);
+
+                 nodeElements = svg.select('#nodes')
+                     .selectAll(".node")
+                     .data(graphData.nodes)
+                     .join("circle")
+                     .attr("class", d => `node node-${d.type}`)
+                     .attr("r", 8)
+                     .attr("data-id", d => d.id)
+                     .attr("opacity", 0.3)
+                     .call(drag(simulation));
+
+                 labelElements = svg.select('#labels')
+                     .selectAll(".node-label")
+                     .data(graphData.nodes)
+                     .join("text")
+                     .attr("class", "node-label")
+                     .attr("dy", -12)
+                     .text(d => d.text);
+
+                 simulation.alpha(0.1).restart(); // Start hotter
+                 setTimeout(() => {
+                     simulation.stop();
+                     graphData.nodes.forEach(node => { node.fx = null; node.fy = null; }); // Release fixed positions
+                 }, 2000); // Longer stabilization
+             }
+
+            // --- Ticked function with Boundary Constraints ---
+            function ticked() {
+                const nodeRadius = 8; // Match the base radius
+                const margin = nodeRadius + 5; // Keep node fully inside + small buffer
+
+                nodeElements
+                    .attr("cx", d => d.x = Math.max(margin, Math.min(width - margin, d.x))) // Clamp x
+                    .attr("cy", d => d.y = Math.max(margin, Math.min(height - margin, d.y))); // Clamp y
+
+                linkElements
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                labelElements
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y);
+            }
+
+            // --- Drag function (unchanged) ---
+            function drag(simulation) {
+                 function dragstarted(event, d) {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    d.fx = d.x;
+                    d.fy = d.y;
+                 }
+                 function dragged(event, d) {
+                    // Keep within bounds while dragging too
+                    d.fx = Math.max(margin, Math.min(width - margin, event.x));
+                    d.fy = Math.max(margin, Math.min(height - margin, event.y));
+                 }
+                 // Add margin variable for drag function scope
+                 const margin = 8 + 5;
+                 function dragended(event, d) {
+                    if (!event.active) simulation.alphaTarget(0);
+                     d.fx = null; // Release fixed position after drag
+                     d.fy = null;
+                 }
+                 return d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended);
+            }
+
+
+            // --- Animation Sequence (Chunk Link Fixes) ---
+            async function runAnimation() {
+                if (currentAnimationTimeout) clearTimeout(currentAnimationTimeout);
+                status.textContent = "Starting...";
+                restartBtn.disabled = true;
+
+                // 1. Reset State
+                resetAnimationVisuals();
+                initGraph(); // initGraph now defines width/height
+
+                // Steps 2 (Query), 3 (Similarity), 4 (Subgraph), 5 (Paths) remain the same...
+                // 2. Show Query
+                status.textContent = "1/6: Processing Query";
+                queryBox.style.opacity = 1;
+                await sleep(1500);
+
+                // 3. Entity Similarity Matching
+                status.textContent = "2/6: Finding Similar Entities...";
+                const querySimOrigin = { x: width * 0.05, y: height * 0.05 };
+                nodeElements.transition().duration(500).attr("opacity", 0.6);
+                labelElements.transition().duration(500).attr("opacity", 0.7);
+                const simLines = []; const scoreTexts = [];
+                 for (const info of similarNodesInfo) {
+                     const targetNode = nodeElements.filter(d => d.id === info.id);
+                     if (targetNode.empty()) continue;
+                     const targetLabel = labelElements.filter(d => d.id === info.id);
+                     const nodeData = targetNode.datum();
+                     if (nodeData && nodeData.x !== undefined) {
+                         const line = dynamicLinesGroup.append("line")
+                             .attr("class", "similarity-line")
+                             .attr("x1", querySimOrigin.x).attr("y1", querySimOrigin.y)
+                             .attr("x2", nodeData.x).attr("y2", nodeData.y);
+                         simLines.push(line);
+                         line.transition().duration(600).attr("stroke-opacity", 0.7);
+                         const score = similarityScoresGroup.append("text")
+                             .attr("class", "similarity-score-text")
+                             .attr("x", nodeData.x + 10).attr("y", nodeData.y - 10)
+                             .text(info.score.toFixed(2));
+                         scoreTexts.push(score);
+                         score.transition().duration(600).attr("opacity", 1);
+                         targetNode.classed("highlight-initial", true).transition().duration(300).attr("opacity", 1);
+                         targetLabel.transition().duration(300).attr("opacity", 1);
+                         await sleep(400);
+                     }
+                 }
+                 status.textContent = `2/6: Found ${similarNodesInfo.length} Top Similar Nodes`;
+                 await sleep(1500);
+                 simLines.forEach(l => l.transition().duration(500).attr("stroke-opacity", 0).remove());
+                 scoreTexts.forEach(t => t.transition().duration(500).attr("opacity", 0).remove());
+                 await sleep(500);
+
+                // 4. Subgraph Highlighting
+                status.textContent = "3/7: Highlighting Full Subgraph (29 Nodes, 30 Edges)";
+                 nodeElements.filter(d => allSubgraphNodeIds.has(d.id))
+                     .classed("highlight-subgraph", true).transition().duration(800).attr("opacity", 1);
+                 labelElements.filter(d => allSubgraphNodeIds.has(d.id))
+                     .transition().duration(800).attr("opacity", 1);
+                 linkElements.filter(d => { const ids = [d.source.id, d.target.id].sort(); return allSubgraphLinkIds.has(`${ids[0]}-${ids[1]}`); })
+                     .classed("highlight-subgraph", true).transition().duration(800).attr("stroke-opacity", 0.7);
+                await sleep(2000);
+
+                // 5. Path Description Generation & Highlight
+                // status.textContent = `4/7: Highlighting ${pathData.length} Example Paths...`;
+                // pathDisplay.style.opacity = 1; pathContent.innerHTML = '';
+                // for (let i = 0; i < pathData.length; i++) {
+                //     const currentPath = pathData[i];
+                //     pathContent.innerHTML += `${i + 1}: ${currentPath.text}<br>`; pathDisplay.scrollTop = pathDisplay.scrollHeight;
+                //     const pathNodeIdsInPath = new Set(currentPath.ids);
+                //     const pathLinkIdsInPath = new Set();
+                //     for (let j = 0; j < currentPath.ids.length - 1; j++) { pathLinkIdsInPath.add([currentPath.ids[j], currentPath.ids[j+1]].sort().join('-')); }
+                //     nodeElements.filter(d => pathNodeIdsInPath.has(d.id)).classed('highlight-path', true);
+                //     linkElements.filter(d => pathLinkIdsInPath.has([d.source.id, d.target.id].sort().join('-'))).classed('highlight-path', true);
+                //     await sleep(800);
+                //     nodeElements.filter(d => pathNodeIdsInPath.has(d.id)).classed('highlight-path', false).transition().duration(300).attr('r', 8);
+                //     linkElements.filter(d => pathLinkIdsInPath.has([d.source.id, d.target.id].sort().join('-'))).classed('highlight-path', false);
+                //     await sleep(400);
+                // }
+                //  status.textContent = `4/7: Highlighted ${pathData.length} Example Paths`;
+                //  await sleep(1500); pathDisplay.style.opacity = 0;
+
+
+                // 6. Chunk Selection (Debugging chunk links)
+                status.textContent = "4/6: Linking Entities to Relevant Chunks...";
+                chunksContainer.style.opacity = 1;
+                document.querySelectorAll('.chunk').forEach(c => { c.style.opacity = 0.7; });
+
+                const chunkLines = [];
+                // console.log("--- Drawing Chunk Links ---"); // Debug Start
+                 allSubgraphNodeIds.forEach(nodeId => {
+                     const nodeData = nodeElements.filter(d => d.id === nodeId).datum();
+                     // Check if node exists AND has mappings
+                     if (!nodeData || !entityChunks[nodeId]) {
+                        // console.log(`Skipping node ${nodeId}: No data or no chunk mapping.`);
+                        return;
+                     }
+
+                     // Check if node has valid coordinates AFTER simulation
+                     if (nodeData.x === undefined || nodeData.y === undefined) {
+                         console.warn(`Node ${nodeId} has no coordinates!`);
+                         return;
+                     }
+
+                     // console.log(`Node ${nodeId} at (${nodeData.x.toFixed(1)}, ${nodeData.y.toFixed(1)}) linked to chunks: ${entityChunks[nodeId]}`);
+
+                     entityChunks[nodeId].forEach(chunkNum => {
+                         const chunkElementId = `chunk${chunkNum}`;
+                         const chunkPos = getChunkCenter(chunkElementId);
+
+                         if (chunkPos) {
+                            // console.log(`   -> Chunk ${chunkNum} center at (${chunkPos.x.toFixed(1)}, ${chunkPos.y.toFixed(1)})`);
+                            const line = dynamicLinesGroup.append("line")
+                                .attr("class", "entity-chunk-line")
+                                .attr("x1", nodeData.x).attr("y1", nodeData.y)
+                                .attr("x2", chunkPos.x).attr("y2", chunkPos.y)
+                                .attr("stroke-opacity", 0); // Ensure it starts hidden
+
+                            chunkLines.push(line);
+
+                            // Apply transition AFTER appending
+                             line.transition()
+                                 .duration(500)
+                                 .delay(200) // Keep delay
+                                 .attr("stroke-opacity", 0.6); // Target opacity
+
+                         } else {
+                             console.warn(`Could not get center for ${chunkElementId} for node ${nodeId}`);
+                         }
+                     });
+                 });
+                 // console.log("--- Finished Chunk Links ---"); // Debug End
+                 await sleep(1500); // Allow time for links to appear
+
+                 // Subsequent chunk highlighting logic remains the same...
+                 status.textContent = "5/6: Identifying Top 5 Chunks";
+                 topChunkIds.forEach(id => { document.getElementById(id)?.classList.add('highlight-top5'); });
+                 await sleep(1500);
+
+                 status.textContent = "6/6: Selecting Final Chunk";
+                 document.querySelectorAll('.chunk.highlight-top5').forEach(el => {
+                     if (el.id !== finalChunkId) {
+                         el.classList.remove('highlight-top5');
+                         el.style.opacity = 0.4;
+                     }
+                 });
+                 document.getElementById(finalChunkId)?.classList.add('highlight-final');
+                 chunkLines.forEach(line => {
+                    const chunkPosFinal = getChunkCenter(finalChunkId);
+                    // Use a tolerance for float comparison
+                    const tolerance = 1;
+                    if(chunkPosFinal && Math.abs(line.attr('x2') - chunkPosFinal.x) < tolerance && Math.abs(line.attr('y2') - chunkPosFinal.y) < tolerance) {
+                        line.transition().duration(500).attr('stroke-opacity', 0.85).attr('stroke-width', 1.5); // Slightly stronger final link
+                    } else {
+                        line.transition().duration(500).attr('stroke-opacity', 0.1);
+                    }
+                 });
+                 await sleep(1500);
+
+
+                 // 7. LLM Generation & Final Answer (same)
+                 status.textContent = "7/7: Generating Answer...";
+                 await sleep(1000);
+                 finalAnswerEl.style.opacity = 1;
+                 finalAnswerEl.style.transform = 'translateX(-50%) translateY(-10px)';
+                 status.textContent = "Animation Complete!";
+                 restartBtn.disabled = false;
+            }
+
+            // --- Reset Function (unchanged) ---
+             function resetAnimationVisuals() {
+                if (currentAnimationTimeout) clearTimeout(currentAnimationTimeout);
+                status.textContent = "Resetting...";
+                queryBox.style.opacity = 0; chunksContainer.style.opacity = 0;
+                document.querySelectorAll('.chunk').forEach(el => { el.classList.remove('highlight-final', 'highlight-top5'); el.style.opacity = 0; el.style.transform = 'scale(1)'; });
+                pathDisplay.style.opacity = 0; pathContent.innerHTML = '';
+                finalAnswerEl.style.opacity = 0; finalAnswerEl.style.transform = 'translateX(-50%) translateY(0)';
+                svg.selectAll('*').remove();
+                dynamicLinesGroup = null; similarityScoresGroup = null;
+                linkElements = null; nodeElements = null; labelElements = null;
+                if (simulation) simulation.stop(); simulation = null;
+             }
+
+            // --- Controls & Resize (unchanged) ---
+             restartBtn.addEventListener('click', function() { runAnimation(); });
+             window.addEventListener('resize', () => { resetAnimationVisuals(); initGraph(); });
+
+            // --- Start ---
+             setTimeout(runAnimation, 500);
+
+        });
+    </script>
+</body>
+</html>

@@ -49,6 +49,14 @@ def parse_args():
         help="Query to run (if not provided, will use interactive mode)",
     )
     parser.add_argument(
+        "--use-cot", action="store_true", help="Use Chain-of-Thought prompting"
+    )
+    parser.add_argument(
+        "--numerical-answer",
+        action="store_true",
+        help="Format answers as numerical values only",
+    )
+    parser.add_argument(
         "--output-file", type=str, default=None, help="Optional file to save results to"
     )
     parser.add_argument("--verbose", action="store_true", help="Print verbose output")
@@ -76,6 +84,8 @@ def main():
         model_name=args.model,
         embedding_model=args.embedding_model,
         top_k=args.top_k,
+        use_cot=args.use_cot,
+        numerical_answer=args.numerical_answer,
         verbose=args.verbose,
     )
 
@@ -84,7 +94,10 @@ def main():
         run_interactive(rag_system, args.output_file)
     else:
         result = process_query(rag_system, args.query, args.output_file)
-        print_result(result)
+        if args.use_cot:
+            print(result.get("answer", "N/A"))
+        elif args.numerical_answer:
+            print(result)
 
 
 def run_interactive(rag_system, output_file=None):

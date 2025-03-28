@@ -159,8 +159,7 @@ class EntityBasedKGRAG:
         # Sort by similarity score (descending)
         similarities.sort(key=lambda x: x[1], reverse=True)
 
-        # Limit to top-k
-        return similarities[: self.top_k_nodes]
+        return similarities
 
     def _get_subgraph(self, nodes: list[str], max_hops: int = 1) -> nx.DiGraph:
         """
@@ -232,7 +231,7 @@ class EntityBasedKGRAG:
         # Get top nodes by degree (more connected nodes are likely more important)
         top_nodes = sorted(
             subgraph.nodes, key=lambda n: subgraph.degree(n), reverse=True
-        )[:5]
+        )[: self.top_k_nodes]
 
         # Describe paths from each top node
         for node in top_nodes:
@@ -250,7 +249,7 @@ class EntityBasedKGRAG:
                     second_hop_path = f"{node} -> {relation} -> {neighbor} -> {next_relation} -> {next_neighbor}"
                     paths.append(second_hop_path)
 
-        return paths[:10]  # Limit to top 10 most relevant paths
+        return paths[: self.top_k_nodes]
 
     def _score_chunks_by_nodes(
         self, chunks: list[Document], node_info: list[tuple[str, float]]
@@ -439,6 +438,21 @@ class EntityBasedKGRAG:
                 "answer": content,
             }
 
+    def _print_subgraph(self, subgraph: nx.DiGraph):
+        """
+        Print subgraph information.
+
+        Args:
+            subgraph: NetworkX subgraph
+        """
+        if self.verbose:
+            print(
+                f"Generated subgraph with {len(subgraph.nodes)} nodes and {len(subgraph.edges)} edges:"
+            )
+            # print all relationships in natural language
+            for edge in subgraph.edges(data=True):
+                print(f"{edge[0]} -> {edge[2]['relation']} -> {edge[1]}")
+
     def query(self, question: str) -> Any:
         """
         Process a query and return relevant information.
@@ -462,8 +476,10 @@ class EntityBasedKGRAG:
         similar_nodes = self._get_similar_nodes(query_embedding)
 
         if self.verbose:
-            print(f"Found {len(similar_nodes)} similar nodes")
-            for node, score in similar_nodes[:5]:
+            print(
+                f"Found {len(similar_nodes)} similar nodes, printing top {self.top_k_nodes}:"
+            )
+            for node, score in similar_nodes[: self.top_k_nodes]:
                 print(f"  {node}: {score:.3f}")
 
         if not similar_nodes:
@@ -473,29 +489,26 @@ class EntityBasedKGRAG:
             }
 
         # Extract node entities
-        nodes = [node for node, _ in similar_nodes]
+        nodes = [node for node, _ in similar_nodes[: self.top_k_nodes]]
 
         # Get relevant subgraph
         subgraph = self._get_subgraph(nodes, max_hops=1)
 
-        if self.verbose:
-            print(
-                f"Generated subgraph with {len(subgraph.nodes)} nodes and {len(subgraph.edges)} edges"
-            )
+        self._print_subgraph(subgraph)
 
         # Get relevant path descriptions
         paths = self._get_path_descriptions(subgraph)
 
         if self.verbose:
-            print(f"Generated {len(paths)} path descriptions")
-            for path in paths[:5]:
+            print(f"Generated {len(paths)} path descriptions:")
+            for path in paths:
                 print(f"  {path}")
 
         # Get relevant chunk indices
         chunk_indices = self._get_chunks_for_nodes(nodes)
 
         if self.verbose:
-            print(f"Found {len(chunk_indices)} relevant chunks")
+            print(f"Found {len(chunk_indices)} relevant chunks:")
 
         # Get actual document chunks
         context_chunks = [
@@ -515,6 +528,12 @@ class EntityBasedKGRAG:
 
         if self.verbose:
             print(f"Selected top {len(top_chunks)} chunks")
+
+        # print top chunks
+        if self.verbose:
+            for i, chunk in enumerate(top_chunks):
+                print(f"Chunk {i + 1}: {chunk.page_content}...")
+                print("")
 
         if not top_chunks:
             return {
