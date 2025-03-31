@@ -74,3 +74,6 @@ chroma_db/
 
 *.pyc
 *.egg-info
+
+# Blog build output
+**public**

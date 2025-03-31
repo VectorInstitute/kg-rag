@@ -9,17 +9,18 @@
 
 <d-front-matter>
   <script type="text/json">{
-  "title": "AI Engineering blog post",
-  "description": "Sample blog post for AI Engineering",
+  "title": "Enhancing RAG with Knowledge Graphs: A Comparative Analysis",
+  "description": "A deep dive into knowledge graph-based approaches for improving retrieval augmented generation",
   "authors": [
     {
-      "author": "John Doe",
-      "authorURL": "https://john.doe",
+      "author": "Ali Kore",
+      "authorURL": "https://github.com/a-kore",
       "affiliation": "Vector Institute",
       "affiliationURL": "https://vectorinstitute.ai"
-    }, {
-      "author": "Jane Doe",
-      "authorURL": "http://www.jane.doe",
+    },
+    {
+      "author": "Amrit Krishnan",
+      "authorURL": "https://github.com/amrit110",
       "affiliation": "Vector Institute",
       "affiliationURL": "https://vectorinstitute.ai"
     }
@@ -34,54 +35,180 @@
 </d-front-matter>
 
 <d-title>
-  <h1>AI Engineering blog post</h1>
+  <h1>Enhancing RAG with Knowledge Graphs</h1>
   <p>
-    Blog posts are a great way to share your ideas with the world. They can be used to showcase our work, especially important results to the broader community.
+    Leveraging structured knowledge to improve accuracy and relevance in retrieval augmented generation systems
   </p>
 </d-title>
 
 <d-byline></d-byline>
 
-<div id="contents" class="base-grid" style="border-top: 1px solid #eee; padding: 1.5rem 0;">
+<div id="contents" class="base-grid" style="border-top: 1px solid #eee; border-radius: 6px; padding: 1.8rem; background-color: #f8f9fa; margin: 1.5rem 0;">
     <nav class="l-text toc figcaption">
-        <h3>Contents</h3>
-        <details>
-            <summary>An overview of the cool AI Engineering project!</summary>
-            <a href="#overview"><em>navigate to section "An overview of the cool AI Engineering project!"</em></a>
+        <h3 style="margin-top: 0; margin-bottom: 1rem; color: #333; font-size: 1.2rem;">Contents</h3>
+        <details open>
+            <summary>Introduction</summary>
+            <a href="#introduction">Navigate to Introduction section</a>
+        </details>
+        <details open>
+            <summary>Baseline RAG Architecture</summary>
+            <a href="#baseline-rag">Navigate to Baseline RAG Architecture section</a>
             <ul>
-                <li><a href="#methods">Methods</a></li>
+                <li><a href="#baseline-components">Key Components</a></li>
+                <li><a href="#baseline-limitations">Limitations</a></li>
             </ul>
         </details>
-        <div><a href="#conclusion">Conclusion: How did the project create impact?</a></div>
+        <details open>
+            <summary>Knowledge Graph-Based RAG</summary>
+            <a href="#kg-rag">Navigate to Knowledge Graph-Based RAG section</a>
+            <ul>
+                <li><a href="#entity-based-approach">Entity-Based Approach</a></li>
+                <li><a href="#interactive-visualization">Interactive Visualization</a></li>
+                <li><a href="#kg-rag-advantages">Advantages</a></li>
+            </ul>
+        </details>
+        <div><a href="#conclusion">Conclusion and Future Directions</a></div>
     </nav>
 </div>
 
 
 <d-article>
 
-  <h2 id="overview">An overview of the cool AI Engineering project!!</h2>
+  <h2 id="introduction">Introduction</h2>
 
-  <p>Explanations of the approaches! <d-cite key="rumelhart1986learning"/></p>
+  <p>Retrieval Augmented Generation (RAG) systems have emerged as a powerful approach for enhancing large language models (LLMs) with external knowledge. By retrieving relevant information from a knowledge base before generating responses, RAG enables LLMs to provide more accurate, up-to-date, and verifiable answers. However, traditional RAG systems primarily rely on vector similarity search, which may miss important contextual relationships between entities and concepts.</p>
 
-  <h3 id="methods">Methods</h3>
+  <p>This blog post explores how knowledge graphs can enhance RAG systems by introducing structured relationships into the retrieval process. We present a comparative analysis between traditional vector-based RAG and our novel knowledge graph-based approaches, focusing particularly on the Entity-Based KG-RAG method. <d-cite key="reimers2019sentence"/></p>
 
-  <p>Details on the methods used in the project</p>
+  <h2 id="baseline-rag">Baseline RAG Architecture</h2>
 
-  <h2 id="conclusion">Conclusion: How did the project create impact?</h2>
+  <p>The standard RAG approach relies on vector similarity to retrieve relevant context. The process follows a straightforward pipeline as illustrated below:</p>
 
-  <p>Conclusion on the project contributions</p>
+  <figure>
+    <img src="assets/baseline.png" alt="Baseline RAG Architecture" style="width: 70%; max-width: 600px; margin: 0 auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
+    <figcaption>Figure 1: Standard RAG architecture using vector similarity for retrieval</figcaption>
+  </figure>
+
+  <p>The workflow consists of five main stages:</p>
+
+  <ol>
+    <li><strong>Query Embedding:</strong> Convert the user query into a vector embedding</li>
+    <li><strong>Chunk Similarity Matching:</strong> Find document chunks with embeddings similar to the query</li>
+    <li><strong>Chunk Selection:</strong> Select the top-k most similar chunks</li>
+    <li><strong>Context Assembly:</strong> Combine the selected chunks into a unified context</li>
+    <li><strong>LLM Generation:</strong> Generate an answer based on the query and assembled context</li>
+  </ol>
+
+  <h3 id="baseline-components">Key Components</h3>
+
+  <p>The baseline RAG system consists of three main components:</p>
+
+  <ul>
+    <li><strong>Document Processor:</strong> Handles document loading, chunking, and metadata extraction</li>
+    <li><strong>Embedding Handler:</strong> Manages vector embeddings creation and similarity calculations</li>
+    <li><strong>Vector Store:</strong> Stores and retrieves document chunks and their embeddings</li>
+  </ul>
+
+  <p>This approach works well for many question-answering tasks but has certain limitations when dealing with complex, relationship-heavy domains.</p>
+
+  <h3 id="baseline-limitations">Limitations</h3>
+
+  <p>While effective for many use cases, traditional RAG systems face several challenges:</p>
+
+  <ul>
+    <li><strong>Semantic Gap:</strong> Vector similarity may not capture complex semantic relationships between entities</li>
+    <li><strong>Lack of Structure:</strong> The flat representation misses hierarchical and relational information</li>
+    <li><strong>Context Fragmentation:</strong> Related information may be spread across different chunks that don't individually match the query well</li>
+    <li><strong>Multi-hop Reasoning:</strong> Difficulty in answering questions that require connecting information across multiple documents</li>
+  </ul>
+
+  <p>These limitations become particularly apparent when dealing with domains that have rich relational structures, such as financial data, scientific literature, or complex technical documentation.</p>
+
+  <h2 id="kg-rag">Knowledge Graph-Based RAG</h2>
+
+  <p>To address the limitations of vector-based RAG, we introduce knowledge graph-based approaches that incorporate structured relationships into the retrieval process. These methods build and leverage a knowledge graph representing entities and relationships extracted from the document collection.</p>
+
+  <h3 id="entity-based-approach">Entity-Based Approach</h3>
+
+  <p>The Entity-Based KG-RAG approach enhances the standard RAG pipeline by incorporating graph-based retrieval. The process follows these steps:</p>
+
+  <figure>
+    <img src="assets/entity.png" alt="Entity-Based KG-RAG Architecture" style="width: 70%; max-width: 600px; margin: 0 auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
+    <figcaption>Figure 2: Entity-Based KG-RAG architecture leveraging knowledge graph relationships</figcaption>
+  </figure>
+
+  <p>The workflow consists of six main stages:</p>
+
+  <ol>
+    <li><strong>Query Embedding:</strong> Convert the user query to a vector embedding</li>
+    <li><strong>Entity Similarity Matching:</strong> Find entities in the knowledge graph most similar to the query</li>
+    <li><strong>Subgraph Exploration:</strong> Explore the local neighborhood around similar entities to find related information</li>
+    <li><strong>Chunk Selection:</strong> Select document chunks based on both entity presence and relevance</li>
+    <li><strong>Context Assembly:</strong> Combine knowledge graph paths and document chunks into a rich context</li>
+    <li><strong>LLM Generation:</strong> Generate a comprehensive answer using both structural and textual information</li>
+  </ol>
+
+  <p>This approach leverages both semantic similarity (through embeddings) and structural relationships (through the knowledge graph) to provide more accurate and comprehensive answers.</p>
+
+  <h3 id="interactive-visualization">Interactive Visualization</h3>
+
+  <p>To better understand how the Entity-Based KG-RAG method works in practice, let's look at an interactive visualization of the process:</p>
+
+  <figure>
+    <iframe src="assets/diagram.html" width="100%" height="896px" frameborder="0" style="max-width: 100%; margin: 0 auto; display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 6px;"></iframe>
+    <figcaption>Figure 3: Interactive visualization of the Entity-Based KG-RAG approach showing query processing flow for a question about Apple's gross margin percentage. The visualization demonstrates how entities are identified, the subgraph is explored, and relevant document chunks are selected to provide comprehensive answers.</figcaption>
+  </figure>
+
+  <p>The visualization above shows how a query about Apple's gross margin percentage flows through the Entity-Based KG-RAG system:</p>
+
+  <ol>
+    <li>The system first identifies relevant entities in the knowledge graph based on similarity to the query</li>
+    <li>It then explores the subgraph around these entities to discover related information</li>
+    <li>Based on the explored subgraph, it selects the most relevant document chunks</li>
+    <li>Finally, it assembles a comprehensive context that combines both structural knowledge and textual information</li>
+  </ol>
+
+  <h3 id="kg-rag-advantages">Advantages</h3>
+
+  <p>The Entity-Based KG-RAG approach offers several advantages over traditional RAG systems:</p>
+
+  <ol>
+    <li><strong>Structure-aware retrieval:</strong> By leveraging the knowledge graph structure, the system can capture complex relationships between entities that might be missed by vector similarity alone</li>
+    <li><strong>Multi-hop reasoning:</strong> The subgraph exploration enables the system to connect information that might be several hops away in the knowledge graph</li>
+    <li><strong>Entity-grounded context:</strong> Document chunks are selected based on their relevance to the query-related entities, ensuring more focused context</li>
+    <li><strong>Hybrid context assembly:</strong> By combining knowledge graph paths with document chunks, the system provides both structured relational information and detailed textual content</li>
+    <li><strong>Improved performance on complex queries:</strong> Particularly effective for questions requiring understanding of relationships between multiple entities</li>
+  </ol>
+
+  <h2 id="conclusion">Conclusion and Future Directions</h2>
+
+  <p>Knowledge graph-based RAG approaches represent a significant advancement over traditional vector-based methods, especially for domains with complex relational structures. By incorporating structured relationships into the retrieval process, these methods can provide more accurate, comprehensive, and explainable answers.</p>
+
+  <p>Our experiments with the Entity-Based KG-RAG method show promising results, particularly for questions that require understanding relationships between multiple entities and documents. The ability to explore subgraphs and combine structural knowledge with textual information enables more nuanced and accurate responses.</p>
+
+  <p>Future directions for this research include:</p>
+
+  <ul>
+    <li><strong>Improved graph construction techniques:</strong> Developing better methods for automatically extracting entities and relationships from documents</li>
+    <li><strong>Dynamic graph updates:</strong> Creating systems that can continuously update the knowledge graph as new information becomes available</li>
+    <li><strong>Cross-domain knowledge integration:</strong> Combining domain-specific knowledge graphs with general-purpose knowledge bases</li>
+    <li><strong>Reasoning-enhanced retrieval:</strong> Incorporating logical reasoning capabilities into the graph exploration process</li>
+  </ul>
+
+  <p>By continuing to advance knowledge graph-based RAG systems, we can build AI assistants that provide more accurate, contextual, and trustworthy information across a wide range of domains and applications.</p>
 
 </d-article>
 
 <d-appendix>
   <h3 id="acknowledgements">Acknowledgments</h3>
   <p>
-    We are grateful to x, y, z, and others for extensive feedback on the article.
+    We would like to thank the Vector Institute for supporting this research, and the open-source community for providing valuable tools and frameworks that made this work possible.
   </p>
 
   <d-footnote-list></d-footnote-list>
   <d-bibliography src="references.bib"></d-bibliography>
   <d-citation-list></d-citation-list>
 </d-appendix>
+
 
 </body>

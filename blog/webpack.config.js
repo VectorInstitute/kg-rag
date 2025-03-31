@@ -134,7 +134,8 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'static/' }
+        { from: 'static/' },
+        { from: 'src/assets/', to: 'assets/' }
       ]
     }),
     new HtmlReplaceWebpackPlugin([
@@ -157,6 +158,10 @@ module.exports = {
       {
         pattern: '<script type="text/javascript" src="index.bundle.js"></script>',
         replacement: ''
+      },
+      {
+        pattern: '</d-appendix>',
+        replacement: '</d-appendix>'
       }
     ])
   ],
