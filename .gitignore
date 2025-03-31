@@ -64,3 +64,13 @@ typings/
 
 # production build produces unnecessary js file
 public/index.bundle.js
+
+# evaluation artifacts
+evaluation_results/
+
+# database
+chroma_db/
+*.pkl
+
+*.pyc
+*.egg-info
