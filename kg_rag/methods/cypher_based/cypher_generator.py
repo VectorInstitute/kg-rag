@@ -145,7 +145,7 @@ class CypherGenerator:
 
         return "\n".join(schema)
 
-    def generate_cypher(self, question: str, schema: str) -> str | list[str | dict]:
+    def generate_cypher(self, question: str, schema: str) -> str:
         """
         Generate a Cypher query from a natural language question.
 
@@ -168,4 +168,6 @@ class CypherGenerator:
         if self.verbose:
             print(f"Generated Cypher query: {query}")
 
-        return query
+        if isinstance(query, str):
+            return query
+        raise ValueError(f"Error generating Cypher query: {query}")

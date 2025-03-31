@@ -1,0 +1,301 @@
+.subgrid {
+    grid-column: screen;
+    display: grid;
+    grid-template-columns: inherit;
+    grid-template-rows: inherit;
+    grid-column-gap: inherit;
+    grid-row-gap: inherit;
+}
+
+d-figure.base-grid {
+    grid-column: screen;
+    background: hsl(0, 0%, 97%);
+    padding: 20px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+d-figure {
+    margin-bottom: 1em;
+    position: relative;
+}
+
+d-figure>figure {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.shaded-figure {
+    background-color: hsl(0, 0%, 97%);
+    border-top: 1px solid hsla(0, 0%, 0%, 0.1);
+    border-bottom: 1px solid hsla(0, 0%, 0%, 0.1);
+    padding: 30px 0;
+}
+
+.pointer {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    top: 26px;
+    left: -48px;
+}
+
+.todo {
+    color: red;
+}
+
+span.nowrap {
+    white-space: nowrap;
+}
+
+d-appendix h3 {
+    grid-column: text !important;
+}
+
+d-appendix ol.debate {
+    margin-left: initial;
+    margin-bottom: .5em;
+    margin-top: .5em;
+}
+
+d-appendix ol.instructions {
+    margin-left: initial;
+}
+
+d-appendix ol.debate li {
+    margin-bottom: initial;
+}
+
+@media (min-width: 1000px) {
+    #figure-debate-tree figcaption {
+        position: absolute;
+        bottom: 0;
+        left: 1em;
+        max-width: 25em;
+    }
+}
+
+#figure-debate-experiments figcaption {
+    margin-top: 1em;
+}
+
+@media (min-width: 1180px) {
+    #figure-debate-experiments {
+        position: relative;
+        display: grid;
+        grid-template-columns: 33% 1fr;
+        grid-gap: inherit;
+    }
+
+    #figure-debate-experiments svg {
+        order: 2;
+    }
+
+    #figure-debate-experiments figcaption {
+        order: 1;
+    }
+}
+
+#dog-debate figcaption {
+    margin-bottom: 1em;
+}
+
+
+/* ## Debate Styling ## */
+
+/* List */
+
+ol.debate {
+    color: black;
+    position: relative;
+    list-style-type: none;
+    padding-left: 4em;
+}
+
+ol.debate li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+ol.debate li:last-of-type>span {
+    margin-bottom: 0;
+}
+
+/* Speech bubbles */
+
+ol.debate li>span {
+    display: inline-block;
+    border-radius: 1em;
+    border-top-left-radius: 0;
+    border: 1px solid hsl(0, 0%, 33%);
+    padding: .5em 1.25em .5em 1.25em;
+}
+
+ol.debate li.question>span {
+    font-weight: 600;
+}
+
+ol.debate li.judge>span {
+    border-color: hsl(0, 0%, 92%);
+    background-color: hsl(0, 0%, 96%);
+}
+
+ol.debate li.wikipedia {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+ol.debate li.wikipedia>span {
+    border-color: hsl(0, 0%, 67%);
+    border-radius: .25em;
+}
+
+ol.debate li.note>span {
+    border: none;
+    font-style: italic;
+}
+
+ol.debate li.red>span {
+    background-color: hsl(18, 95%, 92%);
+    border-color: hsl(18, 100%, 92%);
+}
+
+ol.debate li.blue>span {
+    background-color: hsl(205, 95%, 92%);
+    border-color: hsl(205, 100%, 92%);
+}
+
+/* RED/BLUE identifiers */
+
+ol.debate li>span::before {
+    position: absolute;
+    display: inline-block;
+    width: 4.5em;
+    /* out of 5em left padding on ol */
+    left: 0;
+    background-color: unset;
+    text-align: right;
+    font-size: 75%;
+    text-transform: uppercase;
+}
+
+ol.debate li.red>span::before {
+    content: "Red";
+    color: hsl(18, 100%, 50%);
+}
+
+ol.debate li.blue>span::before {
+    content: "Blue";
+    color: hsl(205, 100%, 50%);
+}
+
+ol.debate li.judge>span::before {
+    content: "Judge";
+}
+
+ol.debate li.wikipedia>span::before {
+    position: relative;
+    display: inline;
+    content: "Wikipedia: ";
+}
+
+/* Debate Transcripts */
+
+#debate-transcripts section.debate {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0 .25em .25em .25em;
+    padding: 1em;
+    display: none;
+}
+
+#debate-transcripts section.debate#debate-unpruned {
+    border-top-left-radius: .25em;
+}
+
+#debate-transcripts input.tab {
+    display: none;
+}
+
+#debate-transcripts label {
+    display: inline-block;
+    font-weight: 500;
+    margin: 0 0 -1px;
+    padding: .5em 2em;
+    border: 1px solid transparent;
+}
+
+#debate-transcripts label:hover {
+    cursor: pointer;
+}
+
+#debate-transcripts input.tab:checked+label {
+    color: rgba(0, 0, 0, 0.65);
+    border-radius: .25em .25em 0 0;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom-color: white;
+}
+
+#debate-transcripts #tab-debate-pruned:checked~#debate-pruned, #debate-transcripts #tab-debate-unpruned:checked~#debate-unpruned {
+    display: block;
+}
+
+/* TOC */
+
+#contents nav a {
+    color: rgba(0, 0, 0, 0.8);
+    border-bottom: none;
+    text-decoration: none;
+}
+
+#contents nav ul li {
+    margin-bottom: .25em;
+}
+
+#contents nav a:hover {
+    text-decoration: underline solid rgba(0, 0, 0, 0.6);
+}
+
+#contents nav details ul {
+    margin-top: 0;
+}
+
+#contents nav details > a {
+    margin-left: 1.06em;
+}
+
+#contents nav summary,
+#contents nav > div,
+#contents nav details > a {
+    display: block;
+    outline: none;
+    margin-bottom: 0.5em;
+}
+
+#contents nav > div {
+    margin-left: 1.06em;
+}
+
+#contents nav summary {
+    cursor: context-menu;
+}
+
+#contents nav summary,
+#contents nav > div > a {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+a.figure-number,
+a.section-number {
+    border-bottom-color: hsla(206, 90%, 20%, 0.3);
+    text-transform: uppercase;
+    font-size: .85em;
+    color: hsla(206, 90%, 20%, 0.7);
+}
+a.figure-number::before {
+    content: "Figure ";
+}
+a.figure-number:hover,
+a.section-number:hover {
+    border-bottom-color: hsla(206, 90%, 20%, 0.6);
+}

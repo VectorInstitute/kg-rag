@@ -1,0 +1,57 @@
+name: code checks
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .pre-commit-config.yaml
+      - .github/workflows/code_checks.yml
+      - '**.py'
+      - uv.lock
+      - pyproject.toml
+      - '**.ipynb'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .pre-commit-config.yaml
+      - .github/workflows/code_checks.yml
+      - '**.py'
+      - uv.lock
+      - pyproject.toml
+      - '**.ipynb'
+
+jobs:
+  run-code-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@1edb52594c857e2b5b13128931090f0640537287
+        with:
+          # Install a specific version of uv.
+          version: "0.5.21"
+          enable-cache: true
+
+      - name: "Set up Python"
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38
+        with:
+          python-version-file: ".python-version"
+
+      - name: Install the project
+        run: uv sync --all-extras --dev
+
+      - name: Install dependencies and check code
+        run: |
+          source .venv/bin/activate
+          pre-commit run --all-files
+
+      - name: pip-audit (gh-action-pip-audit)
+        uses: pypa/gh-action-pip-audit@1220774d901786e6f652ae159f7b6bc8fea6d266
+        with:
+          virtual-environment: .venv/

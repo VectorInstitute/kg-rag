@@ -148,12 +148,16 @@ class BaselineRAG:
 
         if self.verbose:
             print(f"Retrieved {len(results['documents'][0])} documents")
+            print(f"Context:\n{context}")
 
         # Generate answer
         result = self.generate_answer(question, context)
 
         if self.verbose:
-            print(f"Generated answer: {result['answer']}")
+            if self.use_cot:
+                print(f"Generated answer: {result['answer']}")
+            elif self.numerical_answer:
+                print(f"Extracted answer: {result}")
 
         return result
 
