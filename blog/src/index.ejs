@@ -1,0 +1,87 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://distill.pub/template.v2.js"></script>
+  <style><%= require("raw-loader!./style.css") %></style>
+</head>
+<body>
+
+<d-front-matter>
+  <script type="text/json">{
+  "title": "AI Engineering blog post",
+  "description": "Sample blog post for AI Engineering",
+  "authors": [
+    {
+      "author": "John Doe",
+      "authorURL": "https://john.doe",
+      "affiliation": "Vector Institute",
+      "affiliationURL": "https://vectorinstitute.ai"
+    }, {
+      "author": "Jane Doe",
+      "authorURL": "http://www.jane.doe",
+      "affiliation": "Vector Institute",
+      "affiliationURL": "https://vectorinstitute.ai"
+    }
+  ],
+  "katex": {
+    "delimiters": [
+      {"left": "$", "right": "$", "display": false},
+      {"left": "$$", "right": "$$", "display": true}
+    ]
+  }
+  }</script>
+</d-front-matter>
+
+<d-title>
+  <h1>AI Engineering blog post</h1>
+  <p>
+    Blog posts are a great way to share your ideas with the world. They can be used to showcase our work, especially important results to the broader community.
+  </p>
+</d-title>
+
+<d-byline></d-byline>
+
+<div id="contents" class="base-grid" style="border-top: 1px solid #eee; padding: 1.5rem 0;">
+    <nav class="l-text toc figcaption">
+        <h3>Contents</h3>
+        <details>
+            <summary>An overview of the cool AI Engineering project!</summary>
+            <a href="#overview"><em>navigate to section "An overview of the cool AI Engineering project!"</em></a>
+            <ul>
+                <li><a href="#methods">Methods</a></li>
+            </ul>
+        </details>
+        <div><a href="#conclusion">Conclusion: How did the project create impact?</a></div>
+    </nav>
+</div>
+
+
+<d-article>
+
+  <h2 id="overview">An overview of the cool AI Engineering project!!</h2>
+
+  <p>Explanations of the approaches! <d-cite key="rumelhart1986learning"/></p>
+
+  <h3 id="methods">Methods</h3>
+
+  <p>Details on the methods used in the project</p>
+
+  <h2 id="conclusion">Conclusion: How did the project create impact?</h2>
+
+  <p>Conclusion on the project contributions</p>
+
+</d-article>
+
+<d-appendix>
+  <h3 id="acknowledgements">Acknowledgments</h3>
+  <p>
+    We are grateful to x, y, z, and others for extensive feedback on the article.
+  </p>
+
+  <d-footnote-list></d-footnote-list>
+  <d-bibliography src="references.bib"></d-bibliography>
+  <d-citation-list></d-citation-list>
+</d-appendix>
+
+</body>
