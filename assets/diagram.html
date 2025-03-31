@@ -670,26 +670,6 @@
                      .classed("highlight-subgraph", true).transition().duration(800).attr("stroke-opacity", 0.7);
                 await sleep(2000);
 
-                // 5. Path Description Generation & Highlight
-                // status.textContent = `4/7: Highlighting ${pathData.length} Example Paths...`;
-                // pathDisplay.style.opacity = 1; pathContent.innerHTML = '';
-                // for (let i = 0; i < pathData.length; i++) {
-                //     const currentPath = pathData[i];
-                //     pathContent.innerHTML += `${i + 1}: ${currentPath.text}<br>`; pathDisplay.scrollTop = pathDisplay.scrollHeight;
-                //     const pathNodeIdsInPath = new Set(currentPath.ids);
-                //     const pathLinkIdsInPath = new Set();
-                //     for (let j = 0; j < currentPath.ids.length - 1; j++) { pathLinkIdsInPath.add([currentPath.ids[j], currentPath.ids[j+1]].sort().join('-')); }
-                //     nodeElements.filter(d => pathNodeIdsInPath.has(d.id)).classed('highlight-path', true);
-                //     linkElements.filter(d => pathLinkIdsInPath.has([d.source.id, d.target.id].sort().join('-'))).classed('highlight-path', true);
-                //     await sleep(800);
-                //     nodeElements.filter(d => pathNodeIdsInPath.has(d.id)).classed('highlight-path', false).transition().duration(300).attr('r', 8);
-                //     linkElements.filter(d => pathLinkIdsInPath.has([d.source.id, d.target.id].sort().join('-'))).classed('highlight-path', false);
-                //     await sleep(400);
-                // }
-                //  status.textContent = `4/7: Highlighted ${pathData.length} Example Paths`;
-                //  await sleep(1500); pathDisplay.style.opacity = 0;
-
-
                 // 6. Chunk Selection (Debugging chunk links)
                 status.textContent = "4/6: Linking Entities to Relevant Chunks...";
                 chunksContainer.style.opacity = 1;

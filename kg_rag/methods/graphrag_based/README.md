@@ -20,11 +20,6 @@ The architecture of the GraphRAG-based KG-RAG system consists of several key com
 4. **Context Building**: Assembling relevant context from the graph
 5. **Response Generation**: Using an LLM to provide the final answer
 
-## Workflow
-
-The workflow of the GraphRAG-based KG-RAG method follows these stages:
-
-![GraphRAG Workflow](../assets/graphrag_workflow.png)
 
 ### 1. Query Processing
 
@@ -222,46 +217,6 @@ class GlobalSearchStrategy:
         ...
 ```
 
-## Advanced Features
-
-### Chain-of-Thought Reasoning
-
-The system supports Chain-of-Thought (CoT) reasoning for more complex queries:
-
-```python
-# Enable Chain-of-Thought reasoning
-if use_cot or numerical_answer:
-    self.llm = self.llm.bind(response_format={"type": "json_object"})
-```
-
-When CoT is enabled:
-1. The system instructs the LLM to break down reasoning into explicit steps
-2. The output is structured as JSON with separate "reasoning" and "answer" fields
-3. This improves answer accuracy for complex questions
-
-### Numerical Answer Extraction
-
-For questions requiring numerical answers, the system includes specialized processing:
-
-```python
-def _extract_number_from_text(self, text: str) -> str | None:
-    """Extract number from text."""
-    patterns = [
-        r"answer\s*(?:is|:)\s*(-?\d+(?:\.\d+)?)",
-        r"(-?\d+(?:\.\d+)?)\s*%",
-        r"(-?\d+(?:\.\d+)?)\s*(?:million|billion|dollars|USD)",
-        r"(?:value|amount|total)\s*(?:of|is|:)\s*(-?\d+(?:\.\d+)?)",
-        r"(\d+(?:\.\d+)?)",
-    ]
-
-    for pattern in patterns:
-        match = re.search(pattern, text, re.IGNORECASE)
-        if match:
-            return match.group(1)
-
-    return None
-```
-
 ## Configuration Parameters
 
 The system can be configured with several parameters:
@@ -326,6 +281,6 @@ Despite its advantages, the GraphRAG approach has some limitations:
 
 ## References
 
-[- LangChain GraphRAG Documentation](https://github.com/ksachdeva/langchain-graphrag/)
+- [LangChain GraphRAG Documentation](https://github.com/ksachdeva/langchain-graphrag/)
 
-[- Microsoft Graphrag Documentation](https://microsoft.github.io/graphrag/)
+- [Microsoft Graphrag Documentation](https://microsoft.github.io/graphrag/)

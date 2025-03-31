@@ -92,28 +92,6 @@ class BaselineRAG:
         # Initialize components and settings
 ```
 
-#### Query Processing Flow:
-
-1. **Query Embedding**:
-   - The user query is converted to an embedding vector using the OpenAI embedding model
-
-2. **Similarity Search**:
-   - The query embedding is compared to all document chunk embeddings in the vector store
-   - The system retrieves the top-k most similar chunks (default: 5)
-
-3. **Context Assembly**:
-   - Retrieved chunks are formatted into a unified context string
-   - Metadata about source documents is included for reference
-
-4. **Answer Generation**:
-   - The query and assembled context are sent to an LLM (default: GPT-4o)
-   - The system uses a prompt template from `create_query_prompt()`
-   - Prompts can be configured for standard answers or Chain-of-Thought reasoning
-
-5. **Response Processing**:
-   - The LLM response is processed into a structured format
-   - For Chain-of-Thought mode, the response includes both reasoning and answer
-   - For numerical answers, special processing extracts the numerical value
 
 ## Configuration Options
 
@@ -178,22 +156,6 @@ python -m scripts.run_baseline_rag \
     --verbose
 ```
 
-## Advantages and Limitations
-
-### Advantages:
-- Simple and proven architecture with well-established components
-- Leverages efficient embedding models for semantic search
-- Supports persistent storage for reuse across sessions
-- Includes robust error handling and rate limit management
-- Configurable for different answer types and reasoning styles
-
-### Limitations:
-- Limited to lexical and semantic similarity for retrieval
-- Cannot leverage structural information in documents
-- May struggle with complex multi-hop reasoning questions
-- Lacks understanding of hierarchical relationships in data
-- Information is treated as independent chunks without consideration of document structure
-
 ## Evaluation Methods
 
 The baseline RAG system can be evaluated using the included evaluation tools:
@@ -207,11 +169,6 @@ python -m kg_rag.evaluation.run_evaluation \
     --numerical-answer \
     --use-cot
 ```
-
-The evaluation provides metrics on:
-- Answer accuracy
-- Retrieval precision
-- Response quality
 
 ## References
 
