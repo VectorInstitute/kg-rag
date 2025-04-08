@@ -1,10 +1,11 @@
 {
-    "graph_documents_pkl_path": "data/sec-10-q/graphs/sec10q_entity_metadata_graph_documents_formatted.pkl",
+    "graph_documents_pkl_path": "data/sec-10-q/graphs/graph_documents_formatted.pkl",
     "documents_pkl_path": "data/sec-10-q/graphs/documents.pkl",
     "documents_path": "data/sec-10-q/docs",
-    "model_name": "gpt-4o",
-    "top_k_nodes": 10,
+    "model_name": "gpt-4o-mini",
+    "top_k_nodes": 30,
     "top_k_chunks": 5,
+    "max_hops": 1,
     "similarity_threshold": 0.5,
     "node_freq_weight": 0.4,
     "node_sim_weight": 0.6
