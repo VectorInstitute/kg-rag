@@ -77,6 +77,13 @@ def parse_args():
         default=None,
         help="Maximum number of samples to evaluate",
     )
+    # New argument for question index
+    parser.add_argument(
+        "--question-index",
+        type=int,
+        default=None,
+        help="Index of a specific question to evaluate (0-based)",
+    )
 
     return parser.parse_args()
 
@@ -116,6 +123,7 @@ def create_entity_rag(config, use_cot=False, numerical_answer=False, verbose=Fal
         llm=llm,
         top_k_nodes=config.get("top_k_nodes", 10),
         top_k_chunks=config.get("top_k_chunks", 5),
+        max_hops=config.get("max_hops", 1),
         similarity_threshold=config.get("similarity_threshold", 0.7),
         node_freq_weight=config.get("node_freq_weight", 0.4),
         node_sim_weight=config.get("node_sim_weight", 0.6),
@@ -196,6 +204,26 @@ def create_graphrag_rag(config, use_cot=False, numerical_answer=False, verbose=F
     )
 
 
+def check_question_index(index, df):
+    """Check if the question index is valid."""
+    if index < 0 or index >= len(df):
+        raise ValueError(
+            f"Question index {index} is out of bounds. Dataset has {len(df)} entries."
+        )
+    df = df.iloc[[index]].copy()
+    print(f"Evaluating only question at index {index}")
+    return df
+
+
+def check_method(method):
+    """Check if the method is valid and return a list of methods."""
+    if method == "all":
+        methods = ["entity", "baseline", "cypher", "graphrag"]
+    else:
+        methods = [method]
+    return methods
+
+
 def main():
     """Run evaluation across different KG-RAG methods."""
     # Load environment variables
@@ -214,16 +242,15 @@ def main():
     print(f"Loading dataset from {args.data_path}...")
     df = pd.read_csv(args.data_path)
 
+    df = check_question_index(args.question_index, df)
+
     # Determine which methods to evaluate
     methods = []
-    if args.method == "all":
-        methods = ["entity", "baseline", "cypher", "graphrag"]
-    else:
-        methods = [args.method]
+    methods = check_method(args.method)
 
     # Filter out methods missing required components
-    if "graphrag" in methods and not args.graphrag_artifacts:
-        print("Warning: GraphRAG-based method requires --graphrag-artifacts")
+    if "graphrag" in methods and not config.get("artifacts_path"):
+        print("Warning: GraphRAG-based method requires artifacts_path in config")
         methods.remove("graphrag")
 
     # Suffix for CoT evaluation
@@ -278,9 +305,25 @@ def main():
 
     # Print summary
     print("\nEvaluation Results Summary:")
-    print(f"{method} KG-RAG: {results[method_name]['accuracy']:.2%} accuracy")
+    for method_name in results:
+        print(f"{method_name} KG-RAG: {results[method_name]['accuracy']:.2%} accuracy")
 
     print(f"\nDetailed results saved to {output_dir}")
+
+    # If specific question, print more details
+    if args.question_index is not None:
+        print("\nDetailed results for the specified question:")
+        for method_name, method_results in results.items():
+            print(f"\n{method_name} KG-RAG:")
+            if (
+                "predictions" in method_results
+                and len(method_results["predictions"]) > 0
+            ):
+                prediction = method_results["predictions"][0]
+                print(f"Question: {prediction.get('question', 'N/A')}")
+                print(f"Reference Answer: {prediction.get('reference', 'N/A')}")
+                print(f"Predicted Answer: {prediction.get('prediction', 'N/A')}")
+                print(f"Correct: {prediction.get('is_correct', False)}")
 
 
 if __name__ == "__main__":

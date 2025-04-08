@@ -24,6 +24,7 @@ class EntityBasedKGRAG:
         llm: ChatOpenAI | None = None,
         top_k_nodes: int = 10,
         top_k_chunks: int = 5,
+        max_hops: int = 1,
         similarity_threshold: float = 0.7,
         node_freq_weight: float = 0.4,
         node_sim_weight: float = 0.6,
@@ -77,6 +78,7 @@ class EntityBasedKGRAG:
         self.document_chunks = document_chunks
         self.top_k_nodes = top_k_nodes
         self.top_k_chunks = top_k_chunks
+        self.max_hops = max_hops
         self.similarity_threshold = similarity_threshold
         self.node_freq_weight = node_freq_weight
         self.node_sim_weight = node_sim_weight
@@ -301,6 +303,9 @@ class EntityBasedKGRAG:
                 chunk_scores.append((chunk, 0.0))
                 continue
 
+            if self.verbose:
+                print(f"Chunk {chunk_id} references nodes: {referencing_nodes}")
+
             # Calculate frequency score - what fraction of relevant nodes point to this chunk
             freq_score = len(referencing_nodes) / len(nodes) if nodes else 0
 
@@ -492,7 +497,7 @@ class EntityBasedKGRAG:
         nodes = [node for node, _ in similar_nodes[: self.top_k_nodes]]
 
         # Get relevant subgraph
-        subgraph = self._get_subgraph(nodes, max_hops=1)
+        subgraph = self._get_subgraph(nodes, max_hops=self.max_hops)
 
         self._print_subgraph(subgraph)
 
@@ -518,7 +523,9 @@ class EntityBasedKGRAG:
         ]
 
         # Score chunks based on node information
-        chunk_scores = self._score_chunks_by_nodes(context_chunks, similar_nodes)
+        chunk_scores = self._score_chunks_by_nodes(
+            context_chunks, similar_nodes[: self.top_k_nodes]
+        )
 
         # Sort by score (descending)
         chunk_scores.sort(key=lambda x: x[1], reverse=True)

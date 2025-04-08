@@ -623,7 +623,7 @@ SOURCE(S): 2023 Q1 MSFT.pdf","What was the total amount, in millions of dollars,
 SOURCE(S): 2023 Q3 MSFT.pdf","What was the effective tax rate for Microsoft for the three months ended September 30, 2022, as reported in the latest 10-Q? Provide the answer as a percentage.",19,1
 What was NVIDIA's gross margin as stated in the most recent 10-Q report?,*2023 Q3 NVDA*,Single-Doc Single-Chunk RAG,Table,"NVIDIA's gross margin for the three months ended October 29, 2023, was $13,400 million, as stated in the Condensed Consolidated Statements of Income in the 2023 Q3 NVDA.pdf document.
 
-SOURCE(S): 2023 Q3 NVDA.pdf","What was NVIDIA's gross margin percentage for the three months ended October 29, 2023, as stated in their 2023 Q3 report? Provide the answer as a percentage rounded to one decimal place.",74.0,1
+SOURCE(S): 2023 Q3 NVDA.pdf","What was NVIDIA's gross margin percentage for the three months ended October 29, 2023, as stated in their 2023 Q3 report? Provide the answer as a percentage rounded to one decimal place.",74,1
 How did NVIDIA's operating expenses compare to its revenues in Q1 2023?,*2023 Q1 NVDA*,Single-Doc Single-Chunk RAG,Table,"In Q1 2023, NVIDIA's operating expenses were 34.9% of its net revenue.
 
 SOURCE(S): 2023 Q1 NVDA.pdf","What was NVIDIA's net revenue in Q1 2023, as reported in their financial statement? Provide the answer in millions of dollars.",7192,1
@@ -873,3 +873,12 @@ SOURCE(S): 2022 Q3 INTC.pdf","What was the total amount of restructuring and oth
 The future investment plans outlined in the management's discussion are detailed in the ""A Quarter in Review"" section, where it mentions that the Semiconductor Co-Investment Program (SCIP) with Brookfield Asset Management is expected to spend up to $30.0 billion on investments in expanded manufacturing infrastructure at the Ocotillo campus in Chandler, Arizona.
 
 SOURCE(S): 2022 Q3 INTC.pdf","What was the total amount, in billions of dollars, that Intel planned to spend on investments in expanded manufacturing infrastructure at the Ocotillo campus in Chandler, Arizona, as outlined in their Q3 2022 report?",30,1
+Analyze how Amazon's effective tax rate reported in the most recent 10-Q compares with the tax-related discussion in the notes section.,*2023 Q3 AMZN*,Single-Doc Multi-Chunk RAG,Table,"The effective tax rate for Amazon as reported in the most recent 10-Q for the nine months ended September 30, 2023, was impacted by a $175 million net discrete tax expense, primarily consisting of discrete tax expense related to shortfalls from stock-based compensation and approximately $600 million of tax benefit resulting from a change in the estimated qualifying expenditures associated with the 2022 U.S. federal R&D credit. This resulted in an income tax provision of $4.1 billion.
+
+In the notes section, specifically in Note 7 â€” INCOME TAXES, it is mentioned that Amazon's tax provision or benefit from income taxes for interim periods is determined using an estimate of the annual effective tax rate, adjusted for discrete items. The note also states that the quarterly tax provision and the estimate of the annual effective tax rate are subject to significant variation due to several factors, including the variability in predicting pre-tax and taxable income and the mix of jurisdictions to which they relate. Additionally, the note discusses various factors that could impact the effective tax rate, such as changes in global economic conditions, customer demand, competition, management of growth, and potential fluctuations in operating results.
+
+The notes section also details ongoing tax disputes and contingencies, including disputes with the Luxembourg tax authority (LTA) and the Indian tax authority (ITA), as well as the European Commission's investigation into whether tax decisions by the Luxembourg tax authorities comply with European Union rules on state aid.
+
+Overall, the effective tax rate reported reflects the outcomes of various factors, including business operations, discrete items, and ongoing tax disputes, as discussed in the notes section.
+
+SOURCE(S): 2023 Q3 AMZN.pdf","What was the income tax provision for Amazon for the nine months ended September 30, 2023, as reported in their Q3 2023 report? Provide the answer in billions of dollars.",4.1,1

@@ -4,14 +4,11 @@
     <title>Entity KG-RAG Flow (D3 - Bounded)</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-        /* Styles remain largely the same as the previous "Accurate Subgraph" version */
-        /* ... (Keep all styles from the previous version) ... */
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f8f9fa;
+            /* background-color: #f8f9fa; */
             color: #333;
             display: flex;
             justify-content: center;
@@ -22,10 +19,10 @@
         .container {
             max-width: 1200px;
             width: 95%;
-            background: white;
+            /* background: white; */
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            /* box-shadow: 0 5px 25px rgba(0,0,0,0.1); */
             position: relative;
         }
         h1 {
@@ -63,8 +60,7 @@
             left: 20px;
             right: 20px;
             bottom: 180px;
-            overflow: hidden; /* Changed from visible to hidden to clip if needed */
-            /* increase size of  graph */
+            overflow: visible;
             width: calc(100% - 40px);
             height: calc(100% - 260px);
         }
@@ -152,7 +148,7 @@
             transition: all 0.3s ease;
             opacity: 0.7;
         }
-         .chunk strong { font-size: 10px; display: block; margin-bottom: 3px;}
+        .chunk strong { font-size: 10px; display: block; margin-bottom: 3px;}
         .chunk.highlight-top5 {
             border-color: #FFA000;
             box-shadow: 0 0 8px rgba(255, 160, 0, 0.4);
@@ -171,11 +167,13 @@
             stroke-dasharray: 3 2;
             transition: stroke-opacity 0.5s ease;
         }
+        /* // Add this CSS to the existing styles section */
         .entity-chunk-line {
-            stroke: #ab47bc;
-            stroke-width: 1.2px; /* Slightly thicker for visibility */
-            stroke-opacity: 0; /* Start hidden */
-            transition: stroke-opacity 0.5s ease;
+        stroke: #ab47bc;
+        stroke-width: 1.5px;
+        stroke-opacity: 0;
+        /* stroke-dasharray: 6 4; */
+        transition: stroke-opacity 0.3s ease;
         }
         .similarity-score-text {
             font-size: 9px;
@@ -186,9 +184,9 @@
         }
         .path-display {
             position: absolute;
-            top: 85px;
+            top: 135px; /* Adjusted from 85px to match new graph position */
             left: 30px;
-            width: 220px;
+            width: 230px;
             background: rgba(255, 255, 255, 0.98);
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -218,23 +216,129 @@
             transition: all 0.5s ease;
             z-index: 25;
         }
-        .status { text-align: center; margin-top: 15px; font-size: 14px; color: #666; height: 20px; font-weight: 500; }
-        .controls { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
-        button { padding: 7px 14px; background-color: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; }
-        button:hover { background-color: #1976D2; }
-        .legend { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
-        .legend-item { display: flex; align-items: center; font-size: 10px; }
-        .legend-color { width: 12px; height: 12px; margin-right: 4px; border: 1px solid #ddd; border-radius: 50%; }
-        .legend-line { width: 15px; height: 3px; margin-right: 4px; }
-
-
+        .status-container {
+            position: absolute;
+            top: -5px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 30;
+        }
+        .status {
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+            background-color: #2c3e50;
+            padding: 5px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            opacity: 1;
+            transition: all 0.3s ease;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        #playBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #playBtn:hover {
+            background-color: #388E3C;
+        }
+        #restartBtn {
+            background-color: #2196F3;
+            color: white;
+        }
+        #restartBtn:hover {
+            background-color: #1976D2;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .play-icon, .restart-icon {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            position: relative;
+        }
+        .play-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-top: 7px solid transparent;
+            border-bottom: 7px solid transparent;
+            border-left: 12px solid white;
+        }
+        .restart-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 12px;
+            height: 12px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-right-color: transparent;
+        }
+        .restart-icon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-left: 7px solid white;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 10px;
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+        }
+        .legend-line {
+            width: 15px;
+            height: 3px;
+            margin-right: 4px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Entity KG-RAG Flow</h1>
 
-         <div class="legend">
+        <div class="legend">
             <div class="legend-item"><div class="legend-color" style="background-color: #d1c4e9;"></div><span>Company</span></div>
             <div class="legend-item"><div class="legend-color" style="background-color: #c8e6c9;"></div><span>Metric</span></div>
             <div class="legend-item"><div class="legend-color" style="background-color: #ffccbc;"></div><span>Time</span></div>
@@ -244,23 +348,27 @@
             <div class="legend-item"><div class="legend-line" style="background-color: #fbc02d;"></div><span>Similarity</span></div>
             <div class="legend-item"><div class="legend-line" style="background-color: #64b5f6;"></div><span>Subgraph</span></div>
             <div class="legend-item"><div class="legend-line" style="background-color: #ab47bc;"></div><span>Chunk Link</span></div>
-         </div>
+        </div>
 
         <div class="animation-container" id="animation">
+            <div class="status-container">
+                <div class="status" id="status">Press Play to Start</div>
+            </div>
+
             <div class="query-display" id="query-box">
-                 <strong>Query:</strong> What was the Products gross margin percentage for Apple for the quarter ended July 1, 2023, as reported in their Q3 2023 10-Q? Provide the answer rounded to one decimal place.
+                <strong>Query:</strong> What was the Products gross margin percentage for Apple for the quarter ended July 1, 2023, as reported in their Q3 2023 10-Q? Provide the answer rounded to one decimal place.
             </div>
 
             <svg id="graph-svg"></svg>
-             <div class="path-display" id="path-display">
-                 <strong>Subgraph Paths (Examples):</strong><br>
-                 <span id="path-content"></span>
-             </div>
+            <div class="path-display" id="path-display">
+                <strong>Subgraph Paths (Examples):</strong><br>
+                <span id="path-content"></span>
+            </div>
 
             <div class="chunks-container" id="chunks">
-                 <div class="chunk" id="chunk1" data-chunk-id="1"><strong>Chunk 1 (Q3 23):</strong> Products <b>35.4 %</b>... Services 70.5 %...</div>
-                 <div class="chunk" id="chunk2" data-chunk-id="2"><strong>Chunk 2 (Q3 22):</strong> Products 34.5 %... Services 71.5 %...</div>
-                 <div class="chunk" id="chunk3" data-chunk-id="3"><strong>Chunk 3 (Q2 23):</strong> Products 36.7 %... Services 71.0 %...</div>
+                <div class="chunk" id="chunk1" data-chunk-id="1"><strong>Chunk 1 (Q3 23):</strong> Products <b>35.4 %</b>... Services 70.5 %...</div>
+                <div class="chunk" id="chunk2" data-chunk-id="2"><strong>Chunk 2 (Q3 22):</strong> Products 34.5 %... Services 71.5 %...</div>
+                <div class="chunk" id="chunk3" data-chunk-id="3"><strong>Chunk 3 (Q2 23):</strong> Products 36.7 %... Services 71.0 %...</div>
                 <div class="chunk" id="chunk4" data-chunk-id="4"><strong>Chunk 4 (Q1 23):</strong> Products 37.0 %... Services 70.8 %...</div>
                 <div class="chunk" id="chunk5" data-chunk-id="5"><strong>Chunk 5 (Q3 22 Context):</strong> ...future gross margins... Risk Factors...</div>
             </div>
@@ -268,37 +376,32 @@
             <div class="final-answer" id="final-answer">Answer: 35.4%</div>
         </div>
 
-        <div class="status" id="status">Initializing...</div>
-
         <div class="controls">
-            <button id="restartBtn">Restart</button>
+            <button id="playBtn"><span class="play-icon"></span> Play</button>
+            <button id="restartBtn" disabled><span class="restart-icon"></span> Restart</button>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- Elements (same) ---
-             const animationContainer = document.getElementById('animation');
-             const queryBox = document.getElementById('query-box');
-             const svg = d3.select("#graph-svg");
-             const chunksContainer = document.getElementById('chunks');
-             const status = document.getElementById('status');
-             const restartBtn = document.getElementById('restartBtn');
-             const finalAnswerEl = document.getElementById('final-answer');
-             const pathDisplay = document.getElementById('path-display');
-             const pathContent = document.getElementById('path-content');
-             const svgElement = document.getElementById('graph-svg');
+            const animationContainer = document.getElementById('animation');
+            const queryBox = document.getElementById('query-box');
+            const svg = d3.select("#graph-svg");
+            const chunksContainer = document.getElementById('chunks');
+            const statusEl = document.getElementById('status');
+            const playBtn = document.getElementById('playBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            const finalAnswerEl = document.getElementById('final-answer');
+            const pathDisplay = document.getElementById('path-display');
+            const pathContent = document.getElementById('path-content');
+            const svgElement = document.getElementById('graph-svg');
 
             let width, height;
             let simulation;
             let linkElements, nodeElements, labelElements;
             let dynamicLinesGroup, similarityScoresGroup;
             let currentAnimationTimeout = null;
-
-            // --- Data (Accurate data from previous step - no changes needed here) ---
-            // createId, rawNodes, rawEdges, graphData generation, nameToIdMap,
-            // allSubgraphNodeIds, allSubgraphLinkIds, similarNodesInfo, initialNodeIds,
-            // entityChunks, pathData, topChunkIds, finalChunkId all remain the same...
+            let animationStarted = false;
 
             // Function to create consistent IDs
             const createId = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '');
@@ -317,47 +420,47 @@
                 "Gross Margin Percentage - 2022 Q3 AAPL", "2022 - 2022 Q3 AAPL", "2021 - 2022 Q3 AAPL",
                 "Gross Margin Percentage - 2023 Q3 AAPL",
                 "Products - 2023 Q2 AAPL", "Gross Margin - 2023 Q2 AAPL", "Gross Margin Percentage - 2023 Q2 AAPL",
-                "Services - 2023 Q2 AAPL", "Services Gross Margin Percentage - 2023 Q2 AAPL", // Assuming typo in verbose, used 'Gross Margin Percentage'
-                "Services - 2023 Q3 AAPL", "Services Gross Margin Percentage - 2023 Q3 AAPL", // Assuming typo
+                "Services - 2023 Q2 AAPL", "Services Gross Margin Percentage - 2023 Q2 AAPL",
+                "Services - 2023 Q3 AAPL", "Services Gross Margin Percentage - 2023 Q3 AAPL",
                 "Services - 2023 Q1 AAPL",
                 "Products - 2022 Q3 AAPL",
                 "Apple Inc. - 2023 Q2 AAPL",
                 "Services - 2022 Q3 AAPL",
             ];
 
-             // Raw edges from verbose output
-             const rawEdges = [
-                 ["Risk Factors - 2023 Q2 AAPL", "Gross Margins - 2023 Q2 AAPL"],
-                 ["Apple Inc. - 2023 Q1 AAPL", "Gross Margin - 2023 Q1 AAPL"],
-                 ["Apple Inc. - 2023 Q1 AAPL", "Services Gross Margin - 2023 Q1 AAPL"],
-                 ["Apple Inc. - 2023 Q3 AAPL", "Products - 2023 Q3 AAPL"],
-                 ["Apple Inc. - 2023 Q3 AAPL", "Services - 2023 Q3 AAPL"],
-                 ["Apple Inc. - 2023 Q3 AAPL", "Gross Margin - 2023 Q3 AAPL"],
-                 ["Apple Inc. - 2023 Q3 AAPL", "Q3 2023 Form 10-Q - 2023 Q3 AAPL"],
-                 ["Company - 2023 Q2 AAPL", "Gross Margins - 2023 Q2 AAPL"], // Mapped to Apple Inc. Q2
-                 ["Products - 2023 Q1 AAPL", "Gross Margin - 2023 Q1 AAPL"],
-                 ["Q3 2023 Form 10-Q - 2023 Q3 AAPL", "Apple Inc. - 2023 Q3 AAPL"],
-                 ["Q3 2023 Form 10-Q - 2023 Q3 AAPL", "Gross Margins - 2023 Q3 AAPL"],
-                 ["Gross Margins - 2023 Q2 AAPL", "Volatility - 2023 Q2 AAPL"],
-                 ["Gross Margins - 2023 Q2 AAPL", "Downward Pressure - 2023 Q2 AAPL"],
-                 ["Apple Inc. - 2022 Q3 AAPL", "Gross Margin - 2022 Q3 AAPL"],
-                 ["Gross Margin Percentage - 2022 Q3 AAPL", "2022 - 2022 Q3 AAPL"], // Treating years as nodes
-                 ["Gross Margin Percentage - 2022 Q3 AAPL", "2021 - 2022 Q3 AAPL"], // Treating years as nodes
-                 ["Products - 2023 Q3 AAPL", "Gross Margin - 2023 Q3 AAPL"],
-                 ["Products - 2023 Q3 AAPL", "Gross Margin Percentage - 2023 Q3 AAPL"],
-                 ["Products - 2023 Q2 AAPL", "Gross Margin - 2023 Q2 AAPL"],
-                 ["Products - 2023 Q2 AAPL", "Gross Margin Percentage - 2023 Q2 AAPL"],
-                 ["Services - 2023 Q2 AAPL", "Gross Margin - 2023 Q2 AAPL"],
-                 ["Services - 2023 Q2 AAPL", "Services Gross Margin Percentage - 2023 Q2 AAPL"], // Using assumed corrected name
-                 ["Services - 2023 Q3 AAPL", "Gross Margin - 2023 Q3 AAPL"],
-                 ["Services - 2023 Q3 AAPL", "Services Gross Margin Percentage - 2023 Q3 AAPL"], // Using assumed corrected name
-                 ["Services - 2023 Q1 AAPL", "Services Gross Margin - 2023 Q1 AAPL"],
-                 ["Products - 2022 Q3 AAPL", "Gross Margin - 2022 Q3 AAPL"],
-                 ["Products - 2022 Q3 AAPL", "Gross Margin Percentage - 2022 Q3 AAPL"],
-                 ["Apple Inc. - 2023 Q2 AAPL", "Gross Margin - 2023 Q2 AAPL"],
-                 ["Services - 2022 Q3 AAPL", "Gross Margin - 2022 Q3 AAPL"],
-                 ["Services - 2022 Q3 AAPL", "Gross Margin Percentage - 2022 Q3 AAPL"],
-             ];
+            // Raw edges from verbose output
+            const rawEdges = [
+                ["Risk Factors - 2023 Q2 AAPL", "Gross Margins - 2023 Q2 AAPL"],
+                ["Apple Inc. - 2023 Q1 AAPL", "Gross Margin - 2023 Q1 AAPL"],
+                ["Apple Inc. - 2023 Q1 AAPL", "Services Gross Margin - 2023 Q1 AAPL"],
+                ["Apple Inc. - 2023 Q3 AAPL", "Products - 2023 Q3 AAPL"],
+                ["Apple Inc. - 2023 Q3 AAPL", "Services - 2023 Q3 AAPL"],
+                ["Apple Inc. - 2023 Q3 AAPL", "Gross Margin - 2023 Q3 AAPL"],
+                ["Apple Inc. - 2023 Q3 AAPL", "Q3 2023 Form 10-Q - 2023 Q3 AAPL"],
+                ["Company - 2023 Q2 AAPL", "Gross Margins - 2023 Q2 AAPL"], // Mapped to Apple Inc. Q2
+                ["Products - 2023 Q1 AAPL", "Gross Margin - 2023 Q1 AAPL"],
+                ["Q3 2023 Form 10-Q - 2023 Q3 AAPL", "Apple Inc. - 2023 Q3 AAPL"],
+                ["Q3 2023 Form 10-Q - 2023 Q3 AAPL", "Gross Margins - 2023 Q3 AAPL"],
+                ["Gross Margins - 2023 Q2 AAPL", "Volatility - 2023 Q2 AAPL"],
+                ["Gross Margins - 2023 Q2 AAPL", "Downward Pressure - 2023 Q2 AAPL"],
+                ["Apple Inc. - 2022 Q3 AAPL", "Gross Margin - 2022 Q3 AAPL"],
+                ["Gross Margin Percentage - 2022 Q3 AAPL", "2022 - 2022 Q3 AAPL"], // Treating years as nodes
+                ["Gross Margin Percentage - 2022 Q3 AAPL", "2021 - 2022 Q3 AAPL"], // Treating years as nodes
+                ["Products - 2023 Q3 AAPL", "Gross Margin - 2023 Q3 AAPL"],
+                ["Products - 2023 Q3 AAPL", "Gross Margin Percentage - 2023 Q3 AAPL"],
+                ["Products - 2023 Q2 AAPL", "Gross Margin - 2023 Q2 AAPL"],
+                ["Products - 2023 Q2 AAPL", "Gross Margin Percentage - 2023 Q2 AAPL"],
+                ["Services - 2023 Q2 AAPL", "Gross Margin - 2023 Q2 AAPL"],
+                ["Services - 2023 Q2 AAPL", "Services Gross Margin Percentage - 2023 Q2 AAPL"],
+                ["Services - 2023 Q3 AAPL", "Gross Margin - 2023 Q3 AAPL"],
+                ["Services - 2023 Q3 AAPL", "Services Gross Margin Percentage - 2023 Q3 AAPL"],
+                ["Services - 2023 Q1 AAPL", "Services Gross Margin - 2023 Q1 AAPL"],
+                ["Products - 2022 Q3 AAPL", "Gross Margin - 2022 Q3 AAPL"],
+                ["Products - 2022 Q3 AAPL", "Gross Margin Percentage - 2022 Q3 AAPL"],
+                ["Apple Inc. - 2023 Q2 AAPL", "Gross Margin - 2023 Q2 AAPL"],
+                ["Services - 2022 Q3 AAPL", "Gross Margin - 2022 Q3 AAPL"],
+                ["Services - 2022 Q3 AAPL", "Gross Margin Percentage - 2022 Q3 AAPL"],
+            ];
 
             // Deduplicate and assign types + IDs
             const uniqueNodeNames = [...new Set(rawNodes)];
@@ -382,36 +485,24 @@
                 else if (name.match(/^\d{4}/) && name.includes('AAPL')) { type = 'context'; shortText = name.split(' - ')[0]; } // e.g., 2022 from "2022 - 2022 Q3 AAPL"
                 else if (name.includes('Risk') || name.includes('Volatility') || name.includes('Pressure')) { type = 'context'; shortText = name.split(' - ')[0]; }
 
-                 shortText = shortText.replace(' AAPL', '').replace(' - ', ' '); // Clean up text
+                shortText = shortText.replace(' AAPL', '').replace(' - ', ' '); // Clean up text
 
                 graphData.nodes.push({ id: id, name: name, text: shortText, type: type });
             });
 
-             // Map edges to use IDs
-             rawEdges.forEach(edge => {
-                 const sourceId = nameToIdMap.get(edge[0]);
-                 const targetId = nameToIdMap.get(edge[1]);
-                 if (sourceId && targetId) {
-                     graphData.links.push({ source: sourceId, target: targetId });
-                 } else {
-                     console.warn("Could not map edge:", edge);
-                 }
-             });
-             const allSubgraphLinkIds = new Set(graphData.links.map(l => [l.source, l.target].sort().join('-')));
+            // Map edges to use IDs
+            rawEdges.forEach(edge => {
+                const sourceId = nameToIdMap.get(edge[0]);
+                const targetId = nameToIdMap.get(edge[1]);
+                if (sourceId && targetId) {
+                    graphData.links.push({ source: sourceId, target: targetId });
+                } else {
+                    console.warn("Could not map edge:", edge);
+                }
+            });
+            const allSubgraphLinkIds = new Set(graphData.links.map(l => [l.source, l.target].sort().join('-')));
 
-             // Top Similar Nodes from verbose output
-            // Gross Margin Percentage - 2023 Q3 AAPL: 0.747
-            // Gross Margin Percentage - 2022 Q3 AAPL: 0.735
-            // Gross Margin Percentage - 2023 Q2 AAPL: 0.729
-            // Gross Margin - 2023 Q3 AAPL: 0.718
-            // Gross Margin - 2022 Q3 AAPL: 0.708
-            // Gross Margin - 2023 Q2 AAPL: 0.706
-            // Gross Margins - 2023 Q3 AAPL: 0.702
-            // Gross Margin - 2023 Q1 AAPL: 0.698
-            // Gross Margins - 2023 Q2 AAPL: 0.690
-            // Services Gross Margin - 2023 Q1 AAPL: 0.670
-
-            //  ].filter(n => n.id); // Filter out any potentially missed nodes
+            // Top Similar Nodes from verbose output
             const similarNodesInfo = [
                 { name: "Gross Margin Percentage - 2023 Q3 AAPL", id: nameToIdMap.get("Gross Margin Percentage - 2023 Q3 AAPL"), score: 0.747 },
                 { name: "Gross Margin Percentage - 2022 Q3 AAPL", id: nameToIdMap.get("Gross Margin Percentage - 2022 Q3 AAPL"), score: 0.735 },
@@ -424,11 +515,11 @@
                 { name: "Gross Margins - 2023 Q2 AAPL", id: nameToIdMap.get("Gross Margins - 2023 Q2 AAPL"), score: 0.690 },
                 { name: "Services Gross Margin - 2023 Q1 AAPL", id: nameToIdMap.get("Services Gross Margin - 2023 Q1 AAPL"), score: 0.670 },
             ].filter(n => n.id); // Filter out any potentially missed nodes
-             const initialNodeIds = new Set(similarNodesInfo.map(n => n.id));
+            const initialNodeIds = new Set(similarNodesInfo.map(n => n.id));
 
-             // Entity -> Chunk Mapping (Ensure IDs are correct)
-             const entityChunks = {};
-             const mappings = {
+            // Entity -> Chunk Mapping (Ensure IDs are correct)
+            const entityChunks = {};
+            const mappings = {
                 "Gross Margin Percentage - 2023 Q3 AAPL": [1], "Gross Margin - 2023 Q3 AAPL": [1],
                 "Products - 2023 Q3 AAPL": [1], "Services - 2023 Q3 AAPL": [1],
                 "Apple Inc. - 2023 Q3 AAPL": [1], "Q3 2023 Form 10-Q - 2023 Q3 AAPL": [1],
@@ -444,14 +535,14 @@
                 "Apple Inc. - 2023 Q1 AAPL": [4],
                 "Gross Margins - 2023 Q3 AAPL": [1],
                 "2022 - 2022 Q3 AAPL": [1, 2, 5], "2021 - 2022 Q3 AAPL": [2, 5],
-             };
-             for (const name in mappings) {
+            };
+            for (const name in mappings) {
                 const id = nameToIdMap.get(name);
                 if (id) { entityChunks[id] = mappings[name]; }
-             }
+            }
 
-             // Path Descriptions (Using simplified text)
-             const pathData = [
+            // Path Descriptions (Using simplified text)
+            const pathData = [
                 { ids: ["apple-inc-2023-q3", "products-2023-q3"], text: "AAPL Q3 23 → Products Q3 23" },
                 { ids: ["apple-inc-2023-q3", "products-2023-q3", "gross-margin-2023-q3"], text: "AAPL Q3 23 → Products Q3 23 → GM Q3 23" },
                 { ids: ["apple-inc-2023-q3", "products-2023-q3", "gross-margin-percentage-2023-q3"], text: "AAPL Q3 23 → Products Q3 23 → GM % Q3 23" },
@@ -462,108 +553,141 @@
                 { ids: ["apple-inc-2023-q3", "q3-2023-form-10-q-2023-q3"], text: "AAPL Q3 23 → Q3 23 10-Q" },
                 { ids: ["apple-inc-2023-q3", "q3-2023-form-10-q-2023-q3", "apple-inc-2023-q3"], text: "AAPL Q3 23 → Q3 23 10-Q → AAPL Q3 23" },
                 { ids: ["apple-inc-2023-q3", "q3-2023-form-10-q-2023-q3", "gross-margins-2023-q3"], text: "AAPL Q3 23 → Q3 23 10-Q → Gross Margins Q3 23" },
-             ].map(p => ({ // Ensure all IDs exist in the graph data
-                 ids: p.ids.filter(id => graphData.nodes.some(n => n.id === id)),
-                 text: p.text
-             })).filter(p => p.ids.length > 1);
+            ].map(p => ({ // Ensure all IDs exist in the graph data
+                ids: p.ids.filter(id => graphData.nodes.some(n => n.id === id)),
+                text: p.text
+            })).filter(p => p.ids.length > 1);
 
             const topChunkIds = ['chunk1', 'chunk2', 'chunk3', 'chunk4', 'chunk5'];
             const finalChunkId = 'chunk1';
 
+            // Helper Functions
+            const sleep = (ms) => new Promise(resolve => {
+                currentAnimationTimeout = setTimeout(resolve, ms);
+            });
 
-            // --- Helper Functions (sleep, getChunkCenter - unchanged) ---
-             const sleep = (ms) => new Promise(resolve => {
-                 currentAnimationTimeout = setTimeout(resolve, ms);
-             });
+            function getChunkCenter(elementId) {
+                const element = document.getElementById(elementId);
+                if (!element) {
+                    return null;
+                }
+                const chunkRect = element.getBoundingClientRect();
+                const svgRect = svgElement.getBoundingClientRect();
+                if (svgRect.width === 0 || svgRect.height === 0) return null;
 
-             function getChunkCenter(elementId) {
-                 const element = document.getElementById(elementId);
-                 if (!element) {
-                     // console.warn(`Chunk element not found: ${elementId}`);
-                     return null;
-                 }
-                 const chunkRect = element.getBoundingClientRect();
-                 const svgRect = svgElement.getBoundingClientRect(); // Use SVG element for relative coords
-                 // Check if SVG rect has valid dimensions (might be 0 initially)
-                 if (svgRect.width === 0 || svgRect.height === 0) return null;
+                return {
+                    x: chunkRect.left - svgRect.left + chunkRect.width / 2,
+                    y: chunkRect.top - svgRect.top + 5 // Target near top edge
+                };
+            }
 
-                 return {
-                     x: chunkRect.left - svgRect.left + chunkRect.width / 2,
-                     y: chunkRect.top - svgRect.top + 5 // Target near top edge
-                 };
-             }
+            // Add this new function after the getChunkCenter function
+            async function drawEntityChunkLines(nodeId, chunkNums) {
+                const nodeData = nodeElements.filter(d => d.id === nodeId).datum();
+                if (!nodeData || !nodeData.x || !nodeData.y) return;
 
+                // Draw all lines for this entity in parallel
+                const linePromises = chunkNums.map(async chunkNum => {
+                    const chunkPos = getChunkCenter(`chunk${chunkNum}`);
+                    if (!chunkPos) return;
 
-            // --- D3 Initialization (Forces Adjusted) ---
+                    const line = dynamicLinesGroup.append("line")
+                    .attr("class", "entity-chunk-line")
+                    .attr("x1", nodeData.x)
+                    .attr("y1", nodeData.y)
+                    .attr("x2", nodeData.x)
+                    .attr("y2", nodeData.y)
+                    .style("stroke-opacity", 0);
+
+                    // Quick draw animation (200ms)
+                    await line.transition()
+                    .duration(200)
+                    .style("stroke-opacity", 0.8)
+                    .attr("x2", chunkPos.x)
+                    .attr("y2", chunkPos.y)
+                    .end();
+
+                    // Slower fade out (800ms)
+                    line.transition()
+                    .delay(500) // Keep visible for a bit
+                    .duration(800)
+                    .style("stroke-opacity", 0)
+                    .remove();
+                });
+
+                // Wait for all lines to be drawn (but not faded)
+                await Promise.all(linePromises);
+                }
+
+            // D3 Initialization
             function initGraph() {
-                 const bounds = svgElement.getBoundingClientRect();
-                 width = bounds.width;
-                 height = bounds.height;
+                const bounds = svgElement.getBoundingClientRect();
+                width = bounds.width;
+                height = bounds.height;
 
-                 svg.selectAll('*').remove(); // Clear previous
+                svg.selectAll('*').remove(); // Clear previous
 
-                 // Add groups in specific order for layering
-                 dynamicLinesGroup = svg.append('g').attr('id', 'dynamic-lines'); // Draw lines first (under nodes)
-                 similarityScoresGroup = svg.append('g').attr('id', 'similarity-scores'); // Scores can be above lines
-                 svg.append('g').attr('id', 'links');
-                 svg.append('g').attr('id', 'nodes');
-                 svg.append('g').attr('id', 'labels'); // Labels on top
+                // Add groups in specific order for layering
+                dynamicLinesGroup = svg.append('g').attr('id', 'dynamic-lines'); // Draw lines first (under nodes)
+                similarityScoresGroup = svg.append('g').attr('id', 'similarity-scores'); // Scores can be above lines
+                svg.append('g').attr('id', 'links');
+                svg.append('g').attr('id', 'nodes');
+                svg.append('g').attr('id', 'labels'); // Labels on top
 
-                 // Add fx, fy hints (same as before)
-                 const centerNodeId = nameToIdMap.get("Apple Inc. - 2023 Q3 AAPL");
-                 const docNodeId = nameToIdMap.get("Q3 2023 Form 10-Q - 2023 Q3 AAPL");
-                 const targetMetricNodeId = nameToIdMap.get("Gross Margin Percentage - 2023 Q3 AAPL");
+                // Add fx, fy hints (same as before)
+                const centerNodeId = nameToIdMap.get("Apple Inc. - 2023 Q3 AAPL");
+                const docNodeId = nameToIdMap.get("Q3 2023 Form 10-Q - 2023 Q3 AAPL");
+                const targetMetricNodeId = nameToIdMap.get("Gross Margin Percentage - 2023 Q3 AAPL");
 
-                 graphData.nodes.forEach(node => {
-                      if (node.id === centerNodeId) { node.fx = width / 2; node.fy = height / 2 - 50; }
-                      else if (node.id === docNodeId) { node.fx = width / 2 + 100; node.fy = height / 2 - 50; }
-                      else if (node.id === targetMetricNodeId) { node.fx = width / 2; node.fy = height / 2 + 50; }
-                      else { node.fx = null; node.fy = null; }
-                  });
+                graphData.nodes.forEach(node => {
+                    if (node.id === centerNodeId) { node.fx = width / 2; node.fy = height / 2 - 50; }
+                    else if (node.id === docNodeId) { node.fx = width / 2 + 100; node.fy = height / 2 - 50; }
+                    else if (node.id === targetMetricNodeId) { node.fx = width / 2; node.fy = height / 2 + 50; }
+                    else { node.fx = null; node.fy = null; }
+                });
 
-                 simulation = d3.forceSimulation(graphData.nodes)
-                     // Adjust forces for better containment and spread
-                     .force("link", d3.forceLink(graphData.links).id(d => d.id).distance(20).strength(8.0)) // Shorter, slightly stronger links
-                     .force("charge", d3.forceManyBody().strength(-400)) // Less repulsion to prevent pushing out too hard
-                     .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1)) // Weaker center force, let bounds do more work
-                     .force("collide", d3.forceCollide().radius(15).strength(0.8)) // Stronger collision
-                     // Removed initial fx/fy setting here, apply before simulation starts
-                     .on("tick", ticked); // ticked function now handles boundaries
+                simulation = d3.forceSimulation(graphData.nodes)
+                    // Adjust forces for better containment and spread
+                    .force("link", d3.forceLink(graphData.links).id(d => d.id).distance(1).strength(8.0)) // Shorter, slightly stronger links
+                    .force("charge", d3.forceManyBody().strength(-400)) // Less repulsion to prevent pushing out too hard
+                    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1)) // Weaker center force, let bounds do more work
+                    .force("collide", d3.forceCollide().radius(15).strength(0.8)) // Stronger collision
+                    .on("tick", ticked); // ticked function now handles boundaries
 
-                 linkElements = svg.select('#links')
-                     .selectAll(".link")
-                     .data(graphData.links)
-                     .join("line")
-                     .attr("class", "link")
-                     .attr("data-source", d => d.source.id)
-                     .attr("data-target", d => d.target.id);
+                linkElements = svg.select('#links')
+                    .selectAll(".link")
+                    .data(graphData.links)
+                    .join("line")
+                    .attr("class", "link")
+                    .attr("data-source", d => d.source.id)
+                    .attr("data-target", d => d.target.id);
 
-                 nodeElements = svg.select('#nodes')
-                     .selectAll(".node")
-                     .data(graphData.nodes)
-                     .join("circle")
-                     .attr("class", d => `node node-${d.type}`)
-                     .attr("r", 8)
-                     .attr("data-id", d => d.id)
-                     .attr("opacity", 0.3)
-                     .call(drag(simulation));
+                nodeElements = svg.select('#nodes')
+                    .selectAll(".node")
+                    .data(graphData.nodes)
+                    .join("circle")
+                    .attr("class", d => `node node-${d.type}`)
+                    .attr("r", 8)
+                    .attr("data-id", d => d.id)
+                    .attr("opacity", 0.3)
+                    .call(drag(simulation));
 
-                 labelElements = svg.select('#labels')
-                     .selectAll(".node-label")
-                     .data(graphData.nodes)
-                     .join("text")
-                     .attr("class", "node-label")
-                     .attr("dy", -12)
-                     .text(d => d.text);
+                labelElements = svg.select('#labels')
+                    .selectAll(".node-label")
+                    .data(graphData.nodes)
+                    .join("text")
+                    .attr("class", "node-label")
+                    .attr("dy", -12)
+                    .text(d => d.text);
 
-                 simulation.alpha(0.1).restart(); // Start hotter
-                 setTimeout(() => {
-                     simulation.stop();
-                     graphData.nodes.forEach(node => { node.fx = null; node.fy = null; }); // Release fixed positions
-                 }, 2000); // Longer stabilization
-             }
+                simulation.alpha(0.1).restart(); // Start hotter
+                setTimeout(() => {
+                    simulation.stop();
+                    graphData.nodes.forEach(node => { node.fx = null; node.fy = null; }); // Release fixed positions
+                }, 2000); // Longer stabilization
+            }
 
-            // --- Ticked function with Boundary Constraints ---
+            // Ticked function with Boundary Constraints
             function ticked() {
                 const nodeRadius = 8; // Match the base radius
                 const margin = nodeRadius + 5; // Keep node fully inside + small buffer
@@ -583,200 +707,207 @@
                     .attr("y", d => d.y);
             }
 
-            // --- Drag function (unchanged) ---
+            // Drag function
             function drag(simulation) {
-                 function dragstarted(event, d) {
+                function dragstarted(event, d) {
                     if (!event.active) simulation.alphaTarget(0.3).restart();
                     d.fx = d.x;
                     d.fy = d.y;
-                 }
-                 function dragged(event, d) {
+                }
+                function dragged(event, d) {
                     // Keep within bounds while dragging too
+                    const margin = 8 + 5;
                     d.fx = Math.max(margin, Math.min(width - margin, event.x));
                     d.fy = Math.max(margin, Math.min(height - margin, event.y));
-                 }
-                 // Add margin variable for drag function scope
-                 const margin = 8 + 5;
-                 function dragended(event, d) {
+                }
+                function dragended(event, d) {
                     if (!event.active) simulation.alphaTarget(0);
-                     d.fx = null; // Release fixed position after drag
-                     d.fy = null;
-                 }
-                 return d3.drag()
+                    d.fx = null; // Release fixed position after drag
+                    d.fy = null;
+                }
+                return d3.drag()
                     .on("start", dragstarted)
                     .on("drag", dragged)
                     .on("end", dragended);
             }
 
-
-            // --- Animation Sequence (Chunk Link Fixes) ---
+            // Animation Sequence
             async function runAnimation() {
                 if (currentAnimationTimeout) clearTimeout(currentAnimationTimeout);
-                status.textContent = "Starting...";
+
+                // Update UI elements
+                playBtn.disabled = true;
                 restartBtn.disabled = true;
+                animationStarted = true;
+                // statusEl.textContent = "Initializing...";
+                // No need to set opacity as we're keeping it visible all the time
 
                 // 1. Reset State
-                resetAnimationVisuals();
-                initGraph(); // initGraph now defines width/height
+                // resetAnimationVisuals();
+                // initGraph(); // initGraph now defines width/height
 
-                // Steps 2 (Query), 3 (Similarity), 4 (Subgraph), 5 (Paths) remain the same...
                 // 2. Show Query
-                status.textContent = "1/6: Processing Query";
+                statusEl.textContent = "1/7: Processing Query";
                 queryBox.style.opacity = 1;
                 await sleep(1500);
 
                 // 3. Entity Similarity Matching
-                status.textContent = "2/6: Finding Similar Entities...";
+                statusEl.textContent = "2/7: Finding Similar Entities...";
                 const querySimOrigin = { x: width * 0.05, y: height * 0.05 };
                 nodeElements.transition().duration(500).attr("opacity", 0.6);
                 labelElements.transition().duration(500).attr("opacity", 0.7);
                 const simLines = []; const scoreTexts = [];
-                 for (const info of similarNodesInfo) {
-                     const targetNode = nodeElements.filter(d => d.id === info.id);
-                     if (targetNode.empty()) continue;
-                     const targetLabel = labelElements.filter(d => d.id === info.id);
-                     const nodeData = targetNode.datum();
-                     if (nodeData && nodeData.x !== undefined) {
-                         const line = dynamicLinesGroup.append("line")
-                             .attr("class", "similarity-line")
-                             .attr("x1", querySimOrigin.x).attr("y1", querySimOrigin.y)
-                             .attr("x2", nodeData.x).attr("y2", nodeData.y);
-                         simLines.push(line);
-                         line.transition().duration(600).attr("stroke-opacity", 0.7);
-                         const score = similarityScoresGroup.append("text")
-                             .attr("class", "similarity-score-text")
-                             .attr("x", nodeData.x + 10).attr("y", nodeData.y - 10)
-                             .text(info.score.toFixed(2));
-                         scoreTexts.push(score);
-                         score.transition().duration(600).attr("opacity", 1);
-                         targetNode.classed("highlight-initial", true).transition().duration(300).attr("opacity", 1);
-                         targetLabel.transition().duration(300).attr("opacity", 1);
-                         await sleep(400);
-                     }
-                 }
-                 status.textContent = `2/6: Found ${similarNodesInfo.length} Top Similar Nodes`;
-                 await sleep(1500);
-                 simLines.forEach(l => l.transition().duration(500).attr("stroke-opacity", 0).remove());
-                 scoreTexts.forEach(t => t.transition().duration(500).attr("opacity", 0).remove());
-                 await sleep(500);
+                for (const info of similarNodesInfo) {
+                    const targetNode = nodeElements.filter(d => d.id === info.id);
+                    if (targetNode.empty()) continue;
+                    const targetLabel = labelElements.filter(d => d.id === info.id);
+                    const nodeData = targetNode.datum();
+                    if (nodeData && nodeData.x !== undefined) {
+                        const line = dynamicLinesGroup.append("line")
+                            .attr("class", "similarity-line")
+                            .attr("x1", querySimOrigin.x).attr("y1", querySimOrigin.y)
+                            .attr("x2", nodeData.x).attr("y2", nodeData.y);
+                        simLines.push(line);
+                        line.transition().duration(600).attr("stroke-opacity", 0.7);
+                        const score = similarityScoresGroup.append("text")
+                            .attr("class", "similarity-score-text")
+                            .attr("x", nodeData.x + 10).attr("y", nodeData.y - 10)
+                            .text(info.score.toFixed(2));
+                        scoreTexts.push(score);
+                        score.transition().duration(600).attr("opacity", 1);
+                        targetNode.classed("highlight-initial", true).transition().duration(300).attr("opacity", 1);
+                        targetLabel.transition().duration(300).attr("opacity", 1);
+                        await sleep(400);
+                    }
+                }
+                statusEl.textContent = `2/7: Found ${similarNodesInfo.length} Top Similar Nodes`;
+                await sleep(1500);
+                simLines.forEach(l => l.transition().duration(500).attr("stroke-opacity", 0).remove());
+                scoreTexts.forEach(t => t.transition().duration(500).attr("opacity", 0).remove());
+                await sleep(500);
 
                 // 4. Subgraph Highlighting
-                status.textContent = "3/7: Highlighting Full Subgraph (29 Nodes, 30 Edges)";
-                 nodeElements.filter(d => allSubgraphNodeIds.has(d.id))
-                     .classed("highlight-subgraph", true).transition().duration(800).attr("opacity", 1);
-                 labelElements.filter(d => allSubgraphNodeIds.has(d.id))
-                     .transition().duration(800).attr("opacity", 1);
-                 linkElements.filter(d => { const ids = [d.source.id, d.target.id].sort(); return allSubgraphLinkIds.has(`${ids[0]}-${ids[1]}`); })
-                     .classed("highlight-subgraph", true).transition().duration(800).attr("stroke-opacity", 0.7);
+                statusEl.textContent = "3/7: Exploring Subgraph (29 Nodes, 30 Edges)";
+                nodeElements.filter(d => allSubgraphNodeIds.has(d.id))
+                    .classed("highlight-subgraph", true).transition().duration(800).attr("opacity", 1);
+                labelElements.filter(d => allSubgraphNodeIds.has(d.id))
+                    .transition().duration(800).attr("opacity", 1);
+                linkElements.filter(d => { const ids = [d.source.id, d.target.id].sort(); return allSubgraphLinkIds.has(`${ids[0]}-${ids[1]}`); })
+                    .classed("highlight-subgraph", true).transition().duration(800).attr("stroke-opacity", 0.7);
                 await sleep(2000);
 
-                // 6. Chunk Selection (Debugging chunk links)
-                status.textContent = "4/6: Linking Entities to Relevant Chunks...";
+                // 5. Path Display
+                statusEl.textContent = "4/7: Analyzing Key Entity Paths";
+                pathDisplay.style.opacity = 1;
+                // Make sure path content is displayed properly
+                if (pathData && pathData.length > 0) {
+                    pathContent.innerHTML = pathData.map(p => p.text).join('<br>');
+                } else {
+                    // Fallback paths if data is missing
+                    pathContent.innerHTML =
+                        "AAPL Q3 23 → Products Q3 23<br>" +
+                        "AAPL Q3 23 → Products Q3 23 → GM % Q3 23<br>" +
+                        "AAPL Q3 23 → Q3 23 10-Q<br>" +
+                        "AAPL Q3 23 → Q3 23 10-Q → Gross Margins Q3 23<br>" +
+                        "Products Q3 23 → GM % Q3 23";
+                }
+                await sleep(2000);
+
+                // 6. Chunk Selection
+                statusEl.textContent = "5/7: Linking Entities to Relevant Chunks...";
                 chunksContainer.style.opacity = 1;
                 document.querySelectorAll('.chunk').forEach(c => { c.style.opacity = 0.7; });
 
-                const chunkLines = [];
-                // console.log("--- Drawing Chunk Links ---"); // Debug Start
-                 allSubgraphNodeIds.forEach(nodeId => {
-                     const nodeData = nodeElements.filter(d => d.id === nodeId).datum();
-                     // Check if node exists AND has mappings
-                     if (!nodeData || !entityChunks[nodeId]) {
-                        // console.log(`Skipping node ${nodeId}: No data or no chunk mapping.`);
-                        return;
-                     }
+                // Draw entity-chunk links sequentially
+                for (const [nodeId, chunks] of Object.entries(entityChunks)) {
+                await drawEntityChunkLines(nodeId, chunks);
+                await sleep(10); // Small delay between entities
+                }
 
-                     // Check if node has valid coordinates AFTER simulation
-                     if (nodeData.x === undefined || nodeData.y === undefined) {
-                         console.warn(`Node ${nodeId} has no coordinates!`);
-                         return;
-                     }
+                await sleep(1000); // Pause before moving to next step
 
-                     // console.log(`Node ${nodeId} at (${nodeData.x.toFixed(1)}, ${nodeData.y.toFixed(1)}) linked to chunks: ${entityChunks[nodeId]}`);
+                statusEl.textContent = "6/7: Identifying Top 5 Chunks";
+                topChunkIds.forEach(id => { document.getElementById(id)?.classList.add('highlight-top5'); });
+                await sleep(1500);
 
-                     entityChunks[nodeId].forEach(chunkNum => {
-                         const chunkElementId = `chunk${chunkNum}`;
-                         const chunkPos = getChunkCenter(chunkElementId);
+                statusEl.textContent = "6/7: Identifying Top 5 Chunks";
+                topChunkIds.forEach(id => { document.getElementById(id)?.classList.add('highlight-top5'); });
+                await sleep(1500);
 
-                         if (chunkPos) {
-                            // console.log(`   -> Chunk ${chunkNum} center at (${chunkPos.x.toFixed(1)}, ${chunkPos.y.toFixed(1)})`);
-                            const line = dynamicLinesGroup.append("line")
-                                .attr("class", "entity-chunk-line")
-                                .attr("x1", nodeData.x).attr("y1", nodeData.y)
-                                .attr("x2", chunkPos.x).attr("y2", chunkPos.y)
-                                .attr("stroke-opacity", 0); // Ensure it starts hidden
-
-                            chunkLines.push(line);
-
-                            // Apply transition AFTER appending
-                             line.transition()
-                                 .duration(500)
-                                 .delay(200) // Keep delay
-                                 .attr("stroke-opacity", 0.6); // Target opacity
-
-                         } else {
-                             console.warn(`Could not get center for ${chunkElementId} for node ${nodeId}`);
-                         }
-                     });
-                 });
-                 // console.log("--- Finished Chunk Links ---"); // Debug End
-                 await sleep(1500); // Allow time for links to appear
-
-                 // Subsequent chunk highlighting logic remains the same...
-                 status.textContent = "5/6: Identifying Top 5 Chunks";
-                 topChunkIds.forEach(id => { document.getElementById(id)?.classList.add('highlight-top5'); });
-                 await sleep(1500);
-
-                 status.textContent = "6/6: Selecting Final Chunk";
-                 document.querySelectorAll('.chunk.highlight-top5').forEach(el => {
-                     if (el.id !== finalChunkId) {
-                         el.classList.remove('highlight-top5');
-                         el.style.opacity = 0.4;
-                     }
-                 });
-                 document.getElementById(finalChunkId)?.classList.add('highlight-final');
-                 chunkLines.forEach(line => {
-                    const chunkPosFinal = getChunkCenter(finalChunkId);
-                    // Use a tolerance for float comparison
-                    const tolerance = 1;
-                    if(chunkPosFinal && Math.abs(line.attr('x2') - chunkPosFinal.x) < tolerance && Math.abs(line.attr('y2') - chunkPosFinal.y) < tolerance) {
-                        line.transition().duration(500).attr('stroke-opacity', 0.85).attr('stroke-width', 1.5); // Slightly stronger final link
-                    } else {
-                        line.transition().duration(500).attr('stroke-opacity', 0.1);
+                statusEl.textContent = "7/7: Selecting Final Chunk";
+                document.querySelectorAll('.chunk.highlight-top5').forEach(el => {
+                    if (el.id !== finalChunkId) {
+                        el.classList.remove('highlight-top5');
+                        el.style.opacity = 0.4;
                     }
-                 });
-                 await sleep(1500);
+                });
+                document.getElementById(finalChunkId)?.classList.add('highlight-final');
+                await sleep(1500);
 
+                // 7. Generate Answer
+                finalAnswerEl.style.opacity = 1;
+                finalAnswerEl.style.transform = 'translateX(-50%) translateY(-10px)';
 
-                 // 7. LLM Generation & Final Answer (same)
-                 status.textContent = "7/7: Generating Answer...";
-                 await sleep(1000);
-                 finalAnswerEl.style.opacity = 1;
-                 finalAnswerEl.style.transform = 'translateX(-50%) translateY(-10px)';
-                 status.textContent = "Animation Complete!";
-                 restartBtn.disabled = false;
+                // Enable restart button
+                restartBtn.disabled = false;
             }
 
-            // --- Reset Function (unchanged) ---
-             function resetAnimationVisuals() {
+            // Reset Function
+            function resetAnimationVisuals() {
                 if (currentAnimationTimeout) clearTimeout(currentAnimationTimeout);
-                status.textContent = "Resetting...";
-                queryBox.style.opacity = 0; chunksContainer.style.opacity = 0;
-                document.querySelectorAll('.chunk').forEach(el => { el.classList.remove('highlight-final', 'highlight-top5'); el.style.opacity = 0; el.style.transform = 'scale(1)'; });
-                pathDisplay.style.opacity = 0; pathContent.innerHTML = '';
-                finalAnswerEl.style.opacity = 0; finalAnswerEl.style.transform = 'translateX(-50%) translateY(0)';
+
+                // Hide all elements except status
+                statusEl.textContent = "Ready to start animation...";
+                queryBox.style.opacity = 0;
+                chunksContainer.style.opacity = 0;
+                document.querySelectorAll('.chunk').forEach(el => {
+                    el.classList.remove('highlight-final', 'highlight-top5');
+                    el.style.opacity = 0;
+                    el.style.transform = 'scale(1)';
+                });
+                pathDisplay.style.opacity = 0;
+                pathContent.innerHTML = '';
+                finalAnswerEl.style.opacity = 0;
+                finalAnswerEl.style.transform = 'translateX(-50%) translateY(0)';
+
+                // Clear D3 elements
                 svg.selectAll('*').remove();
-                dynamicLinesGroup = null; similarityScoresGroup = null;
-                linkElements = null; nodeElements = null; labelElements = null;
-                if (simulation) simulation.stop(); simulation = null;
-             }
+                dynamicLinesGroup = null;
+                similarityScoresGroup = null;
+                linkElements = null;
+                nodeElements = null;
+                labelElements = null;
 
-            // --- Controls & Resize (unchanged) ---
-             restartBtn.addEventListener('click', function() { runAnimation(); });
-             window.addEventListener('resize', () => { resetAnimationVisuals(); initGraph(); });
+                // Stop simulation
+                if (simulation) simulation.stop();
+                simulation = null;
 
-            // --- Start ---
-             setTimeout(runAnimation, 500);
+                // Reset UI
+                if (animationStarted) {
+                    playBtn.disabled = false;
+                }
+            }
 
+            // Initialize graph
+            initGraph();
+
+            // Add event listeners
+            playBtn.addEventListener('click', function() {
+                runAnimation();
+            });
+
+            restartBtn.addEventListener('click', function() {
+                resetAnimationVisuals();
+                setTimeout(() => {
+                    runAnimation();
+                }, 100);
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                resetAnimationVisuals();
+                initGraph();
+            });
         });
     </script>
 </body>
