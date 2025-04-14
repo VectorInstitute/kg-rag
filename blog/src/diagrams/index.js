@@ -200,38 +200,43 @@ export function initCustomTOC() {
     });
 
     // Add one more style that will override all bullets
-    const extraStyle = document.createElement('style');
-    extraStyle.textContent = `
-      d-contents li,
-      d-contents ul li,
-      d-contents nav ul li,
-      d-contents li::marker,
-      d-contents ul li::marker,
-      d-contents nav ul li::marker,
-      .custom-toc-item::marker {
-        list-style: none !important;
-        list-style-type: none !important;
-        list-style-position: initial !important;
-        list-style-image: initial !important;
-      }
-
-      /* Simple hover effect for links with purple color */
-      d-contents a:hover {
-        color: #8e44ad !important;
-      }
-
-      /* Fix for the TOC layout and positioning */
-      @media (min-width: 1024px) {
-        d-article {
-          padding-top: 2rem !important;
+    // Check if the style element already exists
+    let extraStyle = document.getElementById('custom-toc-style');
+    if (!extraStyle) {
+      extraStyle = document.createElement('style');
+      extraStyle.id = 'custom-toc-style';
+      extraStyle.textContent = `
+        d-contents li,
+        d-contents ul li,
+        d-contents nav ul li,
+        d-contents li::marker,
+        d-contents ul li::marker,
+        d-contents nav ul li::marker,
+        .custom-toc-item::marker {
+          list-style: none !important;
+          list-style-type: none !important;
+          list-style-position: initial !important;
+          list-style-image: initial !important;
         }
 
-        d-contents + * {
-          margin-top: 2rem !important;
+        /* Simple hover effect for links with purple color */
+        d-contents a:hover {
+          color: #8e44ad !important;
         }
-      }
-    `;
-    document.head.appendChild(extraStyle);
+
+        /* Fix for the TOC layout and positioning */
+        @media (min-width: 1024px) {
+          d-article {
+            padding-top: 2rem !important;
+          }
+
+          d-contents + * {
+            margin-top: 2rem !important;
+          }
+        }
+      `;
+      document.head.appendChild(extraStyle);
+    }
 
     // Add classes for easier styling
     const nav = tocContainer.querySelector('nav');
