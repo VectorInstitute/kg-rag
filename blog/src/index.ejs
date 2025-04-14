@@ -55,7 +55,6 @@
             <a href="#baseline-rag">Navigate to Baseline RAG Architecture section</a>
             <ul>
                 <li><a href="#baseline-components">Key Components</a></li>
-                <li><a href="#baseline-limitations">Limitations</a></li>
             </ul>
         </details>
         <details open>
@@ -119,14 +118,19 @@
     <li><strong>Support Explainable Retrieval:</strong> Making it clear why certain information was selected</li>
   </ol>
 
+  <p>Knowledge graph-based approaches for RAG have been gaining attention in recent research. Notable examples include Microsoft's GraphRAG <d-cite key="edge2025localglobalgraphrag"></d-cite>, which leverages graph structures for query-focused summarization,
+    along with other approaches like MiniRAG <d-cite key="fan2025miniragextremelysimpleretrievalaugmented"></d-cite>,
+    which explores efficient retrieval methods that combines text chunks and named entities in a unified structure.
+  </p>
+
   <p>This blog post explores how knowledge graphs can enhance RAG systems through a comparative analysis of traditional vector-based retrieval and our novel knowledge graph-based approaches. We focus particularly on quantitative question answering in the complex domain of financial documents, where relationships between entities and figures are crucial for accurate responses.</p>
 
   <h2 id="baseline-rag">Baseline RAG Architecture</h2>
 
-  <p>The standard RAG approach relies on vector similarity to retrieve relevant context. The process follows a straightforward pipeline as illustrated below:</p>
+  <p>The standard RAG approach relies on vector similarity between the query embedding and the pre-embedded document chunks in the vector database to retrieve relevant context. The process follows a straightforward pipeline as illustrated below:</p>
 
   <figure>
-    <img src="assets/baseline.png" alt="Baseline RAG Architecture" style="width: 70%; max-width: 600px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
+    <img src="assets/baseline.png" alt="Baseline RAG Architecture" style="width: 70%; max-width: 600px; margin: 0 auto 1rem auto; display: block;  border-radius: 4px;">
     <figcaption>Figure 1: Standard RAG architecture using vector similarity for retrieval</figcaption>
   </figure>
 
@@ -150,20 +154,7 @@
     <li><strong>Vector Store:</strong> Stores and retrieves document chunks and their embeddings</li>
   </ul>
 
-  <p>This approach works well for many question-answering tasks but has certain limitations when dealing with complex, relationship-heavy domains.</p>
-
-  <h3 id="baseline-limitations">Limitations</h3>
-
-  <p>While effective for many use cases, traditional RAG systems face several challenges:</p>
-
-  <ul>
-    <li><strong>Semantic Gap:</strong> Vector similarity may not capture complex semantic relationships between entities</li>
-    <li><strong>Lack of Structure:</strong> The flat representation misses hierarchical and relational information</li>
-    <li><strong>Context Fragmentation:</strong> Related information may be spread across different chunks that don't individually match the query well</li>
-    <li><strong>Multi-hop Reasoning:</strong> Difficulty in answering questions that require connecting information across multiple documents</li>
-  </ul>
-
-  <p>These limitations become particularly apparent when dealing with domains that have rich relational structures, such as financial data, scientific literature, or complex technical documentation.</p>
+  <p>This approach works well for many question-answering tasks but has certain limitations, such as those mentioned above, when dealing with complex, relationship-heavy domains.</p>
 
   <h2 id="kg-rag">Knowledge Graph-Based RAG</h2>
 
@@ -174,7 +165,7 @@
   <p>The Entity-Based KG-RAG approach enhances the standard RAG pipeline by incorporating graph-based retrieval. The process follows these steps:</p>
 
   <figure>
-    <img src="assets/entity.png" alt="Entity-Based KG-RAG Architecture" style="width: 70%; max-width: 600px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
+    <img src="assets/entity.png" alt="Entity-Based KG-RAG Architecture" style="width: 70%; max-width: 600px; margin: 0 auto 1rem auto; display: block; border-radius: 4px;">
     <figcaption>Figure 2: Entity-Based KG-RAG architecture leveraging knowledge graph relationships</figcaption>
   </figure>
 
@@ -189,7 +180,9 @@
     <li><strong>LLM Generation:</strong> Generate a comprehensive answer using both structural and textual information</li>
   </ol>
 
-  <p>This approach leverages both semantic similarity (through embeddings) and structural relationships (through the knowledge graph) to provide more accurate and comprehensive answers.</p>
+  <p>This approach leverages both semantic similarity (through embeddings) and structural relationships (through the knowledge graph) to provide more accurate and comprehensive answers. The entities in the knowledge graph are embedded based on the entity name and source document using the OpenAI <code>text-embedding-3-small</code> model, and compared to the query embedding using cosine similarity.</p>
+
+  <p>It's important to note that the "top nodes" concept is separate from the final number of chunks selected. We choose top N nodes and score them based on both their frequency (how often they are associated with a specific chunk) and overall similarity scores to the query. Then we select a set of top K chunks based on that combined score.</p>
 
   <h3 id="interactive-visualization">Interactive Visualization</h3>
 
@@ -197,7 +190,7 @@
 
   <figure>
     <iframe src="assets/diagram.html" width="100%" height="896px" frameborder="0" style="max-width: 100%; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 6px;"></iframe>
-    <figcaption>Figure 3: Interactive visualization of the Entity-Based KG-RAG approach showing query processing flow for a question about Apple's gross margin percentage. The visualization demonstrates how entities are identified, the subgraph is explored, and relevant document chunks are selected to provide comprehensive answers.</figcaption>
+    <figcaption>Figure 3: Interactive visualization of the Entity-Based KG-RAG approach showing query processing flow for a question about Apple's gross margin percentage. The visualization demonstrates how entities are identified, the subgraph is explored, and relevant document chunks are selected to provide comprehensive answers. The lines in the animation represent the relationships between nodes within the subgraph, defining the local graph structure around the top 10 nodes.</figcaption>
   </figure>
 
   <p>The visualization above shows how a query about Apple's gross margin percentage flows through the Entity-Based KG-RAG system:</p>
@@ -236,7 +229,7 @@
 
   <!-- add sample screenshot of sec-10-q document from apple 2023 q3 report  -->
   <figure>
-    <img src="assets/sec10q_sample.png" alt="Sample SEC 10-Q Document" style="width: 80%; max-width: 700px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
+    <img src="assets/sec10q_sample.png" alt="Sample SEC 10-Q Document" style="width: 85%; max-width: 750px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
     <figcaption>Figure 4: Sample SEC 10-Q document from Apple's Q3 2023 report. The document contains structured financial data and textual information.</figcaption>
   </figure>
 
@@ -267,9 +260,11 @@
   <ol>
     <li><strong>Accuracy:</strong> An answer is considered correct only if the numerical value exactly matches the ground truth.</li>
     <li><strong>Controlled Environment:</strong> All systems used the same LLMs (GPT-4o/GPT-4o-mini) for generation, ensuring that performance differences were attributable to the retrieval components.</li>
-    <li><strong>Hyperparameter Consistency:</strong> Where applicable, we used consistent hyperparameters (e.g., top-k = 5 chunks) across systems for fair comparison.</li>
+    <li><strong>Hyperparameter Consistency:</strong> Where applicable, we used consistent hyperparameters (e.g., top-k = 5 chunks) across systems for fair comparison. For document chunking, we used a standard approach of 512 tokens with an overlap of 24 tokens, kept constant for both baseline and KG-RAG implementations.</li>
     <li><strong>Error Analysis:</strong> Beyond simple accuracy, we analyzed the confusion matrix between systems to understand where and why different approaches succeeded or failed.</li>
   </ol>
+
+  <p>It's worth noting that we did not implement a re-ranker for either method in these experiments. However, re-ranking could be an interesting future exploration for the KG-RAG method by supplying token-efficient subgraph path definitions to have the model re-rank paths based on their usefulness to the query, with the associated nodes then used to select chunks.</p>
 
   <h3 id="performance-results">Performance Results</h3>
 
@@ -277,7 +272,7 @@
 
   <figure>
     <img src="assets/accuracy.png" alt="Performance Comparison" style="width: 80%; max-width: 700px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
-    <figcaption>Figure 4: Performance comparison between Entity-based KG-RAG and Baseline RAG across different LLM models. Entity-based KG-RAG consistently outperforms the baseline approach.</figcaption>
+    <figcaption>Figure 5: Performance comparison between Entity-based KG-RAG and Baseline RAG across different LLM models. Entity-based KG-RAG consistently outperforms the baseline approach.</figcaption>
   </figure>
 
   <p>
@@ -290,29 +285,36 @@
     This suggests that the structural knowledge provided by the knowledge graph compensates for the limitations of the smaller model, allowing it to leverage relationships more effectively than the baseline approach.
   </p>
 
+  <p>Regarding latency, our measurements showed that the KG-RAG method adds only minimal overhead to the retrieval process compared to the baseline method:</p>
+
+  <ul>
+    <li><strong>Baseline Method:</strong> Mean Latency: 0.5679 seconds, Median: 0.3511 seconds</li>
+    <li><strong>KG-RAG Method:</strong> Mean Latency: 0.6224 seconds, Median: 0.4533 seconds</li>
+  </ul>
+
   <p>Here, we conduct a detailed error analysis using a confusion matrix to understand the patterns of success and failure between the two approaches:</p>
 
   <figure>
     <img src="assets/confusion_matrix.png" alt="Confusion Matrix" style="width: 80%; max-width: 700px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px; ">
-    <figcaption>Figure 5: Confusion matrix comparing Entity-based KG-RAG and Baseline RAG performance. The matrix shows that Entity-based KG-RAG correctly answers many questions that the Baseline approach misses, while rarely missing questions that the Baseline gets right.</figcaption>
+    <figcaption>Figure 6: Confusion matrix comparing KG-RAG and Baseline RAG performance. The matrix shows that KG-RAG correctly answers many questions that the Baseline approach misses, while rarely missing questions that the Baseline gets right.</figcaption>
   </figure>
 
   <p>The confusion matrix reveals that:</p>
 
   <ul>
     <li>Both systems correctly answered 38 questions (38% of the dataset)</li>
-    <li>Entity-based KG-RAG correctly answered 17 questions that the Baseline RAG missed</li>
-    <li>Baseline RAG correctly answered only 2 questions that Entity-based KG-RAG missed</li>
+    <li>KG-RAG correctly answered 17 questions that the Baseline RAG missed</li>
+    <li>Baseline RAG correctly answered only 2 questions that KG-RAG missed</li>
     <li>Both systems incorrectly answered 43 questions (43% of the dataset)</li>
   </ul>
 
-  <p>This asymmetric pattern suggests that the Entity-based KG-RAG approach maintains most of the strengths of the baseline approach while addressing many of its weaknesses through improved structural understanding.</p>
+  <p>This asymmetric pattern suggests that the KG-RAG approach maintains most of the strengths of the baseline approach while addressing many of its weaknesses through improved structural understanding.</p>
 
-  <p>We also investigated how the performance of the Entity-based KG-RAG approach varies with different configuration parameters, particularly the number of top nodes considered in the similarity matching stage:</p>
+  <p>We also investigated how the performance of the KG-RAG approach varies with different configuration parameters, particularly the number of top nodes considered in the similarity matching stage:</p>
 
   <figure>
-    <img src="assets/entity_topn.png" alt="Entity-based KG-RAG Performance by Top-N Nodes" style="width: 80%; max-width: 700px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
-    <figcaption>Figure 6: Entity-based KG-RAG performance with varying numbers of top similarity nodes considered. The peak performance occurs around 30-40 nodes, with diminishing returns when considering too many or too few nodes.</figcaption>
+    <img src="assets/entity_topn.png" alt="KG-RAG Performance by Top-N Nodes" style="width: 80%; max-width: 700px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
+    <figcaption>Figure 7: KG-RAG performance with varying numbers of top similarity nodes considered. The peak performance occurs around 30-40 nodes, with diminishing returns when considering too many or too few nodes.</figcaption>
   </figure>
 
   <p>This analysis reveals that performance peaks when considering between 30-40 top similar nodes (56% accuracy), with a noticeable decline when considering either too few (&lt; 10 nodes) or too many (&gt; 50 nodes) similar entities. This suggests an optimal balance where the system has enough similar entities to explore related connections, but not so many that it introduces noise or dilutes the relevance of the retrieved context.</p>
@@ -345,7 +347,7 @@
     <li><strong>LangChain Integration:</strong> Built on the LangChain framework for seamless integration with other components</li>
   </ul>
 
-  <p>This approach is particularly effective for documents with natural community structures, such as research papers with distinct sections or reports covering various business segments.  We leverage a <a href="https://github.com/ksachdeva/langchain-graphrag/tree/main" target="_blank">lanchain implementation of GraphRAG</a> for ease-of-use.</p>
+  <p>This approach is particularly effective for documents with natural community structures, such as research papers with distinct sections or reports covering various business segments.  We leverage a <a href="https://github.com/ksachdeva/langchain-graphrag/tree/main" target="_blank">langchain implementation of GraphRAG</a> for ease-of-use.</p>
 
   <h2 id="conclusion">Conclusion and Future Directions</h2>
 
@@ -363,6 +365,10 @@
     <li><strong>Reasoning-enhanced retrieval:</strong> Incorporating logical reasoning capabilities into the graph exploration process</li>
     <li><strong>Hybrid approaches:</strong> Integrating the strengths of different KG-RAG methods for optimal performance across diverse question types</li>
   </ul>
+
+  <p>
+    Recent work has shown promising results for query-focused summarization using graph-based approaches <d-cite key="edge2025localglobalgraphrag"></d-cite>.
+  </p>
 
 </d-article>
 
