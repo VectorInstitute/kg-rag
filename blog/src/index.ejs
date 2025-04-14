@@ -1,9 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=1300">
+  <style id="distill-article-specific-styles">
+    <%= require("raw-loader!./style.css") %>
+  </style>
+  <style>
+    /* Override default list styling to prevent double bullets */
+    d-contents ul, d-contents li {
+      list-style-type: none !important;
+    }
+    d-contents li::marker {
+      display: none !important;
+      content: '' !important;
+    }
+  </style>
   <script src="https://distill.pub/template.v2.js"></script>
-  <style><%= require("raw-loader!./style.css") %></style>
+  <!-- Bundle will be automatically injected here by webpack -->
 </head>
 <body>
 
@@ -43,59 +56,35 @@
 
 <d-byline></d-byline>
 
-<div id="contents" class="base-grid" style="border-top: 1px solid #eee; border-radius: 6px; padding: 1.8rem; background-color: #f8f9fa; margin: 1.5rem 0;">
-    <nav class="l-text toc figcaption">
-        <h3 style="margin-top: 0; margin-bottom: 1rem; color: #333; font-size: 1.2rem;">Contents</h3>
-        <details open>
-            <summary>Introduction</summary>
-            <a href="#introduction">Navigate to Introduction section</a>
-        </details>
-        <details open>
-            <summary>Baseline RAG Architecture</summary>
-            <a href="#baseline-rag">Navigate to Baseline RAG Architecture section</a>
-            <ul>
-                <li><a href="#baseline-components">Key Components</a></li>
-                <li><a href="#baseline-limitations">Limitations</a></li>
-            </ul>
-        </details>
-        <details open>
-            <summary>Knowledge Graph-Based RAG</summary>
-            <a href="#kg-rag">Navigate to Knowledge Graph-Based RAG section</a>
-            <ul>
-                <li><a href="#entity-based-approach">Entity-Based Approach</a></li>
-                <li><a href="#interactive-visualization">Interactive Visualization</a></li>
-                <li><a href="#kg-rag-advantages">Advantages</a></li>
-            </ul>
-        </details>
-        <details open>
-            <summary>SEC 10-Q Dataset & Evaluation</summary>
-            <a href="#dataset-evaluation">Navigate to Dataset & Evaluation section</a>
-            <ul>
-                <li><a href="#dataset-overview">Dataset Overview</a></li>
-                <li><a href="#evaluation-methodology">Evaluation Methodology</a></li>
-                <li><a href="#performance-results">Performance Results</a></li>
-            </ul>
-        </details>
-        <details open>
-            <summary>Other KG-RAG Approaches</summary>
-            <a href="#other-approaches">Navigate to Other Approaches section</a>
-            <ul>
-                <li><a href="#cypher-based">Cypher-Based KG-RAG</a></li>
-                <li><a href="#graphrag">GraphRAG</a></li>
-            </ul>
-        </details>
-        <div><a href="#conclusion">Conclusion and Future Directions</a></div>
-    </nav>
-</div>
-
-
 <d-article>
+  <d-contents>
+    <nav class="toc figcaption">
+      <h4>Contents</h4>
+      <div><a href="#introduction">Introduction</a>
+        <ul><li><a href="#challenges">The Challenges of Traditional RAG</a></li><li><a href="#knowledge-graphs">Knowledge Graphs: A Structural Solution</a></li></ul>
+      </div>
+      <div><a href="#baseline-rag">Baseline RAG Architecture</a>
+        <ul><li><a href="#baseline-components">Key Components</a></li><li><a href="#baseline-limitations">Limitations</a></li></ul>
+      </div>
+      <div><a href="#kg-rag">Knowledge Graph-Based RAG</a>
+        <ul><li><a href="#entity-based-approach">Entity-Based Approach</a></li><li><a href="#interactive-visualization">Interactive Visualization</a></li><li><a href="#kg-rag-advantages">Advantages</a></li></ul>
+      </div>
+      <div><a href="#dataset-evaluation">SEC 10-Q Dataset & Evaluation</a>
+        <ul><li><a href="#dataset-overview">Dataset Overview</a></li><li><a href="#evaluation-methodology">Evaluation Methodology</a></li><li><a href="#performance-results">Performance Results</a></li></ul>
+      </div>
+      <div><a href="#other-approaches">Other KG-RAG Approaches</a>
+        <ul><li><a href="#cypher-based">Cypher-Based KG-RAG</a></li><li><a href="#graphrag">GraphRAG</a></li></ul>
+      </div>
+      <div><a href="#conclusion">Conclusion and Future Directions</a></div>
+    </nav>
+    <div class="toc-line"></div>
+  </d-contents>
 
   <h2 id="introduction">Introduction</h2>
 
   <p>Retrieval Augmented Generation (RAG) systems have revolutionized how large language models (LLMs) access and utilize external knowledge. By retrieving relevant information from a knowledge base before generating responses, RAG enables LLMs to provide more accurate, up-to-date, and verifiable answers. However, traditional RAG systems face significant challenges when dealing with complex information structures.</p>
 
-  <h3>The Challenges of Traditional RAG</h3>
+  <h3 id="challenges">The Challenges of Traditional RAG</h3>
 
   <p>Standard RAG implementations rely primarily on vector similarity search, treating documents as collections of independent chunks with limited contextual relationships. While effective for simple question answering, this approach struggles with:</p>
 
@@ -106,9 +95,9 @@
     <li><strong>Preserving Structural Information:</strong> Important relationships that exist in the original documents</li>
   </ol>
 
-  <p>For example, when answering questions about financial data, a traditional RAG system might retrieve document chunks containing relevant numbers but may miss crucial context about which fiscal periods, products, or business segments they relate to.  This is particularly relevant for standardized financial documentation with highly correlated chunks.</p>
+  <p>For example, when answering questions about financial data, a traditional RAG system might retrieve document chunks containing relevant numbers but may miss crucial context about which fiscal periods, products, or business segments they relate to. This is particularly relevant for standardized financial documentation with highly correlated chunks.</p>
 
-  <h3>Knowledge Graphs: A Structural Solution</h3>
+  <h3 id="knowledge-graphs">Knowledge Graphs: A Structural Solution</h3>
 
   <p>Knowledge graphs provide a natural solution to these challenges by explicitly modeling entities and their relationships. By representing documents as interconnected nodes and edges rather than isolated chunks, knowledge graph-based RAG systems can:</p>
 
@@ -195,9 +184,11 @@
 
   <p>To better understand how the Entity-Based KG-RAG method works in practice, let's look at an interactive visualization of the process for a query where the baseline system answers incorrectly but the entity-based system gets right:</p>
 
-  <figure>
-    <iframe src="assets/diagram.html" width="100%" height="896px" frameborder="0" style="max-width: 100%; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 6px;"></iframe>
-    <figcaption>Figure 3: Interactive visualization of the Entity-Based KG-RAG approach showing query processing flow for a question about Apple's gross margin percentage. The visualization demonstrates how entities are identified, the subgraph is explored, and relevant document chunks are selected to provide comprehensive answers.</figcaption>
+  <figure class="l-screen" style="width: 100%; margin: 20px 0; padding: 0;">
+    <iframe src="./diagrams/diagram.html" width="100%" height="896px" frameborder="0" style="max-width: 100%; margin: 0 auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 6px;"></iframe>
+    <figcaption style="margin-top: 20px; text-align: left; max-width: 800px; margin-left: auto; margin-right: auto;">
+      <p>Figure 3: Interactive visualization of the Entity-Based KG-RAG approach showing query processing flow for a question about Apple's gross margin percentage. The visualization demonstrates how entities are identified, the subgraph is explored, and relevant document chunks are selected to provide comprehensive answers.</p>
+    </figcaption>
   </figure>
 
   <p>The visualization above shows how a query about Apple's gross margin percentage flows through the Entity-Based KG-RAG system:</p>
@@ -234,12 +225,10 @@
     <li>Structured financial data including revenue, profit margins, and other metrics</li>
   </ul>
 
-  <!-- add sample screenshot of sec-10-q document from apple 2023 q3 report  -->
   <figure>
     <img src="assets/sec10q_sample.png" alt="Sample SEC 10-Q Document" style="width: 80%; max-width: 700px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
     <figcaption>Figure 4: Sample SEC 10-Q document from Apple's Q3 2023 report. The document contains structured financial data and textual information.</figcaption>
   </figure>
-
 
   <p>This dataset was chosen because financial documents represent an ideal use case for knowledge graph approaches - they contain numerous entities with complex relationships between them, and answering questions often requires connecting information across different sections.</p>
 
@@ -277,7 +266,7 @@
 
   <figure>
     <img src="assets/accuracy.png" alt="Performance Comparison" style="width: 80%; max-width: 700px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
-    <figcaption>Figure 4: Performance comparison between Entity-based KG-RAG and Baseline RAG across different LLM models. Entity-based KG-RAG consistently outperforms the baseline approach.</figcaption>
+    <figcaption>Figure 5: Performance comparison between Entity-based KG-RAG and Baseline RAG across different LLM models. Entity-based KG-RAG consistently outperforms the baseline approach.</figcaption>
   </figure>
 
   <p>
@@ -294,7 +283,7 @@
 
   <figure>
     <img src="assets/confusion_matrix.png" alt="Confusion Matrix" style="width: 80%; max-width: 700px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px; ">
-    <figcaption>Figure 5: Confusion matrix comparing Entity-based KG-RAG and Baseline RAG performance. The matrix shows that Entity-based KG-RAG correctly answers many questions that the Baseline approach misses, while rarely missing questions that the Baseline gets right.</figcaption>
+    <figcaption>Figure 6: Confusion matrix comparing Entity-based KG-RAG and Baseline RAG performance. The matrix shows that Entity-based KG-RAG correctly answers many questions that the Baseline approach misses, while rarely missing questions that the Baseline gets right.</figcaption>
   </figure>
 
   <p>The confusion matrix reveals that:</p>
@@ -312,7 +301,7 @@
 
   <figure>
     <img src="assets/entity_topn.png" alt="Entity-based KG-RAG Performance by Top-N Nodes" style="width: 80%; max-width: 700px; margin: 0 auto 1rem auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px;">
-    <figcaption>Figure 6: Entity-based KG-RAG performance with varying numbers of top similarity nodes considered. The peak performance occurs around 30-40 nodes, with diminishing returns when considering too many or too few nodes.</figcaption>
+    <figcaption>Figure 7: Entity-based KG-RAG performance with varying numbers of top similarity nodes considered. The peak performance occurs around 30-40 nodes, with diminishing returns when considering too many or too few nodes.</figcaption>
   </figure>
 
   <p>This analysis reveals that performance peaks when considering between 30-40 top similar nodes (56% accuracy), with a noticeable decline when considering either too few (&lt; 10 nodes) or too many (&gt; 50 nodes) similar entities. This suggests an optimal balance where the system has enough similar entities to explore related connections, but not so many that it introduces noise or dilutes the relevance of the retrieved context.</p>
@@ -332,7 +321,7 @@
     <li><strong>Error Handling:</strong> Includes mechanisms to detect and correct malformed queries through an iterative process</li>
   </ul>
 
-  <p>This approach excels when questions map clearly to specific relationship patterns in the knowledge graph, but requires more specialized knowledge of the underlying graph structure.  We use the <a href="https://python.langchain.com/docs/integrations/graphs/neo4j_cypher/"" target="_blank">Langchain neo4j cookbooks</a> as a reference for our implementation.</p>
+  <p>This approach excels when questions map clearly to specific relationship patterns in the knowledge graph, but requires more specialized knowledge of the underlying graph structure. We use the <a href="https://python.langchain.com/docs/integrations/graphs/neo4j_cypher/" target="_blank">Langchain neo4j cookbooks</a> as a reference for our implementation.</p>
 
   <h3 id="graphrag">GraphRAG</h3>
 
@@ -345,7 +334,7 @@
     <li><strong>LangChain Integration:</strong> Built on the LangChain framework for seamless integration with other components</li>
   </ul>
 
-  <p>This approach is particularly effective for documents with natural community structures, such as research papers with distinct sections or reports covering various business segments.  We leverage a <a href="https://github.com/ksachdeva/langchain-graphrag/tree/main" target="_blank">lanchain implementation of GraphRAG</a> for ease-of-use.</p>
+  <p>This approach is particularly effective for documents with natural community structures, such as research papers with distinct sections or reports covering various business segments. We leverage a <a href="https://github.com/ksachdeva/langchain-graphrag/tree/main" target="_blank">lanchain implementation of GraphRAG</a> for ease-of-use.</p>
 
   <h2 id="conclusion">Conclusion and Future Directions</h2>
 
@@ -363,7 +352,6 @@
     <li><strong>Reasoning-enhanced retrieval:</strong> Incorporating logical reasoning capabilities into the graph exploration process</li>
     <li><strong>Hybrid approaches:</strong> Integrating the strengths of different KG-RAG methods for optimal performance across diverse question types</li>
   </ul>
-
 </d-article>
 
 <d-appendix>
@@ -376,6 +364,5 @@
   <d-bibliography src="references.bib"></d-bibliography>
   <d-citation-list></d-citation-list>
 </d-appendix>
-
 
 </body>

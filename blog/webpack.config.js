@@ -135,7 +135,8 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         { from: 'static/' },
-        { from: 'src/assets/', to: 'assets/' }
+        { from: 'src/assets/', to: 'assets/' },
+        { from: 'src/diagrams/', to: 'diagrams/' }
       ]
     }),
     new HtmlReplaceWebpackPlugin([
