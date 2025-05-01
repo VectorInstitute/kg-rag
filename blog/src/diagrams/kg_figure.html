@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Knowledge Graph Structure</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+        }
+        svg {
+            width: 100%;
+            height: 500px;
+            background-color: #ffffff;
+        }
+        .node {
+            cursor: pointer;
+            transition: opacity 0.5s ease, r 0.3s ease, fill 0.3s ease, stroke 0.3s ease, stroke-width 0.3s ease;
+            stroke: #1976D2;
+            stroke-width: 1.5px;
+            stroke-opacity: 0.8;
+        }
+        .node:hover {
+            stroke-width: 3px;
+            stroke-opacity: 1;
+        }
+        .node-label {
+            font-size: 9px;
+            font-weight: 500;
+            fill: #444;
+            text-anchor: middle;
+            pointer-events: none;
+            user-select: none;
+            transition: opacity 0.5s ease;
+        }
+        .link {
+            stroke: #999;
+            stroke-width: 1.5px;
+            stroke-opacity: 0.4;
+            transition: stroke 0.5s ease, stroke-opacity 0.5s ease, stroke-width 0.3s ease;
+        }
+        .link-label {
+            font-size: 8px;
+            text-anchor: middle;
+            pointer-events: none;
+            user-select: none;
+            fill: #666;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .tooltip {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 200px;
+            z-index: 100;
+        }
+        .node-company { fill: #d1c4e9; }
+        .node-metric { fill: #c8e6c9; }
+        .node-quarter { fill: #ffccbc; }
+        .node-document { fill: #cfd8dc; }
+        .node-context { fill: #FFF9C4; }
+        .node-other { fill: #eeeeee; }
+
+        .link.highlight-subgraph {
+            stroke: #64b5f6;
+            stroke-opacity: 0.7;
+            stroke-width: 2px;
+        }
+        .link.highlight-path {
+            stroke: #e57373;
+            stroke-opacity: 0.9;
+            stroke-width: 2.5px;
+        }
+        .node.highlight-initial {
+            stroke: #FFA000;
+            stroke-width: 3px;
+            stroke-opacity: 1;
+        }
+        .node.highlight-subgraph {
+            stroke: #1976D2;
+            stroke-width: 2px;
+            stroke-opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <svg id="graph-svg"></svg>
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup
+            const svg = d3.select("#graph-svg");
+            const tooltip = d3.select("#tooltip");
+            const boundedWidth = 800; // Constrain width to prevent spreading
+            let width = svg.node().clientWidth;
+            let height = svg.node().clientHeight;
+            const effectiveWidth = Math.min(width, boundedWidth);
+            const margin = {top: 20, right: 20, bottom: 20, left: 20};
+
+            // Create nodes list using entities from original diagram
+            const graphData = {
+                nodes: [
+                    // Companies
+                    { id: "apple-inc-2023-q3", type: "company", label: "AAPL Q3 23", desc: "Apple Inc. for Q3 2023" },
+                    { id: "apple-inc-2023-q2", type: "company", label: "AAPL Q2 23", desc: "Apple Inc. for Q2 2023" },
+                    { id: "apple-inc-2023-q1", type: "company", label: "AAPL Q1 23", desc: "Apple Inc. for Q1 2023" },
+                    { id: "apple-inc-2022-q3", type: "company", label: "AAPL Q3 22", desc: "Apple Inc. for Q3 2022" },
+
+                    // Products & Services
+                    { id: "products-2023-q3", type: "metric", label: "Products Q3 23", desc: "Products segment for Q3 2023" },
+                    { id: "products-2023-q2", type: "metric", label: "Products Q2 23", desc: "Products segment for Q2 2023" },
+                    { id: "products-2023-q1", type: "metric", label: "Products Q1 23", desc: "Products segment for Q1 2023" },
+                    { id: "products-2022-q3", type: "metric", label: "Products Q3 22", desc: "Products segment for Q3 2022" },
+                    { id: "services-2023-q3", type: "metric", label: "Services Q3 23", desc: "Services segment for Q3 2023" },
+                    { id: "services-2023-q2", type: "metric", label: "Services Q2 23", desc: "Services segment for Q2 2023" },
+                    { id: "services-2023-q1", type: "metric", label: "Services Q1 23", desc: "Services segment for Q1 2023" },
+                    { id: "services-2022-q3", type: "metric", label: "Services Q3 22", desc: "Services segment for Q3 2022" },
+
+                    // Gross Margin Metrics
+                    { id: "gross-margin-2023-q3", type: "metric", label: "GM Q3 23", desc: "Gross Margin for Q3 2023" },
+                    { id: "gross-margin-percentage-2023-q3", type: "metric", label: "GM % Q3 23", desc: "Gross Margin Percentage for Q3 2023: 35.4%" },
+                    { id: "gross-margin-2023-q2", type: "metric", label: "GM Q2 23", desc: "Gross Margin for Q2 2023" },
+                    { id: "gross-margin-percentage-2023-q2", type: "metric", label: "GM % Q2 23", desc: "Gross Margin Percentage for Q2 2023: 36.7%" },
+                    { id: "gross-margin-2023-q1", type: "metric", label: "GM Q1 23", desc: "Gross Margin for Q1 2023" },
+                    { id: "gross-margins-2023-q3", type: "metric", label: "Gross Margins Q3 23", desc: "Gross Margins section in Q3 2023 report" },
+                    { id: "gross-margins-2023-q2", type: "metric", label: "Gross Margins Q2 23", desc: "Gross Margins section in Q2 2023 report" },
+                    { id: "gross-margin-2022-q3", type: "metric", label: "GM Q3 22", desc: "Gross Margin for Q3 2022" },
+                    { id: "gross-margin-percentage-2022-q3", type: "metric", label: "GM % Q3 22", desc: "Gross Margin Percentage for Q3 2022: 34.5%" },
+                    { id: "services-gross-margin-2023-q1", type: "metric", label: "Services GM Q1 23", desc: "Services Gross Margin for Q1 2023" },
+                    { id: "services-gross-margin-percentage-2023-q3", type: "metric", label: "Services GM % Q3 23", desc: "Services Gross Margin Percentage for Q3 2023: 70.5%" },
+                    { id: "services-gross-margin-percentage-2023-q2", type: "metric", label: "Services GM % Q2 23", desc: "Services Gross Margin Percentage for Q2 2023: 71.0%" },
+
+                    // Documents & Context
+                    { id: "q3-2023-form-10-q", type: "document", label: "Q3 23 10-Q", desc: "Q3 2023 Form 10-Q filing" },
+                    { id: "risk-factors-2023-q2", type: "context", label: "Risk Factors Q2 23", desc: "Risk Factors section in Q2 2023 report" },
+                    { id: "volatility-2023-q2", type: "context", label: "Volatility Q2 23", desc: "Market volatility mentioned in Q2 2023 report" },
+                    { id: "downward-pressure-2023-q2", type: "context", label: "Downward Pressure Q2 23", desc: "Downward pressure on margins mentioned in Q2 2023 report" },
+
+                    // Time periods
+                    { id: "2022", type: "quarter", label: "2022", desc: "Fiscal year 2022" },
+                    { id: "2021", type: "quarter", label: "2021", desc: "Fiscal year 2021" }
+                ],
+                links: [
+                    // Apple Inc Q3 23 connections
+                    { source: "apple-inc-2023-q3", target: "products-2023-q3", label: "has_segment" },
+                    { source: "apple-inc-2023-q3", target: "services-2023-q3", label: "has_segment" },
+                    { source: "apple-inc-2023-q3", target: "gross-margin-2023-q3", label: "has_metric" },
+                    { source: "apple-inc-2023-q3", target: "q3-2023-form-10-q", label: "filed" },
+
+                    // Products connections
+                    { source: "products-2023-q3", target: "gross-margin-2023-q3", label: "has_metric" },
+                    { source: "products-2023-q3", target: "gross-margin-percentage-2023-q3", label: "has_metric" },
+                    { source: "products-2023-q2", target: "gross-margin-2023-q2", label: "has_metric" },
+                    { source: "products-2023-q2", target: "gross-margin-percentage-2023-q2", label: "has_metric" },
+                    { source: "products-2023-q1", target: "gross-margin-2023-q1", label: "has_metric" },
+                    { source: "products-2022-q3", target: "gross-margin-2022-q3", label: "has_metric" },
+                    { source: "products-2022-q3", target: "gross-margin-percentage-2022-q3", label: "has_metric" },
+
+                    // Services connections
+                    { source: "services-2023-q3", target: "gross-margin-2023-q3", label: "has_metric" },
+                    { source: "services-2023-q3", target: "services-gross-margin-percentage-2023-q3", label: "has_metric" },
+                    { source: "services-2023-q2", target: "gross-margin-2023-q2", label: "has_metric" },
+                    { source: "services-2023-q2", target: "services-gross-margin-percentage-2023-q2", label: "has_metric" },
+                    { source: "services-2023-q1", target: "services-gross-margin-2023-q1", label: "has_metric" },
+                    { source: "services-2022-q3", target: "gross-margin-2022-q3", label: "has_metric" },
+
+                    // Document connections
+                    { source: "q3-2023-form-10-q", target: "apple-inc-2023-q3", label: "about" },
+                    { source: "q3-2023-form-10-q", target: "gross-margins-2023-q3", label: "contains" },
+
+                    // Company connections
+                    { source: "apple-inc-2023-q2", target: "gross-margin-2023-q2", label: "has_metric" },
+                    { source: "apple-inc-2023-q2", target: "products-2023-q2", label: "has_segment" },
+                    { source: "apple-inc-2023-q2", target: "services-2023-q2", label: "has_segment" },
+                    { source: "apple-inc-2023-q1", target: "gross-margin-2023-q1", label: "has_metric" },
+                    { source: "apple-inc-2023-q1", target: "services-gross-margin-2023-q1", label: "has_metric" },
+                    { source: "apple-inc-2022-q3", target: "gross-margin-2022-q3", label: "has_metric" },
+
+                    // Risk and context connections
+                    { source: "risk-factors-2023-q2", target: "gross-margins-2023-q2", label: "impacts" },
+                    { source: "gross-margins-2023-q2", target: "volatility-2023-q2", label: "affected_by" },
+                    { source: "gross-margins-2023-q2", target: "downward-pressure-2023-q2", label: "experiences" },
+
+                    // Year connections
+                    { source: "gross-margin-percentage-2022-q3", target: "2022", label: "in_year" },
+                    { source: "gross-margin-percentage-2022-q3", target: "2021", label: "compared_to" }
+                ]
+            };
+
+            // Initialize visualization
+            function initializeGraph() {
+                // Clear svg
+                svg.selectAll("*").remove();
+
+                // Create arrow marker definition
+                const defs = svg.append("defs");
+                defs.append("marker")
+                    .attr("id", "arrowhead")
+                    .attr("viewBox", "0 -5 10 10")
+                    .attr("refX", 22) // Position relative to end point, moved farther to account for larger nodes
+                    .attr("refY", 0)
+                    .attr("orient", "auto")
+                    .attr("markerWidth", 6)
+                    .attr("markerHeight", 6)
+                    .append("path")
+                    .attr("d", "M0,-5L10,0L0,5")
+                    .attr("fill", "#999");
+
+                // Center the graph in the available space
+                const innerWidth = width - margin.left - margin.right;
+                const innerHeight = height - margin.top - margin.bottom;
+
+                // Create a container group that centers everything
+                const container = svg.append("g")
+                    .attr("transform", `translate(${margin.left + (innerWidth - effectiveWidth) / 2}, ${margin.top})`);
+
+                // Create SVG groups
+                const linkGroup = container.append("g").attr("class", "links");
+                const linkLabelGroup = container.append("g").attr("class", "link-labels");
+                const nodeGroup = container.append("g").attr("class", "nodes");
+                const labelGroup = container.append("g").attr("class", "labels");
+
+                // Create links
+                const links = linkGroup.selectAll("line")
+                    .data(graphData.links)
+                    .enter()
+                    .append("line")
+                    .attr("class", "link")
+                    .attr("marker-end", "url(#arrowhead)");
+
+                // Create link labels
+                const linkLabels = linkLabelGroup.selectAll("text")
+                    .data(graphData.links)
+                    .enter()
+                    .append("text")
+                    .attr("class", "link-label")
+                    .text(d => d.label);
+
+                // Create nodes with larger radius as in original
+                const nodes = nodeGroup.selectAll("circle")
+                    .data(graphData.nodes)
+                    .enter()
+                    .append("circle")
+                    .attr("class", d => `node node-${d.type}`)
+                    .attr("r", d => d.type === "document" ? 11 : 10) // Larger nodes to match original
+                    .on("mouseover", showNodeDetails)
+                    .on("mouseout", hideNodeDetails)
+                    .on("click", toggleNodeFocus);
+
+                // Create node labels
+                const labels = labelGroup.selectAll("text")
+                    .data(graphData.nodes)
+                    .enter()
+                    .append("text")
+                    .attr("class", "node-label")
+                    .attr("dy", -12)
+                    .text(d => d.label);
+
+                // Setup force simulation with a more constrained layout
+                const simulation = d3.forceSimulation(graphData.nodes)
+                    .force("link", d3.forceLink(graphData.links).id(d => d.id).distance(80))
+                    .force("charge", d3.forceManyBody().strength(-300))
+                    .force("center", d3.forceCenter(effectiveWidth / 2, innerHeight / 2))
+                    .force("x", d3.forceX(effectiveWidth / 2).strength(0.1)) // Keep nodes closer to center
+                    .force("y", d3.forceY(innerHeight / 2).strength(0.1))    // Keep nodes closer to center
+                    .force("collision", d3.forceCollide().radius(25)) // Larger collision radius
+                    .on("tick", ticked);
+
+                // Position key nodes to create a more structured layout
+                // Central nodes - Apple Q3 2023
+                const centralNode = graphData.nodes.find(n => n.id === "apple-inc-2023-q3");
+                if (centralNode) {
+                    centralNode.fx = effectiveWidth * 0.5;
+                    centralNode.fy = innerHeight * 0.40;
+                }
+
+                // Document node - Form 10-Q
+                const docNode = graphData.nodes.find(n => n.id === "q3-2023-form-10-q");
+                if (docNode) {
+                    docNode.fx = effectiveWidth * 0.5 + 80;
+                    docNode.fy = innerHeight * 0.40;
+                }
+
+                // Target metric node - Products GM %
+                const metricNode = graphData.nodes.find(n => n.id === "gross-margin-percentage-2023-q3");
+                if (metricNode) {
+                    metricNode.fx = effectiveWidth * 0.5;
+                    metricNode.fy = innerHeight * 0.55;
+                }
+
+                // Run simulation for a bit with stronger forces to better position nodes
+                for (let i = 0; i < 50; i++) simulation.tick();
+
+                // Release fixed positions after stabilizing layout
+                setTimeout(() => {
+                    graphData.nodes.forEach(n => {
+                        n.fx = null;
+                        n.fy = null;
+                    });
+                }, 2000);
+
+                // Update positions on tick with boundary constraints
+                function ticked() {
+                    // Keep nodes inside boundaries - more constrained to match original
+                    graphData.nodes.forEach(node => {
+                        node.x = Math.max(20, Math.min(effectiveWidth - 20, node.x));
+                        node.y = Math.max(20, Math.min(innerHeight - 20, node.y));
+                    });
+
+                    links
+                        .attr("x1", d => d.source.x)
+                        .attr("y1", d => d.source.y)
+                        .attr("x2", d => d.target.x)
+                        .attr("y2", d => d.target.y);
+
+                    linkLabels
+                        .attr("x", d => (d.source.x + d.target.x) / 2)
+                        .attr("y", d => (d.source.y + d.target.y) / 2 - 3);
+
+                    nodes
+                        .attr("cx", d => d.x)
+                        .attr("cy", d => d.y);
+
+                    labels
+                        .attr("x", d => d.x)
+                        .attr("y", d => d.y);
+                }
+
+                // Drag behavior
+                nodes.call(d3.drag()
+                    .on("start", dragStarted)
+                    .on("drag", dragging)
+                    .on("end", dragEnded));
+
+                function dragStarted(event, d) {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    d.fx = d.x;
+                    d.fy = d.y;
+                }
+
+                function dragging(event, d) {
+                    d.fx = event.x;
+                    d.fy = event.y;
+                }
+
+                function dragEnded(event, d) {
+                    if (!event.active) simulation.alphaTarget(0);
+                    d.fx = null;
+                    d.fy = null;
+                }
+
+                return { nodes, links, linkLabels, labels, simulation };
+            }
+
+            // Track currently focused node
+            let focusedNodeId = null;
+
+            // Show node details on hover
+            function showNodeDetails(event, d) {
+                // Don't show hover details if a node is clicked/focused
+                if (focusedNodeId !== null) return;
+
+                // Show tooltip
+                tooltip.style("left", (event.pageX + 15) + "px")
+                       .style("top", (event.pageY - 20) + "px")
+                       .style("opacity", 1)
+                       .html(`<strong>${d.label}</strong><br>${d.desc}`);
+
+                // Highlight connections
+                highlightConnections(d.id);
+            }
+
+            function hideNodeDetails() {
+                // Only hide tooltip and reset highlights if no node is focused
+                if (focusedNodeId === null) {
+                    tooltip.style("opacity", 0);
+                    resetHighlights();
+                }
+            }
+
+            function toggleNodeFocus(event, d) {
+                if (focusedNodeId === d.id) {
+                    // Clicking the focused node again unfocuses it
+                    focusedNodeId = null;
+                    tooltip.style("opacity", 0);
+                    resetHighlights();
+                } else {
+                    // Focus on the clicked node
+                    focusedNodeId = d.id;
+
+                    // Update tooltip
+                    tooltip.style("left", (event.pageX + 15) + "px")
+                           .style("top", (event.pageY - 20) + "px")
+                           .style("opacity", 1)
+                           .html(`<strong>${d.label}</strong><br>${d.desc}`);
+
+                    // Highlight connections and show relationship labels
+                    highlightConnections(d.id, true);
+                }
+            }
+
+            function highlightConnections(nodeId, showLabels = false) {
+                // Find connected links and nodes
+                const connectedLinkIds = new Set();
+                const connectedNodeIds = new Set([nodeId]);
+
+                graphData.links.forEach(link => {
+                    const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
+                    const targetId = typeof link.target === 'object' ? link.target.id : link.target;
+                    const linkId = `${sourceId}-${targetId}`;
+
+                    if (sourceId === nodeId) {
+                        connectedLinkIds.add(linkId);
+                        connectedNodeIds.add(targetId);
+                    }
+                    if (targetId === nodeId) {
+                        connectedLinkIds.add(linkId);
+                        connectedNodeIds.add(sourceId);
+                    }
+                });
+
+                // Apply highlights using classes from the original diagram
+                svg.selectAll(".node")
+                    .style("opacity", d => connectedNodeIds.has(d.id) ? 1 : 0.3)
+                    .classed("highlight-initial", d => d.id === nodeId)
+                    .classed("highlight-subgraph", d => d.id !== nodeId && connectedNodeIds.has(d.id));
+
+                svg.selectAll(".link")
+                    .style("opacity", d => {
+                        const linkId = `${d.source.id || d.source}-${d.target.id || d.target}`;
+                        return connectedLinkIds.has(linkId) ? 1 : 0.2;
+                    })
+                    .classed("highlight-subgraph", d => {
+                        const linkId = `${d.source.id || d.source}-${d.target.id || d.target}`;
+                        return connectedLinkIds.has(linkId);
+                    });
+
+                svg.selectAll(".node-label")
+                    .style("opacity", d => connectedNodeIds.has(d.id) ? 1 : 0.3);
+
+                // Show relationship labels for clicked node
+                svg.selectAll(".link-label")
+                    .style("opacity", d => {
+                        if (!showLabels) return 0;
+                        const linkId = `${d.source.id || d.source}-${d.target.id || d.target}`;
+                        return connectedLinkIds.has(linkId) ? 1 : 0;
+                    });
+            }
+
+            function resetHighlights() {
+                svg.selectAll(".node")
+                    .style("opacity", 1)
+                    .classed("highlight-initial", false)
+                    .classed("highlight-subgraph", false);
+
+                svg.selectAll(".link")
+                    .style("opacity", 1)
+                    .classed("highlight-subgraph", false)
+                    .classed("highlight-path", false);
+
+                svg.selectAll(".node-label")
+                    .style("opacity", 1);
+
+                svg.selectAll(".link-label")
+                    .style("opacity", 0);
+            }
+
+            // Initialize graph
+            initializeGraph();
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                width = svg.node().clientWidth;
+                height = svg.node().clientHeight;
+                initializeGraph();
+            });
+
+            // Allow clicking anywhere on SVG to reset focus
+            svg.on("click", function(event) {
+                if (event.target.tagName === "svg" && focusedNodeId !== null) {
+                    focusedNodeId = null;
+                    tooltip.style("opacity", 0);
+                    resetHighlights();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
