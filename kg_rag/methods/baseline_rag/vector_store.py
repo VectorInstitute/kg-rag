@@ -3,7 +3,6 @@
 from typing import Any
 
 import chromadb
-from chromadb.errors import InvalidCollectionException
 
 from .embedder import OpenAIEmbedding
 
@@ -39,7 +38,7 @@ class ChromaDBManager:
             collection = self.client.get_collection(self.collection_name)
             if self.verbose:
                 print(f"Found existing collection: {self.collection_name}")
-        except InvalidCollectionException:
+        except ValueError:
             if self.verbose:
                 print(f"Creating new collection: {self.collection_name}")
             collection = self.client.create_collection(self.collection_name)
