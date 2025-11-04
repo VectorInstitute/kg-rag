@@ -45,6 +45,9 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
 
     steps:
     - name: Download build artifact
@@ -60,6 +63,7 @@ jobs:
       uses: actions/upload-pages-artifact@v4
       with:
         path: blog/public
+        retention-days: 1
 
     - name: Deploy to GitHub Pages
       id: deployment
