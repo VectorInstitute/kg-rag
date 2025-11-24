@@ -33,6 +33,7 @@ dependencies = [
     "ragas>=0.2.12",
     "spacy>=3.8.4",
     "levenshtein>=0.26.1",
+    "langgraph-checkpoint>=3.0.0",
 ]
 
 [build-system]
