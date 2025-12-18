@@ -2,6 +2,16 @@
  * Main diagrams module - imports and initializes all visualizations
  */
 
+// Simple HTML escape function to prevent XSS when inserting text as HTML
+function escapeHTML(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // Import diagram script path for iframe reference
 export const diagramPath = './diagrams/diagram.js';
 
@@ -151,7 +161,7 @@ export function initCustomTOC() {
     const link = div.querySelector('a');
     if (link) {
       const originalText = link.textContent;
-      link.innerHTML = `<span style="color: #2c3e50; font-weight: bold; margin-right: 5px;">${sectionNum}.</span> ${originalText}`;
+      link.innerHTML = `<span style="color: #2c3e50; font-weight: bold; margin-right: 5px;">${sectionNum}.</span> ${escapeHTML(originalText)}`;
     }
 
     // Add toc-section class to all divs
