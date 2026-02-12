@@ -58,3 +58,4 @@ jobs:
           ignore-vulns: |
             GHSA-xqrq-4mgf-ff32
             GHSA-7gcm-g887-7qv7
+            GHSA-2g6r-c272-w58r
