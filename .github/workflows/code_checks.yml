@@ -60,3 +60,4 @@ jobs:
             GHSA-7gcm-g887-7qv7
             GHSA-2g6r-c272-w58r
             CVE-2025-69872
+            CVE-2026-28277
