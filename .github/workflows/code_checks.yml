@@ -64,3 +64,4 @@ jobs:
             CVE-2026-34070
             GHSA-r7w7-9xr2-qq2r
             GHSA-fv5p-p927-qmxr
+            CVE-2026-6587
