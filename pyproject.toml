@@ -42,7 +42,7 @@ dependencies = [
     "langchain-core>=0.3.84",
     "marshmallow>=3.26.2",
     "pyasn1>=0.6.2",
-    "urllib3>=2.6.3",
+    "urllib3>=2.7.0",
     "virtualenv>=20.36.1",
     "requests>=2.33.0",
 ]
