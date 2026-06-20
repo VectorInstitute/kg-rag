@@ -45,7 +45,9 @@ dependencies = [
     "urllib3>=2.7.0",
     "virtualenv>=20.36.1",
     "requests>=2.33.0",
-    "langsmith>=0.8.0",
+    "langsmith>=0.8.18",
+    "msgpack>=1.2.1",
+    "pydantic-settings>=2.14.2",
 ]
 
 [build-system]
