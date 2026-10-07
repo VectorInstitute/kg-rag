@@ -1,8 +1,6 @@
-# Contributing to bootcamp_template
+# Contributing to kg-rag
 
-Thanks for your interest in contributing to the bootcamp_template!
-
-To submit PRs, please fill out the PR template along with the PR. If the PR fixes an issue, don't forget to link the PR to the issue!
+This repository is archived and does not accept issues or pull requests. The notes below describe the conventions the code follows, for anyone who forks it.
 
 ## Pre-commit hooks
 

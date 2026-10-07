@@ -1,29 +1,49 @@
-# KG-RAG: Knowledge Graph-based Retrieval Augmented Generation
+# KG-RAG: knowledge graph retrieval augmented generation experiments
 
-This repository contains a collection of implementations for Knowledge Graph-based RAG (Retrieval Augmented Generation) approaches and baseline methods for comparison. The code is structured as a Python package with modular components.
+> NOTE (2026-10-07): This repository is archived. It is the companion code to the Vector Institute post
+> [Enhancing RAG with knowledge graphs](https://vectorinstitute.ai/enhancing-rag-with-knowledge-graphs/)
+> and is kept for reference. It is not maintained, and issues and pull requests are closed.
 
-## Overview
+This repository holds exploratory, bare-bones implementations of three knowledge graph RAG methods and
+two baselines, written to run the experiments in the post on SEC 10-Q filings. The code is a small
+Python package with command-line scripts. It is not a framework: there is no stable API, no test
+suite, and no packaging for reuse, and the dependencies are the versions locked in `uv.lock`. Expect to
+read and adapt the scripts rather than install the package as a library.
 
-The repository implements several RAG approaches:
+## Methods
 
-1. **Baseline approaches**:
-   - **Standard RAG**: Traditional retrieval-based approach using vector similarity
-   - **Chain-of-Thought RAG**: Enhanced retrieval with explicit reasoning steps
+Baselines:
 
-2. **KG-RAG approaches**:
-   - **Entity-based approach**: Uses embedding-based entity matching and beam search to find relevant information in the knowledge graph
-   - **Cypher-based approach**: Uses Cypher queries to retrieve information from a Neo4j graph database
-   - **GraphRAG-based approach**: Implements a community detection and hierarchical search strategy
+- Standard RAG: retrieval by vector similarity over document chunks.
+- Chain-of-thought RAG: the same retrieval with explicit reasoning steps in the prompt.
+
+Knowledge graph methods:
+
+- Entity-based: matches query entities to graph entities by embedding, then runs a beam search over
+  the graph to collect the chunks to answer from. This is the method the post evaluates.
+- Cypher-based: an LLM writes Cypher queries against a Neo4j graph built from the documents.
+- GraphRAG-based: community detection over the entity graph with a hierarchical search, after the
+  GraphRAG design.
+
+## Contents
+
+- `kg_rag/`: the package, with one module per method under `methods/` and the evaluation scripts
+  under `evaluation/`.
+- `scripts/`: builds the vector store and the graphs, and runs each method interactively.
+- `data/sec-10-q/`: the SEC 10-Q documents and the question sets used in the post.
+- `blog/`: the interactive version of the post, served from GitHub Pages at
+  [vectorinstitute.github.io/kg-rag](https://vectorinstitute.github.io/kg-rag/).
+- `literature_review.md`: the survey of RAG evaluation papers and datasets written during the work.
 
 ## Installation
 
-### Using uv (Recommended)
+### Using uv
 
 This project uses [uv](https://github.com/astral-sh/uv) for dependency management.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/kg-rag.git
+git clone https://github.com/VectorInstitute/kg-rag.git
 cd kg-rag
 
 # Install uv if you don't have it
@@ -141,19 +161,9 @@ python -m kg_rag.evaluation.hyperparameter_search \
 
 ### Pre-commit hooks
 
-This project uses pre-commit hooks to ensure code quality:
+The repository uses pre-commit hooks for formatting and linting:
 
 ```bash
 # Run pre-commit hooks on all files
 pre-commit run --all-files
-```
-
-### Running tests
-
-```bash
-# Run tests
-pytest
-
-# Run tests with coverage
-pytest --cov=kg_rag tests/
 ```
